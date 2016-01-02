@@ -41,7 +41,15 @@ t.init({
 			prices : t.page(),
 			contact : t.page()
 		},
-		css: OBJ // CSS RULES TO ALL PAGES
+		css: OBJ, // CSS RULES TO ALL PAGES
+		external :[
+			"/css/bootstrap.min.css",
+			"/css/superStyle.css",
+			"/js/jQuery.min.js",
+			"/js/angular.min.js",
+			"/custom/32168|css", // WHEN THE CSS/JS CODE IS GENERATED ON THE SERVER
+			"/custom/12635|js", // path/to/code|css OR path/to/code|js
+		]
 	});
 
 //CONFIG EACH PAGE
