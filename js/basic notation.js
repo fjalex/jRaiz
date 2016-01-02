@@ -58,7 +58,21 @@ t.prices.external : [
 	"/js/prices.js"
 ];
 t.prices.table({
-	
+	ID : {
+		active : true,
+		sort : true
+	},
+	product : {
+		sort : true
+	},
+	minimum : {
+		label : "Minimum Order",
+		sort : true
+	},
+	price : {
+		label : "Price USD",
+		sort : true
+	},
 });
 
 t.contact.form({
