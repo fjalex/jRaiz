@@ -62,9 +62,26 @@ t.prices.table({
 });
 
 t.contact.form({
-	name : ["name", "notEmpty"],
-	email : ["email", "validate", "notEmpty"],
-	phone : ["phone", "validate", "notEmpty"],
-	birthday : ["date"],
-	message : ["text", "notEmpty"]
+	name : {
+		type: "name",
+		empty: false
+	},
+	email : {
+		type: "email",
+		validate : true,
+		empty: false
+	},
+	phone :  {
+		type : "phone",
+		mask : "+00 00 0000 0000",
+		validate : true,
+		empty : false
+	},
+	birthday :  {
+		type: "date"
+	},
+	message :  {
+		type: "text",
+		empty: false
+	}
 });
