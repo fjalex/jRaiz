@@ -6,7 +6,6 @@
 			SET PAGES W/ ROUTING ADDRESS
 		
 		ADD CHANGES TO EACH PAGE
-		
 	
 */
 
@@ -76,12 +75,16 @@ t.prices.table({
 });
 
 t.contact.form({
+	$ : {
+		inline: false,
+	},
 	name : {
 		type: "name",
 		empty: false
 	},
 	email : {
-		type: "email",
+		type : "email",
+		label : "E-mail",
 		validate : true,
 		empty: false
 	},
