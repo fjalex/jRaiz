@@ -42,7 +42,7 @@ t.init({
 			contact : t.page()
 		},
 		css: OBJ, // CSS RULES TO ALL PAGES
-		external :[
+		external : [
 			"/css/bootstrap.min.css",
 			"/css/superStyle.css",
 			"/js/jQuery.min.js",
@@ -53,6 +53,10 @@ t.init({
 	});
 
 //CONFIG EACH PAGE
+t.prices.external : [
+	"/css/prices.css",
+	"/js/prices.js"
+];
 t.prices.table({
 	
 });
