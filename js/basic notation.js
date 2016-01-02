@@ -27,7 +27,7 @@ t.init({
 				ad1 : {},
 				ad2 : {},
 				ad3 : {},
-			}
+			},
 			footer : {
 				col1 : {},
 				col2 : {},
@@ -45,6 +45,10 @@ t.init({
 	});
 
 //CONFIG EACH PAGE
+t.prices.table({
+	
+});
+
 t.contact.form({
 	name : ["name", "notEmpty"],
 	email : ["email", "validate", "notEmpty"],
