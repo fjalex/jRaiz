@@ -248,6 +248,7 @@ function Tree(){
 				document.body.appendChild( children[element] );
 			}
 		}
+		treeThis.body = document.body;
 	};
 
 	//element() FUNCTION
