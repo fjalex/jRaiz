@@ -1,5 +1,12 @@
 struct = {
 	container : {
+		$ : {
+			classes : "criatr lskdjfie lska",
+			id : "superDiv",
+			css : {
+				
+			}
+		},
 		header : {
 			logo : {},
 			menu : {}
@@ -29,11 +36,19 @@ struct = {
 		}
 	},
 	modal : {
-		button : {}
+		button : {
+			$ : {
+				tag : "input",
+				type : "submit"
+			}
+		}
 	}
 };
 
 
 //t.init({a:64});
 //t.it(struct, t.body);
+
+//t.init({strict:false, sections:true});
+t.init({strict:true, sections:false});
 t.it(struct);
