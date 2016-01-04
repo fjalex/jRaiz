@@ -138,7 +138,7 @@ function Tree(){
 		h6 : {},
 		head : {},
 		hr : {self:true},
-		html : {},
+		//html : {},
 		i : {},
 		iframe : {},
 		img : {self:true},
@@ -287,13 +287,26 @@ function Tree(){
 	this.it = function(obj, parent){
 		parent = parent || this.body;
 		for(var k in obj){
+			var ops = {};
+			
 			if(k == "$"){
 				parent.className += " " + obj[k].classes;
 				parent.id += " " + obj[k].id;
 				continue; //jump to next key
 			}
 			
-			ops = {text: k}
+			if(k == "text"){
+				console.log(k);
+				parent.innerText += obj[k];
+				continue;
+			}
+			
+			if(k == "html"){
+				console.log(k);
+				parent.innerHTML += obj[k];
+				continue;
+			} 
+			
 			if(k in this.tags){
 				ops.tag = k;
 			} else {
@@ -301,8 +314,6 @@ function Tree(){
 			}
 			
 			var Element = this.element(ops);
-			//console.log(parent, Element);
-			
 			parent.appendChild(Element);
 			treeThis.it(obj[k], Element);
 		}
