@@ -16,6 +16,20 @@ function Tree(){
 		children : []
 	};
 	
+	//HTML 4 SPECIFIC TAGS
+	this.html4 = {
+		acronym : {},
+		applet : {},
+		basefont : {},
+		dir : {},
+		font : {},
+		frame : {},
+		frameset : {},
+		noframes : {},
+		strike : {},
+		tt : {},
+	};
+	
 	//HTML 5 SPECIFIC TAGS
 	this.html5 = {
 		audio : {},
@@ -29,9 +43,10 @@ function Tree(){
 		progress : {},
 		source : {self:true},
 		time : {},
+		track : {self:true},
 		video : {},
 		wbr : {self:true}
-	},
+	};
 
 	//HTML5 SECTIONS
 	this.sections = {
@@ -52,28 +67,24 @@ function Tree(){
 		ruby : {},
 		section : {},
 		summary : {},
-		track : {self:true},
 	};
 
 	//HTML TAGS
 	this.tags = {
 		a : {},
 		abbr : {},
-		acronym : {h4:true},
 		address : {},
-		applet : {h4:true},
 		area : {self:true},
 		b : {},
 		base : {self:true},
-		basefont : {h4:true},
 		bdo : {},
-		big : {h4:true},
+		big : {},
 		blockquote : {},
 		body : {},
 		br : {self:true},
 		button : {},
 		caption : {},
-		center : {h4:true},
+		center : {},
 		cite : {},
 		code : {},
 		col : {self:true},
@@ -82,17 +93,13 @@ function Tree(){
 		dd : {},
 		del : {},
 		dfn : {},
-		dir : {h4:true},
 		div : {},
 		dl : {},
 		dt : {},
 		em : {},
 		embed : {self:true},
 		fieldset : {},
-		font : {h4:true},
 		form : {},
-		frame : {h4:true},
-		frameset : {h4:true},
 		h1 : {},
 		h2 : {},
 		h3 : {},
@@ -101,7 +108,7 @@ function Tree(){
 		h6 : {},
 		head : {},
 		hr : {self:true},
-		html : {},
+		//html : {},
 		i : {},
 		iframe : {},
 		img : {self:true},
@@ -114,7 +121,6 @@ function Tree(){
 		link : {self:true},
 		map : {},
 		meta : {self:true},
-		noframes : {h4:true},
 		noscript : {},
 		object : {},
 		ol : {},
@@ -130,7 +136,6 @@ function Tree(){
 		select : {},
 		small : {},
 		span : {},
-		strike : {h4:true},
 		strong : {},
 		style : {},
 		sub : {},
@@ -144,7 +149,6 @@ function Tree(){
 		thead : {},
 		title : {},
 		tr : {},
-		tt : {h4:true},
 		u : {},
 		ul : {},
 		'var' : {},
@@ -250,13 +254,23 @@ Tree.prototype.nodes = function(obj, parent){
 				continue; //JUMP TO NEXT KEY
 			}
 			
+			if(k == "text"){
+				parent.innerText += obj[k];
+				continue;
+			}
+			
+			if(k == "html"){
+				parent.innerHTML += obj[k];
+				continue;
+			} 
 
 			if(k in tree.tags) ops.tag = k;
-			else ops.classes = k;
+				else ops.classes = k;
 			
 			var Element = tree.element(ops);
 			
 			parent.appendChild(Element);
+			
 			tree.nodes(obj[k], Element);
 		}
 	
