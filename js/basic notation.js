@@ -12,21 +12,35 @@
 //INIT
 t.init({
 		strict: false, // FALSE WHEN HTML 5
+		sections : false,
+		vars : { //DEFINE CSS VARIABLES
+			green : t.color('green'),
+			lGrey : t.color(999),
+			sideWidth : t.size("250px"),
+			bigFont : t.size("50px")
+		},
 		structure: { // DATA OBJ WITH STRUCTURE DIVS / SECTIONS
 			header : {
-				logo : "logo",
-				menu : {}
+				logo : t.logo(),
+				menu : {
+					css : {
+						$ : "body#APP div.container>.header>.menu", // OPTIONAL SPECIFIC CSS SELECTOR
+						backgroundColor : this.vars.green;
+					}
+				}
 			},
 			main : {
 				article : {
 					iterate : true
 				}
 			},
+
 			sidebar : {
 				ad1 : {},
 				ad2 : {},
 				ad3 : {},
 			},
+			"div#elmID.class1.class2" : {}, // OBJ PROPERTY NAME WITH CSS SELECTOR
 			footer : {
 				col1 : {},
 				col2 : {},
