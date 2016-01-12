@@ -285,7 +285,15 @@ Tree.prototype.element = function(ops){
 		Element.appendChild( document.createTextNode(ops.text));
 	
 	for(var attr in ops){
-		if(attr in Element) Element[attr] = ops[attr];
+		try{
+			if(attr in Element) Element[attr] = ops[attr];
+		} catch(e){
+			return this.bug([
+				"THE ELEMENT: " + Element,
+				"DOES NOT ACCEPT THE ATTRIBUTE: " + attr,
+				"WITH THIS VALUE: " + ops[attr]
+				]);
+		}
 	}
 	
 	return Element;
@@ -308,6 +316,11 @@ Tree.prototype.nodes = function(obj, parent){
 	if(typeof obj == "object")
 		for(var k in obj){
 			var ops = {};
+			
+			if(typeof obj[k] == "object" && "$" in obj[k]){
+				ops = obj[k]["$"];
+			}
+			
 			if( k == "$"){
 				parent.className += " " + obj[k].classes;
 				parent.id = obj[k].id;
@@ -319,7 +332,7 @@ Tree.prototype.nodes = function(obj, parent){
 				continue;
 			}
 			
-			if(k == "html"){
+			if(k == "html"){ //TODO: must update body tree
 				parent.innerHTML += obj[k];
 				continue;
 			} 
