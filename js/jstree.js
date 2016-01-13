@@ -419,6 +419,101 @@ Tree.prototype.logo = function(ops){
 	return logo;
 }
 
+/*		
+		FORM FUNCTION
+*/
+Tree.prototype.formFields = {
+	name : {tag : "input", type: "text", classes : "field name"},
+	firstName : {tag : "input", type: "text", classes : "field first-name"},
+	familyName : {tag : "input", type: "text", classes : "field family-name"},
+	email : {tag : "input", type: "text", classes : "field email"},
+	phone : {tag : "input", type: "text", classes : "field phone"},
+	date : {tag : "input", type: "text", classes : "field date"},
+	text : {tag : "textarea", classes : "field text"},
+	submit : {tag : "input", type: "submit", classes : "button", value : "Send"},
+	reset : {tag : "input", type: "reset", classes : "button", value: "Clear"}
+};
+
+Tree.prototype.form = function(form){
+	var formNode = {$:{classes:""}},
+			inline = false;
+	
+	if("$" in form){
+		for(conf in form.$){
+			switch(conf){
+				case "url":
+					formNode.$.action = form.$.url;
+				break;
+				
+				case "inline":
+					if(form.$.inline){
+						inline = true;
+						formNode.$.classes += " inline";
+					} else{
+						formNode.$.classes += " block";
+					}
+				break;
+				
+				case "ajax":
+					if(!form.$.ajax) break;
+					formNode.$.onsubmit = function(ev){
+						console.info(ev);
+						return false;
+					}
+				break;
+				
+				case "post":
+					if(!form.$.post){
+						formNode.$.method = "GET";
+						break;
+					} else {
+						formNode.$.method = "POST";
+						formNode.$.enctype = "multipart/form-data";
+					}
+				break;
+				
+				case "classes":
+					formNode.$.classes += ' ' + form.$.classes;
+				break;
+				
+				default:
+					formNode.$[conf] = form.$[conf];
+			}
+		}
+		
+		delete form.$;
+	}
+	
+	for(f in form){
+		switch(f){
+			case "submit" :
+			case "reset" :
+				//if(form[f].label !== undefined) console.log(form[f].label);
+			break;
+			
+			default:
+				if(inline){
+					var field = formNode[f] = {};
+				} else {
+					var label = (form[f].label === undefined) ? f : form[f].label;
+					formNode[f] = {$ : {tag : "label"}, span : {text : label} };
+					var field = formNode[f][f] = {};
+				}
+				field.$ = this.formFields[form[f]["type"]];
+				field.$.name = f;
+		}
+	}
+	
+	formNode.submit = {$ : this.formFields.submit};
+	formNode.submit.$.value = form.submit.label || "Send";
+	
+	formNode.reset = {$ : this.formFields.reset};
+	formNode.reset.$.value = form.reset.label || "Clear";
+	
+	//console.info(formNode, this.formFields.submit);
+	return formNode
+}
+
 /*
 		COLOR FUNCTION
 */
