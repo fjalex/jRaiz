@@ -186,6 +186,88 @@ function Tree(){
 		ul : {},
 		'var' : {},
 	};
+	
+	this.varObj = {
+		//$lightColor : 30,
+		
+		add : function(pName, value){
+			value = value || " ";
+			
+			if(pName in this){
+				if(pName + "V" in this && this[pName + "V"] !== undefined && value !== undefined)
+					this[pName+"V"] = value;
+				
+				return false;
+			}
+ 			//console.log(pName);
+
+			pDescr = {};
+			pDescr[pName] = {
+				get: function(){
+					return this[pName + "V"];
+					},
+				set: function(newV){
+					this[pName + "V"] = newV;
+					for(i in this[pName + "L"])
+						this[pName + "L"][i].style[pName] = this[pName + "V"];
+					},
+				enumerable:true,
+				configurable:true
+				};
+				
+			Object.defineProperties(this, pDescr);
+			
+			this[pName + "V"] = value;
+			this[pName + "L"] = [];
+			
+			return true;
+		},
+		
+		del : function(pName){
+			delete this[pName];
+			delete this[pName+"L"];
+			delete this[pName+"V"];
+			return true;
+		},
+		
+		css : function(obj, parent){
+			console.groupCollapsed("CSS OBJ");
+			console.log(obj);
+			
+			for(var r in obj){
+				var str = obj[r];
+				//console.info("RULE STRING ", str);
+
+				if( str.indexOf("$") < 0 && str.indexOf("{") < 0 ) continue;
+				
+				//str = str.match(/[\w]+|\$[\w]+|\{(?!\}).*?\}/g);
+				str = str.match(/\{(?!\}).*?\}|[\w\S\-]+|\$[\w]+/g);
+				
+				for(var p in str){
+					subProp = str[p];
+
+					if(subProp[0] == "{"){
+						str[p] = str[p].slice(1,-1);
+						exprVar = str[p].match(/\$[\w]+/g);
+						if(exprVar !== null)
+							for(vr in exprVar)
+								console.log("ADD_VAR", exprVar[vr], this.add(exprVar[vr]) );
+					} else if(subProp[0] == "$"){
+						console.log("ADD_VAR", subProp, this.add(subProp) );
+						////str[p] = str[p].slice(1);
+						//str[p] = eval(str[p]);
+					}
+				}
+
+				console.info(">>> END", str);
+			}
+			
+			//for(v in this)
+			//	console.log(v);
+			
+			console.groupEnd();
+		}
+	}
 		
 	//STYLE TAG
 	this.styleSheet = function(){
@@ -194,6 +276,12 @@ function Tree(){
 		var a = document.head.appendChild(style);
 		//console.log(a.);
 		//a.addRule(".container", "background:red;", 0);
+		
+		//MEDIA RULES
+		//document.styleSheets[0].media.appendMedium("screen and (max-width: 800px)");
+		//document.styleSheets[0].media.appendMedium("screen and (min-height: 600px)");
+		//document.styleSheets[0].media.deleteMedium("(min-height: 500px)");
+
 		return document.styleSheets[0];
 	};
 	
@@ -253,16 +341,18 @@ function Tree(){
 
 	//element() FUNCTION
 	this.element = function(ops){
+		ops = ops || {};
 		ops.tag = ops.tag || "div";
-		
+
 		if( this.strict && "h5" in this.tags[ops.tag] ){
 			console.log("html5", ops.tag);
 		}
+		
 		var Element = document.createElement(ops.tag);
 		delete(ops.tag);
 		
 		if(ops.classes !== undefined){
-			Element.className = ops.classes;
+			Element.className = ops.classes.trim();
 			delete(ops.classes);
 		}
 		
@@ -273,50 +363,153 @@ function Tree(){
 		}
 		
 		for(var attr in ops){
-			if( Element[attr] != undefined){
-				Element[attr] = ops[attr];
-				// IE7/8 ONLY
-				//document.createElement("<input type='submit' name='tal' value='Enviar' />")
+			if( attr in Element ){
+				try{
+					Element[attr] = ops[attr];
+				} catch (e){
+					console.error("THE ELEMENT: " + Element
+					+ "\nDOES NOT ACCEPT THE ATTRIBUTE: [" + attr
+					+ "]\nWITH THIS VALUE: [" + ops[attr] + "]");
+				}
 			}
 		}
 		
 		return Element;
 	};
 	
+	
 	//iterator() FUNCTION
 	this.it = function(obj, parent){
 		parent = parent || this.body;
 		for(var k in obj){
-			var ops = {};
+
+			if(typeof obj[k] == "object" && "$" in obj[k]) ops = obj[k].$;
+				else ops = {};
+
+			ops.classes = ops.classes || "";
 			
-			if(k == "$"){
-				parent.className += " " + obj[k].classes;
-				parent.id += " " + obj[k].id;
-				continue; //jump to next key
+			switch(k){
+				case "$":
+					for(v in obj[k]){
+						//WHEN $VARS
+						if(v[0] == '$'){
+							this.varObj.add(v, obj[k][v]);
+						} else if(v == "css"){
+							this.varObj.css(obj[k][v], parent);
+						}
+					}
+				break;
+				
+				case "text":
+					parent.innerText += obj[k];
+				break;
+				
+				case "html":
+					parent.innerHTML += obj[k];
+				break;
+				
+				default:
+					if(k in this.tags) ops.tag = k;
+						else ops.classes += ' ' + k;
+
+					var Element = this.element(ops);
+					parent.appendChild(Element);
+					treeThis.it(obj[k], Element);
 			}
 			
-			if(k == "text"){
-				console.log(k);
-				parent.innerText += obj[k];
-				continue;
-			}
-			
-			if(k == "html"){
-				console.log(k);
-				parent.innerHTML += obj[k];
-				continue;
-			} 
-			
-			if(k in this.tags){
-				ops.tag = k;
-			} else {
-				ops.classes = k;				
-			}
-			
-			var Element = this.element(ops);
-			parent.appendChild(Element);
-			treeThis.it(obj[k], Element);
 		}
+	};
+	
+	this.formFields = {
+		name : {tag : "input", type: "text", classes : "field name"},
+		firstName : {tag : "input", type: "text", classes : "field first-name"},
+		familyName : {tag : "input", type: "text", classes : "field family-name"},
+		email : {tag : "input", type: "text", classes : "field email"},
+		phone : {tag : "input", type: "text", classes : "field phone"},
+		date : {tag : "input", type: "text", classes : "field date"},
+		text : {tag : "textarea", classes : "field text"},
+		submit : {tag : "input", type: "submit", classes : "button", value : "Send"},
+		reset : {tag : "input", type: "reset", classes : "button", value: "Clear"}
+	};
+	
+	this.form = function(form){
+		var formNode = {$ : {classes : ""}};
+		var inline = false;
+		
+		if("$" in form){
+			for(conf in form.$){
+				switch(conf){
+					case "url":
+						formNode.$.action = form.$.url;
+					break;
+					
+					case "inline":
+						if(form.$.inline){
+							inline = true;
+							formNode.$.classes += " inline";
+						} else{
+							formNode.$.classes += " block";
+						}
+					break;
+					
+					case "ajax":
+						if(!form.$.ajax) break;
+						formNode.$.onsubmit = function(ev){
+							console.info(ev);
+							return false;
+						}
+					break;
+					
+					case "post":
+						if(!form.$.post){
+							formNode.$.method = "GET";
+							break;
+						} else {
+							formNode.$.method = "POST";
+							formNode.$.enctype = "multipart/form-data";
+						}
+					break;
+					
+					case "classes":
+						formNode.$.classes += ' ' + form.$.classes;
+					break;
+					
+					default:
+						formNode.$[conf] = form.$[conf];
+				}
+			}
+			
+			delete form.$;
+		}
+		
+		for(f in form){
+			switch(f){
+				case "submit" :
+				case "reset" :
+					//if(form[f].label !== undefined) console.log(form[f].label);
+				break;
+				
+				default:
+					if(inline){
+						var field = formNode[f] = {};
+					} else {
+						var label = (form[f].label === undefined) ? f : form[f].label;
+						formNode[f] = {$ : {tag : "label"}, span : {text : label} };
+						var field = formNode[f][f] = {};
+					}
+					field.$ = this.formFields[form[f]["type"]];
+					field.$.name = f;
+			}
+		}
+		
+		formNode.submit = {$ : this.formFields.submit};
+		formNode.submit.$.value = form.submit.label || "Send";
+		
+		formNode.reset = {$ : this.formFields.reset};
+		formNode.reset.$.value = form.reset.label || "Clear";
+		
+		//console.info(formNode, this.formFields.submit);
+		return formNode
 	};
 	
 	//TREE OBJ END
