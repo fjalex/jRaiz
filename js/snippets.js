@@ -437,6 +437,13 @@ if(document.doctype) {
 	document.insertBefore(nodeDoctype, document.childNodes[0]);
 }
 
+/*
+*
+*	SET BACKGROUND COLOR
+*	USING RGB
+*
+*/
+t.body.style.backgroundColor = "rgb(100,150,135)";
 
 /*
 *
@@ -462,22 +469,23 @@ Varib = function(){
 			configurable:true
 			};
 			
+		Object.defineProperties(this, pDescr);
+		
 		this[pName + "V"] = value;
 		this[pName + "L"] = [];
-			
-		Object.defineProperties(this, pDescr);
 		
 	}
 	
 	this.del = function(pName){
 		delete this[pName];
 		delete this[pName+"L"];
+		delete this[pName+"V"];
 	};
 }
 
 z = new Varib();
 z.add("borderBottom");
-z.add("alignment");
+z.add("alignment", "vertical super alignment");
 console.log(z.borderBottom);
 cnt = t.body.children[0].children
 z.borderBottomL.push(cnt[0], cnt[1], cnt[3]);
@@ -485,3 +493,109 @@ z.borderBottom = "solid 10px #FFCADE";
 
 for(k in z)
 	console.log(k);
+
+
+/*
+*
+*	CSS WITH VARIABLES
+*
+*/
+var cssVar = function(){
+	$superColor = 500;
+	$str = "solid 1px {$superColor + 250 + px} other {} text {nextVar + Num_} $nother";
+	console.log($str);
+	
+	$str = $str.match(/[\w]+|\$[\w]+|\{(?!\}).*?\}/g);
+	//.match(/\$[\w]+/g);
+
+	//sp = '593'; eval("sp + 156");
+	
+	console.log($str);
+	//$str[2] = $str[2].slice(1,-1);
+	//$str[2] = eval($str[2]);
+	
+	$str = $str.map(function(p){
+		if(p[0] == "{"){
+			return p.slice(1,-1);
+		}else if(p[0] == "$"){
+			return p.slice(1);
+		}else{
+			return p;
+		}
+	});
+	
+	console.log($str.join(" "));
+	
+	
+}
+
+
+/*
+*
+*	CSS EXPRESSION EVAL
+*
+*/
+vr = 500;
+va = 800;
+exprStr = "(200 + vr + va) / 50 + px";
+
+var cssExpr = function(exprStr){
+	if(exprStr === undefined) return false;
+	
+	exprVars = exprStr.match(/[:alpha:][\w]+|[^\d\s\W][\w]+/g);
+
+	for(v in exprVars){
+		if(!(exprVars[v] in this))
+			this[exprVars[v]] = exprVars[v];
+	}
+
+	return eval(exprStr);
+}
+
+console.log( cssExpr(exprStr) );
+
+
+//=== other try
+try {
+	eval("VARR + OTHER + 426654");
+	}catch(e){
+		console.error(e.name, e.message);
+		if(e.name == "ReferenceError") console.info("variable not existent")
+		}
+
+
+
+/*
+*	TRY/CATCH CREATE ELEMENT FOR IE7/8
+*
+*/
+ops = {
+	tag : "div",
+	classes : "super duber uber",
+	id : "thisDIV",
+	dir : "ltr"
+};
+
+ops.className = ops.classes;
+delete ops.classes;
+
+try {
+	var Element = document.createElement(ops.tag);
+	for(var attr in ops){
+		if( attr in Element ){
+			Element[attr] = ops[attr];
+		}
+	}
+} 
+catch(e){
+	var code = "<" + ops.tag;
+	for(var attr in ops){
+		code += " " + attr + "='" + ops[attr] + "'";
+	}
+	code += "></" + ops.tag + ">";
+	var Element = document.createElement(code);
+}
+finally{
+	console.log(Element)
+}
+
