@@ -351,6 +351,72 @@ Tree.prototype.nodes = function(obj, parent){
 }
 
 /*
+		CREATES ONE <style> TAG AND ADD IT TO THE DOCUMENT HEAD
+		RETURN styleSheet STYLE ELEMENT
+		THE constructor CAN RECEIVE ONE OBJECT WITH RULES AND PROPERTIES:
+		{
+			rule : {
+				property:value,
+				property:value,
+				property:value,
+			},
+			rule : {
+				property:value,
+				property:value,
+				property:value,
+			},
+		}
+		
+		ELEMENT.style ACCESS THE RULES OBJECT
+*/
+Tree.prototype.basicCSS = {
+	".cols" : {
+		float : "left",
+		minHeight : "5px",
+		padding : "0px 10px",
+		marginBottom : "10px"
+	}
+};
+
+Tree.prototype.Sheet = function(obj){
+	this.styleTag = treeThis.element({tag: "style", type: "text/css", parent: document.head});
+	if("$media" in obj){
+		this.styleTag.media = obj.$media;
+		delete obj.$media;
+	}
+	
+	this.style = this.styleTag.sheet;
+	this.length = this.style.rules.length;
+	
+	this.rules = function(obj){
+		if(obj !== undefined){
+			console.log(obj);
+			
+			for(rule in obj){
+				this.style.addRule(rule, "");
+				this.length = this.style.rules.length;
+				console.group(rule);
+				
+				if(typeof obj[rule] == "object" ){
+					for(prop in obj[rule]){
+						ruleStyle = this.style.rules[this.length - 1].style;
+						if(prop in ruleStyle){
+							console.log(prop, obj[rule][prop]);
+							ruleStyle[prop] = obj[rule][prop];
+						}
+					}
+				}
+				
+				console.groupEnd();
+			}
+		}
+	};
+	
+	this.rules(obj);
+};
+
+
+/*
 		CREATES ONE <style> TAG
 		ADD IT TO THE DOCUMENT HEAD AS THE 1st styleSheet
 		RETURN document.styleSheets[0]
