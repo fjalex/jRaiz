@@ -1,4 +1,5 @@
 cssRules  = {
+	$media : "screen and (max-width:800px)",
 	".container>div" : {
 		backgroundColor: "orange",
 		margin: "10px",
@@ -12,6 +13,33 @@ cssRules  = {
 	".header" : {
 		height: "200px",
 		width: "940px"
+	},
+	".main" : {
+		width : "640px",
+		height : "1000px",
+	},
+	".sidebar" : {
+		width : "280px",
+	},
+	".footer" : {
+		width : "940px",
+	},
+	".modal" : {
+		position : "absolute",
+	},
+	"form>label " : {
+		display : "block",
+		padding : "10px",
+	},
+	"form>label>*" : {
+		display : "inline-block",
+		width : "400px",
+		verticalAlign: "top",
+	},
+	"form>label>span" : {
+		padding : "0px 20px",
+		width : "100px",
+		textAlign: "right"
 	}
 };
 
@@ -134,3 +162,15 @@ struct = {
 //t.init({strict:false, sections:true});
 t.init({strict:true, sections:false});
 t.it(struct);
+
+a = new t.Sheet(cssRules);
+
+/*
+		
+		FUNCTIONS
+		 TESTING
+		
+*/
+//(function(){
+//})()
+
