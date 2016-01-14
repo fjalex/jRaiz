@@ -268,26 +268,94 @@ function Tree(){
 			console.groupEnd();
 		}
 	}
+	
+	this.basicCss = {
+		".cols" : {
+			float : "left",
+			minHeight : "5px",
+			padding : "0px 10px",
+			marginBottom : "10px"
+		}
+	};
+	
+	this.Sheet = function(obj){
+		this.styleTag = treeThis.element({tag: "style", type: "text/css", parent: document.head});
+		if("$media" in obj){
+			this.styleTag.media = obj.$media;
+			delete obj.$media;
+		}
+		this.style = this.styleTag.sheet;
+		this.length = this.style.rules.length;
+		
+		
+		this.rules = function(obj){
+			if(obj !== undefined){
+				console.log(obj);
+				
+				for(rule in obj){
+					this.style.addRule(rule, "");
+					this.length = this.style.rules.length;
+					console.group(rule);
+					
+					if(typeof obj[rule] == "object" ){
+						for(prop in obj[rule]){
+							ruleStyle = this.style.rules[this.length - 1].style;
+							if(prop in ruleStyle){
+								console.log(prop, obj[rule][prop]);
+								ruleStyle[prop] = obj[rule][prop];
+							}
+						}
+					}
+					
+					console.groupEnd();
+				}
+			}
+		};
+		
+		this.rules(obj);
+		
+	};
+	
 		
 	//STYLE TAG
 	this.styleSheet = function(){
 		var style = document.createElement("style");
 		style.type = "text/css";
-		var a = document.head.appendChild(style);
+		document.head.appendChild(style);
+		var css = style.sheet;
+		console.log(css);
+		
 		//console.log(a.);
-		//a.addRule(".container", "background:red;", 0);
+		//document.styleSheets[0].media.appendMedium("screen and (max-height: 600px) and (min-width: 600px)");
+		//document.styleSheets[0].media.appendMedium("screen and (max-width: 600px)");
+		//document.styleSheets[0].addRule("body", "background:red;");
+		//document.styleSheets[0].addRule(".container", "height: 800px;");
 		
 		//MEDIA RULES
 		//document.styleSheets[0].media.appendMedium("screen and (max-width: 800px)");
 		//document.styleSheets[0].media.appendMedium("screen and (min-height: 600px)");
 		//document.styleSheets[0].media.deleteMedium("(min-height: 500px)");
 
-		return document.styleSheets[0];
+		for(rule in rules){
+			console.log(rule);
+		}
+
+		
+		var classSelector, classRule,
+				width = 960,
+				margin = 10,
+				nCols = 12,
+				colW = width / nCols;
+
+		for(i = 1; i <= nCols; i++){
+			classSelector = ".col_" + i;
+			classRule = "width: " + parseInt( colW * i - (2*margin) ) + "px";
+			css.addRule(classSelector, classRule);
+			//console.info(classSelector, classRule);
+		}
+
+		return css;
 	};
-	
-	this.css = this.styleSheet();
-	//this.css.addRule(".container", "background:orange;", 0);
-	console.log(document.styleSheets);
 	
 	//SET BASIC CONFIGURATION
 	this.init = function(config){
@@ -372,6 +440,10 @@ function Tree(){
 					+ "]\nWITH THIS VALUE: [" + ops[attr] + "]");
 				}
 			}
+		}
+		
+		if("parent" in ops){
+			ops.parent.appendChild(Element);
 		}
 		
 		return Element;
