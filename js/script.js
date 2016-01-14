@@ -1,5 +1,5 @@
 cssRules  = {
-	$media : "screen and (max-width:800px)",
+	$media : "screen and (min-width:700px)",
 	".container>div" : {
 		backgroundColor: "orange",
 		margin: "10px",
