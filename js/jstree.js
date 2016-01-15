@@ -393,7 +393,7 @@ Tree.prototype.Sheet = function(obj){
 			console.log(obj);
 			
 			for(rule in obj){
-				this.style.addRule(rule, "");
+				this.style.addRule(rule, " ");
 				this.length = this.style.rules.length;
 				console.group(rule);
 				
