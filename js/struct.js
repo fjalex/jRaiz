@@ -280,12 +280,14 @@ function Tree(){
 	
 	this.Sheet = function(obj){
 		this.styleTag = treeThis.element({tag: "style", type: "text/css", parent: document.head});
+
 		if("$media" in obj){
 			this.styleTag.media = obj.$media;
 			delete obj.$media;
 		}
+		
 		this.style = this.styleTag.sheet;
-		this.length = this.style.rules.length;
+		this.length = this.style.cssRules.length;
 		
 		
 		this.rules = function(obj){
@@ -293,13 +295,14 @@ function Tree(){
 				console.log(obj);
 				
 				for(rule in obj){
-					this.style.addRule(rule, " ");
-					this.length = this.style.rules.length;
+					//this.style.addRule(rule, " ");
+					this.style.insertRule(rule + "{}", this.length);
+					this.length = this.style.cssRules.length;
 					console.group(rule);
 					
 					if(typeof obj[rule] == "object" ){
 						for(prop in obj[rule]){
-							ruleStyle = this.style.rules[this.length - 1].style;
+							ruleStyle = this.style.cssRules[this.length - 1].style;
 							if(prop in ruleStyle){
 								console.log(prop, obj[rule][prop]);
 								ruleStyle[prop] = obj[rule][prop];
@@ -313,7 +316,6 @@ function Tree(){
 		};
 		
 		this.rules(obj);
-		
 	};
 	
 		
