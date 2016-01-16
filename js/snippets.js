@@ -99,6 +99,18 @@ myFunc = Function.apply(null, args);
 
 /*
 *
+*	CODE SYNTAX HIGHLIGHTING
+*
+*/
+
+code = "var string = function(w){ console.log('foi'); }";
+highlight = function(w){
+	return "<code class='green'>" + w + "</code>";
+}
+code.replace(/var|function|console|log/g, );
+
+/*
+*
 * struct obj
 * BASIC SITE STRUCTURE EXAMPLE
 
@@ -261,8 +273,21 @@ window.onload = function(){
 	
 	//document.body.appendChild(ddd);
 
-
 }
+
+/*
+*
+* OBJECT EXTENSION
+* toString FUNCTION
+*
+*/
+Object.prototype.toString = function(){
+	var str = " ";
+	for(prop in this) str += prop + "\n";
+	return str;
+};
+
+
 
 /*
 *
