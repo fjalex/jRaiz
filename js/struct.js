@@ -240,15 +240,14 @@ function Tree(){
 
 				if( str.indexOf("$") < 0 && str.indexOf("{") < 0 ) continue;
 				
-				//str = str.match(/[\w]+|\$[\w]+|\{(?!\}).*?\}/g);
-				str = str.match(/\{(?!\}).*?\}|[\w\S\-]+|\$[\w]+/g);
+				str = str.match(/\{(?!\}).*?\}|[\w\S\-]+|\$[\w]+/g); // {expr} | word | $var
 				
 				for(var p in str){
 					subProp = str[p];
 
 					if(subProp[0] == "{"){
 						str[p] = str[p].slice(1,-1);
-						exprVar = str[p].match(/\$[\w]+/g);
+						exprVar = str[p].match(/\$[\w]+/g); //$var
 						if(exprVar !== null)
 							for(vr in exprVar)
 								console.log("ADD_VAR", exprVar[vr], this.add(exprVar[vr]) );
@@ -280,37 +279,67 @@ function Tree(){
 	
 	this.Sheet = function(obj){
 		this.styleTag = treeThis.element({tag: "style", type: "text/css", parent: document.head});
-
-		if("$media" in obj){
-			this.styleTag.media = obj.$media;
-			delete obj.$media;
-		}
-		
 		this.style = this.styleTag.sheet;
 		this.length = this.style.cssRules.length;
-		
-		
+
 		this.rules = function(obj){
+			if("$" in obj){
+				for(conf in obj.$){
+					switch(conf){
+						case "media":
+							this.styleTag.media = obj.$.media;
+							delete obj.$.media;
+						break;
+						
+						default:
+							if(conf[0] == "$"){
+								console.log(conf);
+							}
+					}
+				}
+				delete obj.$;
+			}
+		
 			if(obj !== undefined){
 				console.log(obj);
 				
 				for(rule in obj){
-					//this.style.addRule(rule, " ");
-					this.style.insertRule(rule + "{}", this.length);
-					this.length = this.style.cssRules.length;
-					console.group(rule);
-					
-					if(typeof obj[rule] == "object" ){
-						for(prop in obj[rule]){
+					try {
+						this.style.insertRule(rule + "{}", this.length);
+						this.length = this.style.cssRules.length;
+						
+						console.groupCollapsed(rule);
+						
+						if("float" in obj[rule]){
+							obj[rule]["cssFloat"] = obj[rule]["float"];
+							delete obj[rule]["float"]
+						}
+						
+						if("text" in obj[rule]){
+							obj[rule]["cssText"] = obj[rule]["text"];
+							delete obj[rule]["text"];
+						}
+						
+						if(typeof obj[rule] == "object" ){
 							ruleStyle = this.style.cssRules[this.length - 1].style;
-							if(prop in ruleStyle){
-								console.log(prop, obj[rule][prop]);
-								ruleStyle[prop] = obj[rule][prop];
+							
+							for(prop in obj[rule]){
+								if(prop in ruleStyle){
+									console.log(prop + ":", obj[rule][prop]);
+									ruleStyle[prop] = obj[rule][prop];
+								} else {
+									console.error("This browser doesn't support the '" + prop + "' property");
+								}
 							}
 						}
+						
+						console.groupEnd();
+					
+					}catch(err){
+						//for(a in err) console.info(a, ":", err[a]);
+						console.error(err.name + "\n\n" + err.message);
 					}
 					
-					console.groupEnd();
 				}
 			}
 		};
@@ -318,7 +347,7 @@ function Tree(){
 		this.rules(obj);
 	};
 	
-		
+	
 	//STYLE TAG
 	this.styleSheet = function(){
 		var style = document.createElement("style");
@@ -358,6 +387,8 @@ function Tree(){
 
 		return css;
 	};
+	
+	
 	
 	//SET BASIC CONFIGURATION
 	this.init = function(config){
