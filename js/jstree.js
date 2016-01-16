@@ -379,42 +379,73 @@ Tree.prototype.basicCSS = {
 };
 
 Tree.prototype.Sheet = function(obj){
-		this.styleTag = treeThis.element({tag: "style", type: "text/css", parent: document.head});
+	this.styleTag = treeThis.element({tag: "style", type: "text/css", parent: document.head});
+	this.style = this.styleTag.sheet;
+	this.length = this.style.cssRules.length;
 
-		if("$media" in obj){
-			this.styleTag.media = obj.$media;
-			delete obj.$media;
+	this.rules = function(obj){
+		if("$" in obj){
+			for(conf in obj.$){
+				switch(conf){
+					case "media":
+						this.styleTag.media = obj.$.media;
+						delete obj.$.media;
+					break;
+					
+					default:
+						if(conf[0] == "$"){
+							console.log(conf);
+						}
+				}
+			}
+			delete obj.$;
 		}
-		
-		this.style = this.styleTag.sheet;
-		this.length = this.style.cssRules.length;
-		
-		this.rules = function(obj){
-			if(obj !== undefined){
-				console.log(obj);
-				
-				for(rule in obj){
-					//this.style.addRule(rule, " ");
+	
+		if(obj !== undefined){
+			console.log(obj);
+			
+			for(rule in obj){
+				try {
 					this.style.insertRule(rule + "{}", this.length);
 					this.length = this.style.cssRules.length;
-					console.group(rule);
+					
+					console.groupCollapsed(rule);
+					
+					if("float" in obj[rule]){
+						obj[rule]["cssFloat"] = obj[rule]["float"];
+						delete obj[rule]["float"]
+					}
+					
+					if("text" in obj[rule]){
+						obj[rule]["cssText"] = obj[rule]["text"];
+						delete obj[rule]["text"];
+					}
 					
 					if(typeof obj[rule] == "object" ){
+						ruleStyle = this.style.cssRules[this.length - 1].style;
+						
 						for(prop in obj[rule]){
-							ruleStyle = this.style.cssRules[this.length - 1].style;
 							if(prop in ruleStyle){
-								console.log(prop, obj[rule][prop]);
+								console.log(prop + ":", obj[rule][prop]);
 								ruleStyle[prop] = obj[rule][prop];
+							} else {
+								console.error("This browser doesn't support the '" + prop + "' property");
 							}
 						}
 					}
 					
 					console.groupEnd();
+				
+				}catch(err){
+					//for(a in err) console.info(a, ":", err[a]);
+					console.error(err.name + "\n\n" + err.message);
 				}
+				
 			}
-		};
-		
-		this.rules(obj);
+		}
+	};
+	
+	this.rules(obj);
 };
 
 
