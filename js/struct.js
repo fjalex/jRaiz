@@ -192,7 +192,7 @@ function Tree(){
 			value = value || "";
 			
 			if(pName in this){
-				if(pName + "V" in this && this[pName + "V"] !== undefined && value !== undefined)
+				if(pName + "V" in this && this[pName + "V"] !== [""] && value !== "")
 					if(!Array.isArray(value))
 						this[pName+"V"] = [value];
 					else
@@ -250,8 +250,8 @@ function Tree(){
 			
 			if(finalExpression !== undefined) bindObj.finalExpression = finalExpression;
 			
-			//this[variable + 'L'].push([objPath, property]);
 			this[variable + 'L'].push(bindObj);
+			this[variable] += ' ';
 		},
 		
 		unbind : function(objPath){
