@@ -251,7 +251,7 @@ function Tree(){
 			if(finalExpression !== undefined) bindObj.finalExpression = finalExpression;
 			
 			this[variable + 'L'].push(bindObj);
-			this[variable] += ' ';
+			this[variable] += '';
 		},
 		
 		unbind : function(objPath){
