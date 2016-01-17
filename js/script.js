@@ -1,9 +1,13 @@
 cssRules  = {
-	$media : "screen and (min-width:700px)",
+	$ : {
+		media : "screen and (min-width:800px)",
+		$bWidth : 5,
+		$mainColor : "#FCADEB"
+	},
 	".container>div" : {
 		backgroundColor: "orange",
-		margin: "10px",
-		float: "left"		
+		float : "left",
+		margin: "10px"
 	},
 	".container" : {
 		border: "solid 1px blue",
@@ -19,6 +23,7 @@ cssRules  = {
 		height : "1000px",
 	},
 	".sidebar" : {
+		minHeight : "500px",
 		width : "280px",
 	},
 	".footer" : {
@@ -40,6 +45,12 @@ cssRules  = {
 		padding : "0px 20px",
 		width : "100px",
 		textAlign: "right"
+	},
+	"#anySelector>div>ul>li" : {
+		border : "solid {$bWidth * 2 + px } $mainColor",
+		backgroundColor : "$mainColor",
+		color : "$mainColor",
+		
 	}
 };
 
@@ -51,7 +62,8 @@ struct = {
 			css : {
 				marginA : "30px 40px",
 				margin : "30px {30 +20}",
-				border : "solid {$bwidth + $ouVar + px} $lightColor $otherVar $tVar" //REGISTER VAR, WHEN UNDEFINED
+				backgroundColor : "$lightColor",
+				border : "solid {$bwidth + $ouVar} $lightColor $otherVar $tVar" //REGISTER VAR, WHEN UNDEFINED
 			},
 			$var1 : 465, //REGISTER VAR, WHEN UNDEFINED AND ASSIGN VALUE
 			$var2 : "200px",
@@ -60,20 +72,26 @@ struct = {
 		},
 		header : {
 			$ : {
-				dir: "CDA",//'ltr', //TRY/CATCH ERROR
+				dir: "ltr",//'ltr', //TRY/CATCH ERROR
 				onclick : function(e){
 					console.log(e,e.offsetX, e.x, e.clientX, e.layerX, e.movementX);
 				},
 				css : {
 					margin : "40px 50px",
 					fontFamily : "$fontFamily",
-					background : "url('/img/headerbg.jpg') no-repeat center top $lightColor"
+					background : "url('/img/headerbg.jpg') no-repeat center top $lightColor",
+					color : "$lightColor"
 				}
 			},
 			logo : {},
 			menu : {}
 		},
 		main : {
+			$ : {
+				css : {
+					backgroundColor : "$lightColor"
+				}
+			},
 			article1 : {
 				text : 'TEXT TEXT TEXT TEXT TEXT ',
 				html : '|| HTML HTML HTML <a href="#">LINK</a> \n <code> Super code </code>',
@@ -129,10 +147,10 @@ struct = {
 				img : {}
 			},
 			ad2 : {
-				embed : {}
+				//embed : {}
 			},
 			ad3 : {
-				applet : {}
+				//applet : {}
 			}
 		},
 		"div#elmID.class1.class2" : {}, // TEST
@@ -163,7 +181,8 @@ struct = {
 t.init({strict:true, sections:false});
 t.it(struct);
 
-a = new t.Sheet(cssRules);
+var a = new t.Sheet(cssRules);
+console.info(document.styleSheets);
 
 /*
 		
@@ -173,4 +192,15 @@ a = new t.Sheet(cssRules);
 */
 //(function(){
 //})()
+
+(function(){
+	var width = 960,
+			margin = 10,
+			nCols = 12,
+			colW = width / nCols;
+
+	for(i = 1; i <= nCols; i++){
+		//console.info("col_" + i + "{", "width:", colW * i - (2*margin));
+	}
+})()
 
