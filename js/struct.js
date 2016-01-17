@@ -187,38 +187,45 @@ function Tree(){
 		'var' : {},
 	};
 	
-	this.varObj = {
-		//$lightColor : 30,
-		
+	this.vars = {
 		add : function(pName, value){
-			value = value || " ";
+			value = value || "";
 			
 			if(pName in this){
 				if(pName + "V" in this && this[pName + "V"] !== undefined && value !== undefined)
-					this[pName+"V"] = value;
+					if(!Array.isArray(value))
+						this[pName+"V"] = [value];
+					else
+						this[pName+"V"] = value;						
 				
 				return false;
 			}
- 			//console.log(pName);
 
 			pDescr = {};
+			
 			pDescr[pName] = {
 				get: function(){
-					return this[pName + "V"];
+					return this[pName + "V"].join(' ');
 					},
 				set: function(newV){
-					this[pName + "V"] = newV;
-					for(i in this[pName + "L"])
-						this[pName + "L"][i].style[pName] = this[pName + "V"];
+					if(!Array.isArray(newV))
+						this[pName+"V"] = [newV];
+					else
+						this[pName+"V"] = newV;						
+
+					var list = this[pName + "L"];
+					
+					for(i in list)
+						list[i][0].style[list[i][1]] = this[pName + "V"].join(' ');
 					},
 				enumerable:true,
 				configurable:true
-				};
+			};
+			
+			pDescr[pName + "V"] = {value: [value], writable: true, enumerable: false, configurable: true};
+			pDescr[pName + "L"] = {value: [], writable: true, enumerable: false, configurable: true};
 				
 			Object.defineProperties(this, pDescr);
-			
-			this[pName + "V"] = value;
-			this[pName + "L"] = [];
 			
 			return true;
 		},
@@ -230,16 +237,29 @@ function Tree(){
 			return true;
 		},
 		
-		css : function(obj, parent){
-			console.groupCollapsed("CSS OBJ");
-			console.log(obj);
+		bind : function(objPath, property, variable){
+			if(!(variable in this)) this.add(variable);
 			
-			for(var r in obj){
-				var str = obj[r];
-				//console.info("RULE STRING ", str);
+			this[variable + 'L'].push([objPath, property]);
+		},
+		
+		unbind : function(objPath){
+			//for(var in )
+			//if(objPath )
+		},
+		
+		css : function(rule, parent){
+			console.groupCollapsed("CSS OBJ");
+			console.log(rule);
+			
+			for(var property in rule){
+				var str = rule[property];
+				console.log("RULE STRING ", str);
+				console.info("PROP: ", property);
 
 				if( str.indexOf("$") < 0 && str.indexOf("{") < 0 ) continue;
 				
+				//str.match(/([\s]|[\w]+)\{(?!\}).*?\}([\s]|[\w]+)|[\w\S\-]+|\$[\w]+/g); // str{expr}str | word | $var
 				str = str.match(/\{(?!\}).*?\}|[\w\S\-]+|\$[\w]+/g); // {expr} | word | $var
 				
 				for(var p in str){
@@ -247,17 +267,20 @@ function Tree(){
 
 					if(subProp[0] == "{"){
 						str[p] = str[p].slice(1,-1);
-						exprVar = str[p].match(/\$[\w]+/g); //$var
-						if(exprVar !== null)
-							for(vr in exprVar)
-								console.log("ADD_VAR", exprVar[vr], this.add(exprVar[vr]) );
+						//this[variable + L].push([objPath, property]);
+						//exprVar = str[p].match(/\$[\w]+/g); //$var
+						str[p] = this.expression(str[p]);
+						//if(exprVar !== null)
+						//	for(vr in exprVar)
+						//		console.log("ADD_VAR", exprVar[vr], this.add(exprVar[vr]) );
 					} else if(subProp[0] == "$"){
-						console.log("ADD_VAR", subProp, this.add(subProp) );
-						////str[p] = str[p].slice(1);
-						//str[p] = eval(str[p]);
+						this.add(subProp);
+						//console.log("ADD_VAR", subProp, this.add(subProp) );
 					}
 				}
-
+				
+				this.add(property, str);
+				this.bind(parent, property, property);
 				console.info(">>> END", str);
 			}
 			
@@ -265,9 +288,36 @@ function Tree(){
 			//	console.log(v);
 			
 			console.groupEnd();
+		},
+		
+		expression : function(/*objPath, property,*/ expr){
+			var exprVars = expr.match(/\$[\w]+/g);
+			var vr;
+			console.info(expr);
+			
+			if(exprVars !== null)
+				for(i in exprVars){
+					vr = exprVars[i];
+					this.add(exprVars[i]);
+				}
+			
+			exprObj = {
+				//obj : objPath,
+				//property : property,
+				//expr : expr,
+				parent : this,
+				toString : new Function("with(this.parent){ return " + expr + "; }")
+			}
+			
+			return Object.create(exprObj);
 		}
 	}
 	
+	//VARS FUNCTIONS NOT ENUMERABLES/WRITABLE
+	for(func in treeThis.vars)
+		Object.defineProperty(treeThis.vars, func, {enumerable : false, writable : false});
+	
+	//BASIC CSS OBJ
 	this.basicCss = {
 		".cols" : {
 			float : "left",
@@ -277,6 +327,7 @@ function Tree(){
 		}
 	};
 	
+	//NEW SHEET OBJ CONSTRUCTOR
 	this.Sheet = function(obj){
 		this.styleTag = treeThis.element({tag: "style", type: "text/css", parent: document.head});
 		this.style = this.styleTag.sheet;
@@ -498,9 +549,9 @@ function Tree(){
 					for(v in obj[k]){
 						//WHEN $VARS
 						if(v[0] == '$'){
-							this.varObj.add(v, obj[k][v]);
+							this.vars.add(v, obj[k][v]);
 						} else if(v == "css"){
-							this.varObj.css(obj[k][v], parent);
+							this.vars.css(obj[k][v], parent);
 						}
 					}
 				break;
