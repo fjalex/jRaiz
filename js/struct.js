@@ -192,11 +192,8 @@ function Tree(){
 			value = value || "";
 			
 			if(pName in this){
-				if(pName + "V" in this && this[pName + "V"] !== [""] && value !== "")
-					if(!Array.isArray(value))
-						this[pName+"V"] = [value];
-					else
-						this[pName+"V"] = value;
+				if(pName + "V" in this && this[pName + "V"] !== "" && value !== "")
+					this[pName+"V"] = value;
 				
 				return false;
 			}
@@ -205,27 +202,24 @@ function Tree(){
 			
 			pDescr[pName] = {
 				get: function(){
-					return this[pName + "V"].join(' ');
+					return this[pName + "V"];
 					},
 				set: function(newV){
-					if(!Array.isArray(newV))
-						this[pName+"V"] = [newV];
-					else
-						this[pName+"V"] = newV;						
+					this[pName+"V"] = newV;						
 
 					var list = this[pName + "L"];
 					
 					for(i in list)
 						if(list[i].finalExpression === undefined)
-							list[i].objPath.style[list[i].property] = this[pName + "V"].join(' ');
+							list[i].objPath.style[list[i].property] = this[pName + "V"];
 						else
-							list[i].objPath.style[list[i].property] = list[i].finalExpression.join(' ');							
+							list[i].objPath.style[list[i].property] = list[i].finalExpression.join(' ');
 					},
 				enumerable:true,
 				configurable:true
 			};
 			
-			pDescr[pName + "V"] = {value: [value], writable: true, enumerable: false, configurable: true};
+			pDescr[pName + "V"] = {value: value, writable: true, enumerable: false, configurable: true};
 			pDescr[pName + "L"] = {value: [], writable: true, enumerable: false, configurable: true};
 				
 			Object.defineProperties(this, pDescr);
@@ -259,58 +253,7 @@ function Tree(){
 			//if(objPath )
 		},
 		
-		css : function(rule, parent){
-			//console.groupCollapsed("CSS OBJ");
-			//console.log(rule);
-			
-			for(var property in rule){
-				var str = rule[property];
-				//console.log("RULE STRING ", str);
-				//console.info("PROP: ", property);
-
-				if( str.indexOf("$") < 0 && str.indexOf("{") < 0 ) continue;
-				
-				onlyVars = str.match(/\$[\w]+/g);
-				
-				//str.match(/([\s]|[\w]+)\{(?!\}).*?\}([\s]|[\w]+)|[\w\S\-]+|\$[\w]+/g); // str{expr}str | word | $var
-				str = str.match(/\{(?!\}).*?\}|[\w\S\-]+|\$[\w]+/g); // {expr} | word | $var
-				
-				for(var p in str){
-					subProp = str[p];
-
-					if(subProp[0] == "{"){
-						str[p] = str[p].slice(1,-1);
-						//this[variable + L].push([objPath, property]);
-						//exprVar = str[p].match(/\$[\w]+/g); //$var
-						str[p] = this.expression(str[p]);
-						//if(exprVar !== null)
-						//	for(vr in exprVar)
-						//		console.log("ADD_VAR", exprVar[vr], this.add(exprVar[vr]) );
-					} else if(subProp[0] == "$"){
-						this.add(subProp);
-						str[p] = this.expression(str[p]);
-						//console.log("ADD_VAR", subProp, this.add(subProp) );
-					}
-				}
-				
-				//this.add(property, str);
-				for(vr in onlyVars)
-					this.bind(parent, property, onlyVars[vr], str);
-				
-				//console.info(">>> END", str);
-			}
-			
-			//for(v in this)
-			//	console.log(v);
-			
-			//console.groupEnd();
-			
-		},
-		
 		afix : function(expr){
-			
-			console.log(arguments);
-			
 			if(arguments[0] === "{}" ) return '\0';
 			
 			var finalMatch = "";
@@ -321,55 +264,48 @@ function Tree(){
 			}
 
 			if( arguments[1] ) finalMatch += "'" + arguments[1] + "' + " ;
-
 			if( arguments[2] ) finalMatch += "Number(1*(" + arguments[2] + "))";
-				
 			if( arguments[3] ) finalMatch += " + '" + arguments[3] + "'" ;
 			
 			if( arguments[4] ) finalMatch = arguments[4];
 			
-			//if(!arguments[1] && !arguments[2] && !arguments[3] && !arguments[4] ) finalMatch = arguments[0];
-
 			exprArr.push( treeThis.vars.expression(finalMatch) );
-			
-			//console.info(finalMatch);
 			
 			return finalMatch;
 		},
 		
-		rule : function(rule, parent){
+		css : function(rule, parent){
 			for(var property in rule){
 				str = rule[property];
 				
 				if( str.indexOf("$") < 0 && str.indexOf("{") < 0 ) continue;
+				
+				onlyVars = str.match(/\$[\w]+/g);
 				
 				exprArr = [];
 
 				str = str.replace(/(\'|\")/g, "\\$1")
 					.replace(/(|[\w\S]+)\{(?!\})(.*?)\}([\w\S]+|)|(\$[\w]+)|([\w\S]+)/g, this.afix);
 					
-				console.info(exprArr);
-				console.info(exprArr.join(" "));
+				for(vr in onlyVars)
+					this.bind(parent, property, onlyVars[vr], exprArr);
 			}
 		},
 		
-		expression : function(/*objPath, property,*/ expr){
-			var exprVars = expr.match(/\$[\w]+/g);
-			var vr;
-			//console.info(']]]]', expr);
+		expression : function(expr){
+			var exprVars = expr.match(/\$[\w]+/g),
+					vr;
 			
 			if(exprVars !== null)
 				for(i in exprVars){
 					vr = exprVars[i];
-					this.add(exprVars[i], 10);
+					this.add(exprVars[i]);
 				}
 			
 			exprObj = {
-				//obj : objPath,
-				//property : property,
-				//expr : expr,
+				expr : expr,
 				vars : this,
-				toString : new Function("with(this.vars){ for(v in this.vars) console.info(typeof v); return " + expr + "; }")
+				toString : new Function("with(this.vars){ return " + expr + "; }")
 			};
 			
 			return Object.create(exprObj);
