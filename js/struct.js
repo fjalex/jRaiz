@@ -196,7 +196,7 @@ function Tree(){
 					if(!Array.isArray(value))
 						this[pName+"V"] = [value];
 					else
-						this[pName+"V"] = value;						
+						this[pName+"V"] = value;
 				
 				return false;
 			}
@@ -260,13 +260,13 @@ function Tree(){
 		},
 		
 		css : function(rule, parent){
-			console.groupCollapsed("CSS OBJ");
-			console.log(rule);
+			//console.groupCollapsed("CSS OBJ");
+			//console.log(rule);
 			
 			for(var property in rule){
 				var str = rule[property];
-				console.log("RULE STRING ", str);
-				console.info("PROP: ", property);
+				//console.log("RULE STRING ", str);
+				//console.info("PROP: ", property);
 
 				if( str.indexOf("$") < 0 && str.indexOf("{") < 0 ) continue;
 				
@@ -297,33 +297,80 @@ function Tree(){
 				for(vr in onlyVars)
 					this.bind(parent, property, onlyVars[vr], str);
 				
-				console.info(">>> END", str);
+				//console.info(">>> END", str);
 			}
 			
 			//for(v in this)
 			//	console.log(v);
 			
-			console.groupEnd();
+			//console.groupEnd();
+			
+		},
+		
+		afix : function(expr){
+			
+			console.log(arguments);
+			
+			if(arguments[0] === "{}" ) return '\0';
+			
+			var finalMatch = "";
+			
+			if( arguments[5] ){
+				exprArr.push(arguments[5]);
+				return arguments[5];				
+			}
+
+			if( arguments[1] ) finalMatch += "'" + arguments[1] + "' + " ;
+
+			if( arguments[2] ) finalMatch += "Number(1*(" + arguments[2] + "))";
+				
+			if( arguments[3] ) finalMatch += " + '" + arguments[3] + "'" ;
+			
+			if( arguments[4] ) finalMatch = arguments[4];
+			
+			//if(!arguments[1] && !arguments[2] && !arguments[3] && !arguments[4] ) finalMatch = arguments[0];
+
+			exprArr.push( treeThis.vars.expression(finalMatch) );
+			
+			//console.info(finalMatch);
+			
+			return finalMatch;
+		},
+		
+		rule : function(rule, parent){
+			for(var property in rule){
+				str = rule[property];
+				
+				if( str.indexOf("$") < 0 && str.indexOf("{") < 0 ) continue;
+				
+				exprArr = [];
+
+				str = str.replace(/(\'|\")/g, "\\$1")
+					.replace(/(|[\w\S]+)\{(?!\})(.*?)\}([\w\S]+|)|(\$[\w]+)|([\w\S]+)/g, this.afix);
+					
+				console.info(exprArr);
+				console.info(exprArr.join(" "));
+			}
 		},
 		
 		expression : function(/*objPath, property,*/ expr){
 			var exprVars = expr.match(/\$[\w]+/g);
 			var vr;
-			console.info(expr);
+			//console.info(']]]]', expr);
 			
 			if(exprVars !== null)
 				for(i in exprVars){
 					vr = exprVars[i];
-					this.add(exprVars[i]);
+					this.add(exprVars[i], 10);
 				}
 			
 			exprObj = {
 				//obj : objPath,
 				//property : property,
 				//expr : expr,
-				parent : this,
-				toString : new Function("with(this.parent){ return " + expr + "; }")
-			}
+				vars : this,
+				toString : new Function("with(this.vars){ for(v in this.vars) console.info(typeof v); return " + expr + "; }")
+			};
 			
 			return Object.create(exprObj);
 		}
@@ -360,7 +407,7 @@ function Tree(){
 						
 						default:
 							if(conf[0] == "$"){
-								console.log(conf);
+								//console.log(conf);
 							}
 					}
 				}
@@ -368,14 +415,14 @@ function Tree(){
 			}
 		
 			if(obj !== undefined){
-				console.log(obj);
+				//console.log(obj);
 				
 				for(rule in obj){
 					try {
 						this.style.insertRule(rule + "{}", this.length);
 						this.length = this.style.cssRules.length;
 						
-						console.groupCollapsed(rule);
+						//console.groupCollapsed(rule);
 						
 						if("float" in obj[rule]){
 							obj[rule]["cssFloat"] = obj[rule]["float"];
@@ -392,7 +439,7 @@ function Tree(){
 							
 							for(prop in obj[rule]){
 								if(prop in ruleStyle){
-									console.log(prop + ":", obj[rule][prop]);
+									//console.log(prop + ":", obj[rule][prop]);
 									ruleStyle[prop] = obj[rule][prop];
 								} else {
 									console.error("This browser doesn't support the '" + prop + "' property");
@@ -400,7 +447,7 @@ function Tree(){
 							}
 						}
 						
-						console.groupEnd();
+						//console.groupEnd();
 					
 					}catch(err){
 						//for(a in err) console.info(a, ":", err[a]);
