@@ -191,13 +191,13 @@ function Tree(){
 		add : function(pName, value){
 			value = value || "";
 			
-			if(pName in this){
-				if(pName + "V" in this && this[pName + "V"] !== "" && value !== "")
-					this[pName+"V"] = value;
-				
+			if( pName in this ){
+					if(value !== "")
+						this[pName] = value;
+
 				return false;
 			}
-
+			
 			pDescr = {};
 			
 			pDescr[pName] = {
@@ -264,7 +264,7 @@ function Tree(){
 			}
 
 			if( arguments[1] ) finalMatch += "'" + arguments[1] + "' + " ;
-			if( arguments[2] ) finalMatch += "Number(1*(" + arguments[2] + "))";
+			if( arguments[2] ) finalMatch += "Number(" + arguments[2] + ")";
 			if( arguments[3] ) finalMatch += " + '" + arguments[3] + "'" ;
 			
 			if( arguments[4] ) finalMatch = arguments[4];
@@ -285,29 +285,27 @@ function Tree(){
 				exprArr = [];
 
 				str = str.replace(/(\'|\")/g, "\\$1")
-					.replace(/(|[\w\S]+)\{(?!\})(.*?)\}([\w\S]+|)|(\$[\w]+)|([\w\S]+)/g, this.afix);
+						.replace(/(|[\w\S]+)\{(?!\})(.*?)\}([\w\S]+|)|(\$[\w]+)|([\w\S]+)/g, this.afix);
 					
-				for(vr in onlyVars)
-					this.bind(parent, property, onlyVars[vr], exprArr);
+				for(i in onlyVars)
+					this.bind(parent, property, onlyVars[i], exprArr);
+			
 			}
 		},
 		
 		expression : function(expr){
-			var exprVars = expr.match(/\$[\w]+/g),
-					vr;
+			var exprVars = expr.match(/\$[\w]+/g);
 			
 			if(exprVars !== null)
 				for(i in exprVars){
-					vr = exprVars[i];
 					this.add(exprVars[i]);
 				}
 			
 			exprObj = {
-				expr : expr,
 				vars : this,
 				toString : new Function("with(this.vars){ return " + expr + "; }")
 			};
-			
+
 			return Object.create(exprObj);
 		}
 	}
