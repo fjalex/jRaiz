@@ -1,6 +1,9 @@
 # jRaiz
 Basic HTML/CSS constructor from JavaScript configurations.
 
+# Donate
+Donate via <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WEMSKL3F4GNEU&lc=US&item_name=jRaiz&item_number=jraiz&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" target="_blank">PayPal</a>.
+
 # Why
 Angular is too big and complex.<br>
 jQuery is very nice, but I need to learn how the DOM works...<br>
