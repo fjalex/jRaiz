@@ -60,15 +60,19 @@ struct = {
 			classes : "criatr lska",
 			id : "superDiv",
 			css : {
-				marginA : "30px 40px",
-				margin : "30px {30 +20}",
-				backgroundColor : "$lightColor",
-				border : "solid {$bwidth + $ouVar} $lightColor $otherVar $tVar" //REGISTER VAR, WHEN UNDEFINED
+				//marginA : "30px 40px",
+				//margin : "30px {30 +20}",
+				//backgroundColor : "$lightColor",
+				//border : "solid {$bwidth + $ouVar} $lightColor $otherVar $tVar" //REGISTER VAR, WHEN UNDEFINED
+				border : "$var1 $var2 $var3"
 			},
-			$var1 : 465, //REGISTER VAR, WHEN UNDEFINED AND ASSIGN VALUE
-			$var2 : "200px",
-			$lightColor : "#FCADEB",
-			$bwidth : 20
+			//$var1 : 465, //REGISTER VAR, WHEN UNDEFINED AND ASSIGN VALUE
+			//$var2 : "200px",
+			//$lightColor : "#FCADEB",
+			//$bwidth : 20
+			$var1 : "solid",
+			$var2 : "15px",
+			$var3 : "green"
 		},
 		header : {
 			$ : {
@@ -77,10 +81,12 @@ struct = {
 					console.log(e,e.offsetX, e.x, e.clientX, e.layerX, e.movementX);
 				},
 				css : {
-					margin : "40px 50px",
-					fontFamily : "$fontFamily",
-					background : "url('/img/headerbg.jpg') no-repeat center top $lightColor",
-					color : "$lightColor"
+					//margin : "40px 50px",
+					//fontFamily : "$fontFamily",
+					//background : "url('/img/headerbg.jpg') no-repeat center top $lightColor",
+					//color : "$lightColor"
+					border : "solid $var2 $var3",
+					//backgroundColor : "$var3"
 				}
 			},
 			logo : {},
@@ -89,7 +95,9 @@ struct = {
 		main : {
 			$ : {
 				css : {
-					backgroundColor : "$lightColor"
+					//backgroundColor : "$lightColor"
+					//backgroundColor : "$var3",
+					border : "solid $var2 $var3",
 				}
 			},
 			article1 : {
@@ -98,7 +106,7 @@ struct = {
 				a : {}
 			},
 			article2 : {
-				form : t.form({
+				form : j.form({
 					$ : { // [$] IS ALWAYS USED FOR CONFIGURATION
 						id : "superForm",
 						url : "/jscode/",
@@ -173,9 +181,9 @@ struct = {
 	}
 };
 
+//j.init({strict:false, sections:true});
+j.init({strict:true, sections:false});
+j.nodes(struct);
 
-t.init({strict:false, sections:true});
-t.it(struct);
-
-var a = new t.Sheet(cssRules);
-console.info(document.styleSheets);
+var a = new j.Sheet(cssRules);
+//console.info(documenj.styleSheets);
