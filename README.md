@@ -1,16 +1,5 @@
 # jstree
-Basic HTML/CSS constructor from JavaScript configurations. You add HTML structure and CSS rules from javascript objects, like:
-<code>
-obj = {
-  div : {
-    '.links' : {
-      $ : {
-        href : "url.com"
-      }
-    }
-  }
-}
-</code>
+Basic HTML/CSS constructor from JavaScript configurations.
 
 # Why
 Angular is too big and complex.<br>
@@ -21,3 +10,32 @@ The file <code>index.html</code> comes without a <code>&lt;body&gt;</code> tag.<
 The file <code>js/jstree.js</code> is the base code.<br>
 The file <code>js/script.js</code> holds the user code.<br>
 The file <code>js/basic notation.js</code> holds some ideas to be implemented in the future.<br>
+
+# Basics
+You add HTML structure and CSS rules from javascript objects, like:
+
+```
+obj = {
+  div : {
+    $ : {
+      classes : "superDiv active",
+      id : "header",
+      onclick : function(ev){
+        alert("click");
+        console.log(ev);
+      }
+    },
+    '.someLink' : {
+      $ : {
+        href : "url.com"
+      }
+    },
+    '.greenLink' : {
+      $ : {
+        href : "green.link.com",
+        target : "_blank"
+      }
+    }
+  }
+}
+```
