@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Jstree : Basic HTML/CSS constructor from JavaScript configurations.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Jstree</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/fjalex/jstree">View on GitHub</a>
+
+          <h1 id="project_title">Jstree</h1>
+          <h2 id="project_tagline">Basic HTML/CSS constructor from JavaScript configurations.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/fjalex/jstree/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/fjalex/jstree/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="jstree" class="anchor" href="#jstree" aria-hidden="true"><span class="octicon octicon-link"></span></a>jstree</h1>
+
+<p>Basic HTML/CSS constructor from JavaScript configurations.</p>
+
+<h1>
+<a id="why" class="anchor" href="#why" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why</h1>
+
+<p>Angular is too big and complex.<br>
+jQuery is very nice, but I need to learn how the DOM works...<br></p>
+
+<h1>
+<a id="files" class="anchor" href="#files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Files</h1>
+
+<p>The file <code>index.html</code> comes without a <code>&lt;body&gt;</code> tag.<br>
+The file <code>js/jstree.js</code> is the base code.<br>
+The file <code>js/script.js</code> holds the user code.<br>
+The file <code>js/basic notation.js</code> holds some ideas to be implemented in the future.<br></p>
+
+<h1>
+<a id="basics" class="anchor" href="#basics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basics</h1>
+
+<p>You add HTML structure and CSS rules from javascript objects, like:</p>
+
+<pre><code>obj = {
+  div : {
+    $ : {
+      classes : "superDiv active",
+      id : "header",
+      onclick : function(ev){
+        alert("click");
+        console.log(ev);
+      }
+    },
+    '.someLink' : {
+      $ : {
+        href : "url.com"
+      }
+    },
+    '.greenLink' : {
+      $ : {
+        href : "green.link.com",
+        target : "_blank"
+      }
+    }
+  }
+}
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Jstree maintained by <a href="https://github.com/fjalex">fjalex</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
