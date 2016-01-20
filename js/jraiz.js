@@ -1,6 +1,6 @@
-function Tree(){
+function Raiz(){
 	//PROTOTYPE REFERENCE
-	var tree = this;
+	var raiz = this;
 
 	//DEBUG MODE
 	this.debug = false;
@@ -156,12 +156,12 @@ function Tree(){
 	
 	//WHEN BODY IS READY ~ HANDLER
 	window.onload = function(){
-		var children = tree.body.children;
+		var children = raiz.body.children;
 		if( children.length > 0 )
 			for( var element in children)
 				document.body.appendChild( children[element] );
 		
-		tree.body = document.body;
+		raiz.body = document.body;
 	};
 
 	/*
@@ -169,7 +169,7 @@ function Tree(){
 	*/
 	this.bug = function(err){
 		if(this.debug && err != undefined){
-			var msg = "jsTree\n";
+			var msg = "jRaiz\n";
 			if(Array.isArray(err)){
 				for(var k in err){
 					msg += "\n\t" + err[k];
@@ -385,7 +385,7 @@ function Tree(){
 	};
 
 	this.Sheet = function(obj){
-		this.styleTag = tree.element({tag: "style", type: "text/css", parent: document.head});
+		this.styleTag = raiz.element({tag: "style", type: "text/css", parent: document.head});
 		this.style = this.styleTag.sheet;
 		this.length = this.style.cssRules.length;
 
@@ -697,7 +697,7 @@ function Tree(){
 			
 			if( arguments[4] ) finalMatch = arguments[4];
 			
-			exprArr.push( tree.vars.expression(finalMatch) );
+			exprArr.push( raiz.vars.expression(finalMatch) );
 			
 			return finalMatch;
 		},
@@ -751,6 +751,6 @@ function Tree(){
 /*
 		INITIALIZATION
 */
-t = new Tree();
-t.debug = true;
+j = new Tree();
+j.debug = true;
 //t.init();
