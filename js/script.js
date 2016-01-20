@@ -174,33 +174,8 @@ struct = {
 };
 
 
-//t.init({a:64});
-//t.it(struct, t.body);
-
-//t.init({strict:false, sections:true});
-t.init({strict:true, sections:false});
+t.init({strict:false, sections:true});
 t.it(struct);
 
 var a = new t.Sheet(cssRules);
 console.info(document.styleSheets);
-
-/*
-		
-		FUNCTIONS
-		 TESTING
-		
-*/
-//(function(){
-//})()
-
-(function(){
-	var width = 960,
-			margin = 10,
-			nCols = 12,
-			colW = width / nCols;
-
-	for(i = 1; i <= nCols; i++){
-		//console.info("col_" + i + "{", "width:", colW * i - (2*margin));
-	}
-})()
-
