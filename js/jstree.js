@@ -316,36 +316,41 @@ function Tree(){
 		
 		if(typeof obj == "object")
 			for(var k in obj){
-				var ops = {};
-				
-				if(typeof obj[k] == "object" && "$" in obj[k]){
-					ops = obj[k]["$"];
-				}
-				
-				if( k == "$"){
-					parent.className += " " + obj[k].classes;
-					parent.id = obj[k].id;
-					continue; //JUMP TO NEXT KEY
-				}
-				
-				if(k == "text"){
-					parent.innerText += obj[k];
-					continue;
-				}
-				
-				if(k == "html"){ //TODO: must update body tree
-					parent.innerHTML += obj[k];
-					continue;
-				} 
 
-				if(k in this.tags) ops.tag = k;
-					else ops.classes = k;
+				if(typeof obj[k] == "object" && "$" in obj[k]) ops = obj[k].$;
+					else ops = {};
+
+				ops.classes = ops.classes || "";
 				
-				var Element = this.element(ops);
+				switch(k){
+					case "$":
+						for(v in obj[k]){
+							//WHEN $VARS
+							if(v[0] == '$'){
+								this.vars.add(v, obj[k][v]);
+							} else if(v == "css"){
+								this.vars.css(obj[k][v], parent);
+							}
+						}
+					break;
+					
+					case "text":
+						parent.innerText += obj[k];
+					break;
+					
+					case "html":
+						parent.innerHTML += obj[k];
+					break;
+					
+					default:
+						if(k in this.tags) ops.tag = k;
+							else ops.classes += ' ' + k;
+
+						var Element = this.element(ops);
+						parent.appendChild(Element);
+						this.nodes(obj[k], Element);
+				}
 				
-				parent.appendChild(Element);
-				
-				this.nodes(obj[k], Element);
 			}
 		
 		return this;
@@ -604,6 +609,7 @@ function Tree(){
 			function del()
 			function bind()
 			function unbind()
+			function afix()
 			function css()
 			
 	*/
@@ -614,9 +620,9 @@ function Tree(){
 			var VVar = pName + "V";
 			var LVar = pName + "L";
 			
-			if(VVar in this && this[VVar] !== [""] && value !== "" ){
-				if(!Array.isArray(value)) this[VVar] = [value];
-					else this[VVar] = value;
+			if( pName in this ){
+				if(value !== "")
+						this[pName] = value;
 				
 				return false;
 			}
@@ -625,17 +631,16 @@ function Tree(){
 			
 			pDescription[pName] = {
 				get : function(){
-					return this[VVar].join(" ");
+					return this[VVar];
 				},
 				set : function(newVal){
-					if(!Array.isArray(newVal) ) this[VVar] = [newVal];
-						else this[VVar] = newVal;
+					this[VVar] = newVal;
 					
 					var list = this[LVar];
 					
 					for(i in list)
 						if(list[i].finalExpr === undefined )
-							list[i].objPath.style[ list[i].property ] = this[VVar].join(" ");
+							list[i].objPath.style[ list[i].property ] = this[VVar];
 						else
 							list[i].objPath.style[ list[i].property ] = list[i].finalExpr.join(" ");
 							
@@ -644,7 +649,7 @@ function Tree(){
 				configurable : true
 			};
 			
-			pDescription[VVar] = {value: [value], writable: true, enumerable: false, configurable: true};
+			pDescription[VVar] = {value: value, writable: true, enumerable: false, configurable: true};
 			pDescription[LVar] = {value: [], writable: true, enumerable: false, configurable: true};
 			
 			Object.defineProperties(this, pDescription);
@@ -676,6 +681,27 @@ function Tree(){
 		
 		unbind : function(objPath){},
 		
+		afix : function(expr){
+			if( arguments[0] === "{}" ) return '\0';
+			
+			var finalMatch = "";
+			
+			if( arguments[5] ){
+				exprArr.push(arguments[5]);
+				return arguments[5];
+			}
+			
+			if( arguments[1] ) finalMatch += "'" + arguments[1] + "' + ";
+			if( arguments[2] ) finalMatch += "Number(" + arguments[2] + ")";
+			if( arguments[3] ) finalMatch += " + '" + arguments[3] + "'";
+			
+			if( arguments[4] ) finalMatch = arguments[4];
+			
+			exprArr.push( tree.vars.expression(finalMatch) );
+			
+			return finalMatch;
+		},
+		
 		css : function(rule, parent){
 			for(var property in rule){
 				var pString = rule[property];
@@ -684,19 +710,15 @@ function Tree(){
 				
 				onlyVars = pString.match(/\$[\w]+/g);
 				
-				exprArr = pString.match(/\{(?!\}).*?\}|[\w\S\-]+|\$[\w]+/g); // {expr} | word | $var
+				exprArr = [];
 				
-				for(var i in exprArr){
-					
-					if(expression[0] == "{" ){
-						exprArr[i] = this.expression( exprArr[i].slice(1,-1) );
-					} else if(exprArr[i][0] == "$" ){
-						this.add(exprArr[i]);
-						exprArr[i] = this.expression( exprArr[i] );
-					}
-				} //2nd FOR()
+				// REPLACE ['] AND ["] FOR [\'] AND [\"] - escape quote marks
+				// REPLACE sufix{expr}postfix | $var | word - populates exprArr with words and expressions
+				pString = pString.replace(/(\'|\")/g, "\\$1")
+						.replace(/(|[\w\S]+)\{(?!\})(.*?)\}([\w\S]+|)|(\$[\w]+)|([\w\S]+)/g, this.afix);
 				
-				for(var vr in onlyVars) this.bind(parent, property, onlyVars[vr], pString);
+				for(var i in onlyVars) this.bind(parent, property, onlyVars[i], exprArr);
+				
 			} //1st FOR()
 		},
 		
@@ -716,9 +738,8 @@ function Tree(){
 		}
 	};
 
-	for(func in Tree.vars)
-		Object.defineProperty(Tree.vars, func, {enumerable : false, writable : false});
-
+	for(func in this.vars)
+		Object.defineProperty(this.vars, func, {enumerable : false, writable : false});
 
 /*
 		TREE END
