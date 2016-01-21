@@ -154,7 +154,60 @@ function Raiz(){
 		'var' : {},
 	};
 	
-	//WHEN BODY IS READY ~ HANDLER
+	/*
+			BASIC CSS
+	*/
+	this.basicCSS = {
+		".cols" : {
+			backgroundColor : "lightgrey",
+			float : "left",
+			minHeight : "40px",
+			margin : "0px 10px",
+			marginBottom : "10px",
+			textAlign : "center"
+		},
+		".clear" : {
+			clear : "both",
+			display : "block"
+		},
+		".container" : {
+			margin: "0px auto",
+			width: "960px"
+		}
+	};
+	
+	this.bGrid = {
+		container : {}
+		};
+	
+	this.width = 960;
+	this.margin = 10;
+	this.nCols = 12;
+	this.colW = this.width / this.nCols;
+
+	for(i = 1; i <= this.nCols; i++){
+		this.basicCSS[".col_" + i] = { width : this.colW * i - (2*this.margin) + "px" };
+
+		//this.bGrid.container["d1_" + i] = {$ : {text : this.colW, classes: "cols col_1"} };
+		this.bGrid.container["d" + i] = {$ : {text : i, classes: "cols col_" + i} };
+		this.bGrid.container["d_" + (12 - i)] = {$ : {text : i, classes: "cols col_" + (12 - i)} };
+		this.bGrid.container["c" + i] = {$ : {classes: "clear"} };
+
+		if(i == 12) continue;
+		this.basicCSS[".mleft_" + i] = { marginLeft : this.colW * i + this.margin + "px" };
+		this.basicCSS[".pleft_" + i] = { paddingLeft : this.colW * i + "px" };
+		this.basicCSS[".mright_" + i] = { marginRight : this.colW * i + this.margin + "px" };
+		this.basicCSS[".pright_" + i] = { paddingRight : this.colW * i + "px" };
+	}
+	
+	console.info(this.basicCSS);
+	console.info(this.bGrid);
+	
+
+
+	/*
+			ONLOAD FUNCTION
+	*/
 	window.onload = function(){
 		var children = raiz.body.children;
 		if( children.length > 0 )
@@ -330,6 +383,7 @@ function Raiz(){
 								this.vars.add(v, obj[k][v]);
 							} else if(v == "css"){
 								this.vars.css(obj[k][v], parent);
+								console.log("css");
 							}
 						}
 					break;
@@ -375,15 +429,6 @@ function Raiz(){
 			
 			ELEMENT.style ACCESS THE RULES OBJECT
 	*/
-	this.basicCSS = {
-		".cols" : {
-			float : "left",
-			minHeight : "5px",
-			padding : "0px 10px",
-			marginBottom : "10px"
-		}
-	};
-
 	this.Sheet = function(obj){
 		var config = {
 			tag : "style",
@@ -408,8 +453,6 @@ function Raiz(){
 			}
 			delete obj.$;
 		}
-		
-		console.log(config);
 		
 		this.styleTag = raiz.element(config);
 		this.style = this.styleTag.sheet;
@@ -716,6 +759,9 @@ function Raiz(){
 		},
 		
 		css : function(rule, parent){
+			/*
+				TODO: ADD INLINE CSS
+			*/
 			for(var property in rule){
 				var pString = rule[property];
 				
