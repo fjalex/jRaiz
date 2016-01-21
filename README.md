@@ -24,7 +24,7 @@ You add HTML structure and CSS rules from javascript objects, like:
 
 ```
 obj = {
-  div : {
+  div : { // GENERATES <div class="superDiv active" id="header" onclick="function(ev){...}">...</div>
     $ : {
       classes : "superDiv active",
       id : "header",
@@ -33,19 +33,22 @@ obj = {
         console.log(ev);
       }
     },
-    '.someLink' : {
+    someLink : { // GENERATES <a class="someLink" href="url.com">First link</a>
       $ : {
-        href : "url.com"
+        href : "url.com",
+        text : "First link'
       }
     },
-    '.greenLink' : {
+    greenLink : { // GENERATES <a class="greenLink" href="green.link.com">Click here!</a>
       $ : {
         href : "green.link.com",
-        target : "_blank"
+        target : "_blank",
+        text : "Click here!"
       }
     }
   }
 }
 ```
 The object $ holds configuration.
+
 The name of the element could be it's tag name or some class name.
