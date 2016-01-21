@@ -1,6 +1,11 @@
 # jRaiz
 Basic HTML/CSS constructor from JavaScript configurations.
 
+# Features
+- HTML/CSS from JavaScript objects;
+- pre-configured objects for logo, headers, forms, and more;
+- Dynamic css variables;
+
 # Donate
 Donate via <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WEMSKL3F4GNEU&lc=US&item_name=jRaiz&item_number=jraiz&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" target="_blank">PayPal</a>.
 
