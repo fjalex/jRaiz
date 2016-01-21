@@ -275,7 +275,7 @@ function Raiz(){
 		var Element = document.createElement(ops.tag),
 				nodeName = Element.nodeName.toLowerCase();
 		
-		if(ops.classes != undefined) Element.className += ops.classes;
+		if(ops.classes != undefined) Element.className += ops.classes.trim();
 		
 		//SELF CLOSING TAGS
 		if(ops.text != undefined && !('self' in this.tags[nodeName]) )
@@ -385,28 +385,37 @@ function Raiz(){
 	};
 
 	this.Sheet = function(obj){
-		this.styleTag = raiz.element({tag: "style", type: "text/css", parent: document.head});
+		var config = {
+			tag : "style",
+			type : "text/css",
+			parent : document.head
+		};
+		
+		if("$" in obj){
+			for(conf in obj.$){
+				switch(conf){
+					case "media":
+						config.media = obj.$.media;
+						delete obj.$.media;
+					break;
+					
+					default:
+						if(conf[0] == "$"){
+							raiz.vars.add(conf, obj.$[conf]);
+							//console.log(conf);
+						}
+				}
+			}
+			delete obj.$;
+		}
+		
+		console.log(config);
+		
+		this.styleTag = raiz.element(config);
 		this.style = this.styleTag.sheet;
 		this.length = this.style.cssRules.length;
 
 		this.rules = function(obj){
-			if("$" in obj){
-				for(conf in obj.$){
-					switch(conf){
-						case "media":
-							this.styleTag.media = obj.$.media;
-							delete obj.$.media;
-						break;
-						
-						default:
-							if(conf[0] == "$"){
-								//console.log(conf);
-							}
-					}
-				}
-				delete obj.$;
-			}
-		
 			if(obj !== undefined){
 				//console.log(obj);
 				
@@ -435,15 +444,19 @@ function Raiz(){
 									//console.log(prop + ":", obj[rule][prop]);
 									ruleStyle[prop] = obj[rule][prop];
 								} else {
-									//console.error("This browser doesn't support the '" + prop + "' property");
+									raiz.bug("THIS BROWSER DOESN'T SUPPORT THE '" + prop + "' PROPERTY.");
 								}
 							}
+							
+							//console.info(ruleStyle);
 						}
 						
 						//console.groupEnd();
+						//console.info(this.style.insertRule('body { background-color: lightgrey }'));
 					
 					}catch(err){
 						//for(a in err) console.info(a, ":", err[a]);
+						//raiz.bug("THIS BROWSER DOESN'T SUPPORT THE '" + prop + "' PROPERTY.");
 						//console.error(err.name + "\n\n" + err.message);
 					}
 					
@@ -751,6 +764,5 @@ function Raiz(){
 /*
 		INITIALIZATION
 */
-j = new Tree();
+j = new Raiz();
 j.debug = true;
-//t.init();
