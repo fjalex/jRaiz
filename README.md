@@ -36,7 +36,7 @@ obj = {
     someLink : { // GENERATES <a class="someLink" href="url.com">First link</a>
       $ : {
         href : "url.com",
-        text : "First link'
+        text : "First link"
       }
     },
     greenLink : { // GENERATES <a class="greenLink" href="green.link.com">Click here!</a>
@@ -49,6 +49,7 @@ obj = {
   }
 }
 ```
+
 The object $ holds configuration.
 
 The name of the element could be it's tag name or some class name.
