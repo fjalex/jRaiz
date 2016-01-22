@@ -32,23 +32,32 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h1>
-<a id="jraiz" class="anchor" href="#jraiz" aria-hidden="true"><span class="octicon octicon-link"></span></a>jRaiz</h1>
+<a id="jraiz" class="anchor" href="#jraiz" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jRaiz</h1>
 
 <p>Basic HTML/CSS constructor from JavaScript configurations.</p>
 
 <h1>
-<a id="donate" class="anchor" href="#donate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Donate</h1>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h1>
+
+<ul>
+<li>HTML/CSS from JavaScript objects;</li>
+<li>pre-configured objects for logo, headers, forms, and more;</li>
+<li>Dynamic css variables and expressions;</li>
+</ul>
+
+<h1>
+<a id="donate" class="anchor" href="#donate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Donate</h1>
 
 <p>Donate via <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=WEMSKL3F4GNEU&amp;lc=US&amp;item_name=jRaiz&amp;item_number=jraiz&amp;currency_code=USD&amp;bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" target="_blank">PayPal</a>.</p>
 
 <h1>
-<a id="why" class="anchor" href="#why" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why</h1>
+<a id="why" class="anchor" href="#why" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Why</h1>
 
 <p>Angular is too big and complex.<br>
 jQuery is very nice, but I need to learn how the DOM works...<br></p>
 
 <h1>
-<a id="files" class="anchor" href="#files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Files</h1>
+<a id="files" class="anchor" href="#files" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Files</h1>
 
 <p>The file <code>index.html</code> comes without a <code>&lt;body&gt;</code> tag.<br>
 The file <code>js/jraiz.js</code> is the base code.<br>
@@ -56,37 +65,76 @@ The file <code>js/script.js</code> holds the user code.<br>
 The file <code>js/basic notation.js</code> holds some ideas to be implemented in the future.<br></p>
 
 <h1>
-<a id="basics" class="anchor" href="#basics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basics</h1>
+<a id="basics" class="anchor" href="#basics" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Basics</h1>
 
 <p>You add HTML structure and CSS rules from javascript objects, like:</p>
 
-<pre><code>obj = {
-  div : {
-    $ : {
-      classes : "superDiv active",
-      id : "header",
-      onclick : function(ev){
-        alert("click");
-        console.log(ev);
+<div class="highlight highlight-source-js"><pre>obj <span class="pl-k">=</span> {
+  div <span class="pl-k">:</span> { <span class="pl-c">// GENERATES &lt;div class="superDiv active" id="header" onclick="function(ev){...}"&gt;...&lt;/div&gt;</span>
+    $ <span class="pl-k">:</span> {
+      classes <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>superDiv active<span class="pl-pds">"</span></span>,
+      id <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>header<span class="pl-pds">"</span></span>,
+      <span class="pl-en">onclick</span> <span class="pl-k">:</span> <span class="pl-k">function</span>(<span class="pl-smi">ev</span>){
+        <span class="pl-c1">alert</span>(<span class="pl-s"><span class="pl-pds">"</span>click<span class="pl-pds">"</span></span>);
+        <span class="pl-en">console</span>.<span class="pl-c1">log</span>(ev);
       }
     },
-    '.someLink' : {
-      $ : {
-        href : "url.com"
+    someLink <span class="pl-k">:</span> { <span class="pl-c">// GENERATES &lt;a class="someLink" href="url.com"&gt;First link&lt;/a&gt;</span>
+      $ <span class="pl-k">:</span> {
+        href <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>url.com<span class="pl-pds">"</span></span>,
+        text <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>First link<span class="pl-pds">"</span></span>
       }
     },
-    '.greenLink' : {
-      $ : {
-        href : "green.link.com",
-        target : "_blank"
+    greenLink <span class="pl-k">:</span> { <span class="pl-c">// GENERATES &lt;a class="greenLink" href="green.link.com"&gt;Click here!&lt;/a&gt;</span>
+      $ <span class="pl-k">:</span> {
+        href <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>green.link.com<span class="pl-pds">"</span></span>,
+        target <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>_blank<span class="pl-pds">"</span></span>,
+        text <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>Click here!<span class="pl-pds">"</span></span>
       }
     }
   }
-}
-</code></pre>
+};
 
-<p>The object $ holds configuration.
-The name of the element could be it's tag name or some class name.</p>
+<span class="pl-smi">j</span>.<span class="pl-en">nodes</span>(obj);</pre></div>
+
+<p>The object $ holds configuration.</p>
+
+<p>The name of the element could be it's tag name or some class name.</p>
+
+<h1>
+<a id="dynamic-css-variables-and-expressions" class="anchor" href="#dynamic-css-variables-and-expressions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dynamic CSS variables and expressions</h1>
+
+<p>When only var, you add a word starting with $: <code>"propertyValue $variable"</code>.</p>
+
+<p>When expression, you use brackets: <code>"otherProperty thirdProperty {$var1 * $var2 + 584}"</code>.</p>
+
+<div class="highlight highlight-source-js"><pre>obj <span class="pl-k">=</span> {
+  $ <span class="pl-k">:</span> {
+    $primColor <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>#AAA<span class="pl-pds">"</span></span>,
+    $secndColor <span class="pl-k">:</span> <span class="pl-c1">753</span>
+  },
+  header <span class="pl-k">:</span> {
+    $ <span class="pl-k">:</span> {
+      classes <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>cols col_12<span class="pl-pds">"</span></span>,
+      css <span class="pl-k">:</span> {
+        border <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>solid 1px $primColor<span class="pl-pds">"</span></span>,
+        color <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>{$primColor}BCE<span class="pl-pds">"</span></span>
+      }
+    }
+  },
+  main <span class="pl-k">:</span> {
+    $ <span class="pl-k">:</span> {
+      classes <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>cols col_8<span class="pl-pds">"</span></span>,
+      css <span class="pl-k">:</span> {
+        backgroundColor <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>#{$secndColor * 258}<span class="pl-pds">"</span></span>
+      }
+    }
+  }
+};</pre></div>
+
+<p>You can change any variable, accessing the object j.vars.$nameVariable:</p>
+
+<p>The code <code>j.vars.$primColor = "#BBB"</code> changes every object style property that has $primColor assigned to it.</p>
       </section>
     </div>
 
