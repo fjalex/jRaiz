@@ -22,7 +22,7 @@ The file <code>js/basic notation.js</code> holds some ideas to be implemented in
 # Basics
 You add HTML structure and CSS rules from javascript objects, like:
 
-```
+```javascript
 obj = {
   div : { // GENERATES <div class="superDiv active" id="header" onclick="function(ev){...}">...</div>
     $ : {
