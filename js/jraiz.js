@@ -157,51 +157,48 @@ function Raiz(){
 	/*
 			BASIC CSS
 	*/
-	this.basicCSS = {
-		".cols" : {
-			backgroundColor : "lightgrey",
-			float : "left",
-			minHeight : "40px",
-			margin : "0px 10px",
-			marginBottom : "10px",
-			textAlign : "center"
-		},
-		".clear" : {
-			clear : "both",
-			display : "block"
-		},
-		".container" : {
-			margin: "0px auto",
-			width: "960px"
-		}
-	};
-	
-	this.bGrid = {
-		container : {}
-		};
-	
 	this.width = 960;
 	this.margin = 10;
 	this.nCols = 12;
 	this.colW = this.width / this.nCols;
 
+	this.basicCSS = {
+		".container" : {
+			margin: "0px auto",
+			width: this.width + 'px'
+		},
+		".cols" : {
+			backgroundColor : "lightgrey", // EXAMPLE
+			float : "left",
+			minHeight : "40px", // EXAMPLE
+			margin : "0px " + this.margin + "px 10px",
+			textAlign : "center" // EXAMPLE
+		},
+		".clear" : {
+			clear : "both",
+			display : "block"
+		}
+	};
+	
+	this.bGrid = { container : {} };
+	
 	for(i = 1; i <= this.nCols; i++){
 		this.basicCSS[".col_" + i] = { width : this.colW * i - (2*this.margin) + "px" };
 
 		//this.bGrid.container["d1_" + i] = {$ : {text : this.colW, classes: "cols col_1"} };
-		this.bGrid.container["d" + i] = {$ : {text : i, classes: "cols col_" + i} };
-		this.bGrid.container["d_" + (12 - i)] = {$ : {text : i, classes: "cols col_" + (12 - i)} };
-		this.bGrid.container["c" + i] = {$ : {classes: "clear"} };
+		//this.bGrid.container["da" + i] = {$ : {text : i, classes: "cols col_" + i} };
+		//this.bGrid.container["db" + (12 - i)] = {$ : {text : i, classes: "cols col_" + (12 - i)} };
+		//this.bGrid.container["c" + i] = {$ : {classes: "clear"} };
 
 		if(i == 12) continue;
 		this.basicCSS[".mleft_" + i] = { marginLeft : this.colW * i + this.margin + "px" };
-		this.basicCSS[".pleft_" + i] = { paddingLeft : this.colW * i + "px" };
+		//this.basicCSS[".pleft_" + i] = { display: "block", paddingLeft : this.colW * i + "px" };
 		this.basicCSS[".mright_" + i] = { marginRight : this.colW * i + this.margin + "px" };
-		this.basicCSS[".pright_" + i] = { paddingRight : this.colW * i + "px" };
+		//this.basicCSS[".pright_" + i] = { paddingRight : this.colW * i + "px" };
 	}
 	
 	console.info(this.basicCSS);
-	console.info(this.bGrid);
+	//console.info(this.bGrid);
 	
 
 
@@ -383,7 +380,6 @@ function Raiz(){
 								this.vars.add(v, obj[k][v]);
 							} else if(v == "css"){
 								this.vars.css(obj[k][v], parent);
-								console.log("css");
 							}
 						}
 					break;
@@ -737,25 +733,29 @@ function Raiz(){
 		
 		unbind : function(objPath){},
 		
-		afix : function(expr){
-			if( arguments[0] === "{}" ) return '\0';
+		afix : function(exprArr){
+			var exprArr = exprArr || [];
 			
-			var finalMatch = "";
-			
-			if( arguments[5] ){
-				exprArr.push(arguments[5]);
-				return arguments[5];
+			return function(expr){
+				if( arguments[0] === "{}" ) return '\0';
+				
+				var finalMatch = "";
+				
+				if( arguments[5] ){
+					exprArr.push(arguments[5]);
+					return arguments[5];
+				}
+				
+				if( arguments[1] ) finalMatch += "'" + arguments[1] + "' + ";
+				if( arguments[2] ) finalMatch += "Number(" + arguments[2] + ")";
+				if( arguments[3] ) finalMatch += " + '" + arguments[3] + "'";
+				
+				if( arguments[4] ) finalMatch = arguments[4];
+				
+				exprArr.push( raiz.vars.expression(finalMatch) );
+				
+				return finalMatch;
 			}
-			
-			if( arguments[1] ) finalMatch += "'" + arguments[1] + "' + ";
-			if( arguments[2] ) finalMatch += "Number(" + arguments[2] + ")";
-			if( arguments[3] ) finalMatch += " + '" + arguments[3] + "'";
-			
-			if( arguments[4] ) finalMatch = arguments[4];
-			
-			exprArr.push( raiz.vars.expression(finalMatch) );
-			
-			return finalMatch;
 		},
 		
 		css : function(rule, parent){
@@ -774,7 +774,7 @@ function Raiz(){
 				// REPLACE ['] AND ["] FOR [\'] AND [\"] - escape quote marks
 				// REPLACE sufix{expr}postfix | $var | word - populates exprArr with words and expressions
 				pString = pString.replace(/(\'|\")/g, "\\$1")
-						.replace(/(|[\w\S]+)\{(?!\})(.*?)\}([\w\S]+|)|(\$[\w]+)|([\w\S]+)/g, this.afix);
+						.replace(/(|[\w\S]+)\{(?!\})(.*?)\}([\w\S]+|)|(\$[\w]+)|([\w\S]+)/g, this.afix(exprArr));
 				
 				for(var i in onlyVars) this.bind(parent, property, onlyVars[i], exprArr);
 				
