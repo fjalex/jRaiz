@@ -3,15 +3,11 @@ Basic HTML/CSS constructor from JavaScript configurations.
 
 # Features
 - HTML/CSS from JavaScript objects;
-- pre-configured objects for logo, headers, forms, and more;
+- pre-configured objects for logo, headers, forms and more;
 - Dynamic css variables and expressions;
 
 # Donate
 Donate via <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WEMSKL3F4GNEU&lc=US&item_name=jRaiz&item_number=jraiz&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" target="_blank">PayPal</a>.
-
-# Why
-Angular is too big and complex.<br>
-jQuery is very nice, but I need to learn how the DOM works...<br>
 
 # Files
 The file <code>index.html</code> comes without a <code>&lt;body&gt;</code> tag.<br>
@@ -59,7 +55,7 @@ The name of the element could be it's tag name or some class name.
 # Dynamic CSS variables and expressions
 When only var, you add a word starting with $: <code>"propertyValue $variable"</code>.
 
-When expression, you use brackets: <code>"otherProperty thirdProperty {$var1 * $var2 + 584}"</code>.
+When expression, you use brackets: <code>"othProp thrdProp {$var1 * $var2 + 584}"</code>.
 
 ```javascript
 obj = {
@@ -71,8 +67,8 @@ obj = {
     $ : {
       classes : "cols col_12",
       css : {
-        border : "solid 1px $primColor",
-        color : "{$primColor}BCE"
+        border : "solid 1px $primColor", //OUTPUT: solid 1px #AAA
+        color : "{$primColor}BCE" //OUTPUT: #AAABCE
       }
     }
   },
@@ -80,7 +76,7 @@ obj = {
     $ : {
       classes : "cols col_8",
       css : {
-        backgroundColor : "#{$secndColor * 258}"
+        backgroundColor : "#{$secndColor * 258}" //OUTPUT: #194274
       }
     }
   }
