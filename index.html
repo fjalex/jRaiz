@@ -41,7 +41,7 @@
 
 <ul>
 <li>HTML/CSS from JavaScript objects;</li>
-<li>pre-configured objects for logo, headers, forms, and more;</li>
+<li>pre-configured objects for logo, headers, forms and more;</li>
 <li>Dynamic css variables and expressions;</li>
 </ul>
 
@@ -49,12 +49,6 @@
 <a id="donate" class="anchor" href="#donate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Donate</h1>
 
 <p>Donate via <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=WEMSKL3F4GNEU&amp;lc=US&amp;item_name=jRaiz&amp;item_number=jraiz&amp;currency_code=USD&amp;bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" target="_blank">PayPal</a>.</p>
-
-<h1>
-<a id="why" class="anchor" href="#why" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Why</h1>
-
-<p>Angular is too big and complex.<br>
-jQuery is very nice, but I need to learn how the DOM works...<br></p>
 
 <h1>
 <a id="files" class="anchor" href="#files" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Files</h1>
@@ -106,7 +100,7 @@ The file <code>js/basic notation.js</code> holds some ideas to be implemented in
 
 <p>When only var, you add a word starting with $: <code>"propertyValue $variable"</code>.</p>
 
-<p>When expression, you use brackets: <code>"otherProperty thirdProperty {$var1 * $var2 + 584}"</code>.</p>
+<p>When expression, you use brackets: <code>"othProp thrdProp {$var1 * $var2 + 584}"</code>.</p>
 
 <div class="highlight highlight-source-js"><pre>obj <span class="pl-k">=</span> {
   $ <span class="pl-k">:</span> {
@@ -117,8 +111,8 @@ The file <code>js/basic notation.js</code> holds some ideas to be implemented in
     $ <span class="pl-k">:</span> {
       classes <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>cols col_12<span class="pl-pds">"</span></span>,
       css <span class="pl-k">:</span> {
-        border <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>solid 1px $primColor<span class="pl-pds">"</span></span>,
-        color <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>{$primColor}BCE<span class="pl-pds">"</span></span>
+        border <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>solid 1px $primColor<span class="pl-pds">"</span></span>, <span class="pl-c">//OUTPUT: solid 1px #AAA</span>
+        color <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>{$primColor}BCE<span class="pl-pds">"</span></span> <span class="pl-c">//OUTPUT: #AAABCE</span>
       }
     }
   },
@@ -126,7 +120,7 @@ The file <code>js/basic notation.js</code> holds some ideas to be implemented in
     $ <span class="pl-k">:</span> {
       classes <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>cols col_8<span class="pl-pds">"</span></span>,
       css <span class="pl-k">:</span> {
-        backgroundColor <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>#{$secndColor * 258}<span class="pl-pds">"</span></span>
+        backgroundColor <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>#{$secndColor * 258}<span class="pl-pds">"</span></span> <span class="pl-c">//OUTPUT: #194274</span>
       }
     }
   }
