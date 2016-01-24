@@ -107,7 +107,9 @@ code = "var string = function(w){ console.log('foi'); }";
 highlight = function(w){
 	return "<code class='green'>" + w + "</code>";
 }
-code.replace(/var|function|console|log/g, );
+code.replace(/var|function|console|log/g, highlight);
+
+code.match(/\/\*[\w\s]+\*\/|\/\/[\w\s]+$|var|function/gm);
 
 /*
 *
@@ -554,6 +556,47 @@ var cssVar = function(){
 	
 }
 
+//MATCH EXPRESSIONS: str{expr}str | word | $var
+str = 'prfA{$superColor + 250}Apx prfB{$var + $var} {$var * 50}Bpx solid {$bwidth + $ouVar} $lightColor $otherVar $tVar {} urlMonth super-value url("/path/to/{$var}.png")' + " url('/path/to/{$var}.png')";
+
+	str = str.replace(/(\'|\")/g, "\\$1");
+	console.log(str);
+	
+	var exprArr = [];
+
+	afix = function(expr){
+		console.log(arguments);
+
+		if(arguments[0] === "{}" ) return '\0';
+		
+		var finalMatch = "";
+
+		if( arguments[1] ) finalMatch += "'" + arguments[1] + "' + " ;
+
+		if( arguments[2] ) finalMatch += arguments[2];
+			
+		if( arguments[3] ) finalMatch += " + '" + arguments[3] + "'" ;
+			
+		if(!arguments[1] && !arguments[2] && !arguments[3] ) finalMatch = arguments[0];
+
+		exprArr.push(finalMatch);
+		
+		return finalMatch;
+	}
+
+
+	//console.log( str.replace(/(|[\w]+)\{(?!\})(.*?)\}([\w]+|)/g, afix) );
+	//console.log( str.match(/(|[\w\S]+)\{(?!\})(.*?)\}([\w\S]+|)|\$[\w]+|[\w\S]+/g).length );
+	console.log( str + "\n\n", str.replace(/(|[\w\S]+)\{(?!\})(.*?)\}([\w\S]+|)|[\w\S]+|\$[\w]+/g, afix) );
+
+	for(var i in exprArr)
+		console.info(parseInt(i)+1, exprArr[i]);
+	
+	$var = "IMAGE";
+	console.log( eval(exprArr[10]) );
+	console.log( eval(exprArr[11]) );
+	//console.log( "a b c ".replace(/[\w]|[\s]/g, function(a){console.log('ARG',arguments);}) );
+
 
 /*
 *
@@ -624,3 +667,15 @@ finally{
 	console.log(Element)
 }
 
+
+
+/*
+*
+*	LINK TAG WITH SRC DATA
+*
+*/
+a = document.createElement("link");
+a.type = "text/css"
+a.rel = "stylesheet"
+a.href = "data:text/css;charset=utf-8, body { background-color:red; }"
+document.head.appendChild(a);
