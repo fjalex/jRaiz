@@ -157,49 +157,172 @@ function Raiz(){
 	/*
 			BASIC CSS
 	*/
+	this.css = {};
+	
 	this.width = 960;
 	this.margin = 10;
 	this.nCols = 12;
 	this.colW = this.width / this.nCols;
-
-	this.basicCSS = {
+	
+	this.structureCSS = {
+		$ : {
+			media : "",
+			id : "basic_css"
+		},
+		"body" : {
+			margin : "0px",
+			padding : "0px",
+		},
 		".container" : {
 			margin: "0px auto",
-			width: this.width + 'px'
+			width: this.width + 'px',
 		},
 		".cols" : {
-			backgroundColor : "lightgrey", // EXAMPLE
+			//backgroundColor : "lightgrey", // EXAMPLE
 			float : "left",
 			minHeight : "40px", // EXAMPLE
 			margin : "0px " + this.margin + "px 10px",
-			textAlign : "center" // EXAMPLE
 		},
 		".clear" : {
 			clear : "both",
-			display : "block"
+			display : "block",
 		}
 	};
 	
-	this.bGrid = { container : {} };
-	
 	for(i = 1; i <= this.nCols; i++){
-		this.basicCSS[".col_" + i] = { width : this.colW * i - (2*this.margin) + "px" };
+		this.structureCSS[".col_" + i] = { width : this.colW * i - (2*this.margin) + "px" };
+		
+		if(i == 12) continue; //EXCLUDES 12th CLASSES
 
-		//this.bGrid.container["d1_" + i] = {$ : {text : this.colW, classes: "cols col_1"} };
-		//this.bGrid.container["da" + i] = {$ : {text : i, classes: "cols col_" + i} };
-		//this.bGrid.container["db" + (12 - i)] = {$ : {text : i, classes: "cols col_" + (12 - i)} };
-		//this.bGrid.container["c" + i] = {$ : {classes: "clear"} };
+		this.structureCSS[".mleft_" + i] = { marginLeft : this.colW * i + this.margin + "px" };
+		this.structureCSS[".mright_" + i] = { marginRight : this.colW * i + this.margin + "px" };
 
-		if(i == 12) continue;
-		this.basicCSS[".mleft_" + i] = { marginLeft : this.colW * i + this.margin + "px" };
-		//this.basicCSS[".pleft_" + i] = { display: "block", paddingLeft : this.colW * i + "px" };
-		this.basicCSS[".mright_" + i] = { marginRight : this.colW * i + this.margin + "px" };
-		//this.basicCSS[".pright_" + i] = { paddingRight : this.colW * i + "px" };
+		//this.structureCSS[".pleft_" + i] = { display: "block", paddingLeft : this.colW * i + "px" };
+		//this.structureCSS[".pright_" + i] = { paddingRight : this.colW * i + "px" };
 	}
 	
-	console.info(this.basicCSS);
-	//console.info(this.bGrid);
-	
+	this.textCSS = {
+		$ : {
+			media : "",
+			id : "text_css"
+		},
+		body : {
+			color : "#5A6277",
+			fontFamily : "'Helvetica Neue',Helvetica,Arial,sans-serif",
+			fontSize : "12px",
+			lineHeight : "2",
+		},
+		a : {
+			color : "#2E4172",
+			textDecoration : "none",
+		},
+		"a:hover" : {
+			color : "#4F628E",
+		},
+		p : {
+			marginBottom : "20",
+			//padding : "5px",
+			textAlign : "justify",
+		},
+		"h1, h2, h3, h4, h5, h6" : {
+			fontWeight : "500",
+			lineHeight : "1",
+			padding : "5px 0px",
+			margin: "10px 0px",
+		},
+		h1 : {
+			fontSize : "36px",
+		},
+		h2 : {
+			fontSize : "30px",
+		},
+		h3 : {
+			fontSize : "26px",
+		},
+		h4 : {
+			fontSize : "20px",
+		},
+		h5 : {
+			fontSize : "16px",
+			fontWeight : "600",
+		},
+		h6 : {
+			fontSize : "14px",
+			fontWeight : "600",
+		},
+	};
+
+	this.menuCSS = {
+		$ : {
+			media : "",
+			id : "menu_css"
+		},
+		".menubar" : {
+			backgroundColor : "#EEE",
+			margin : "0px",
+			//display : "none",
+		},
+		".menubar>ul" : {
+			fontSize : "16px",
+			margin : "0px auto",
+			padding : "0px",
+			width : (this.width - 2*this.margin)+ 'px',
+		},
+		".menubar>ul>li" : {
+			display : "inline-block",
+			listStyle : "none outside none",
+			padding: "8px 2px",
+			marginRight : this.margin*2 + "px",
+			textTransform: "capitalize",
+		},
+		".menubar>ul>li>a" : {
+		},
+		".menubar>ul>li>a:hover" : {
+			
+		},
+	}
+	this.formCSS = {
+		$ : {
+			media : "",
+			id : "form_css"
+		},
+		"form>label " : {
+			display : "block",
+			padding : "10px",
+		},
+		"form>label>*" : {
+			display : "inline-block",
+			width : "400px",
+			verticalAlign: "top",
+			textTransform: "capitalize",
+		},
+		"form>label>span" : {
+			padding : "0px 20px",
+			width : "100px",
+			textAlign: "right"
+		},
+	};
+	this.modalCSS = {
+		".modal" : {
+			position : "absolute",
+			
+		},
+	};
+	this.fullCSS = {
+		$ : {
+			media : "",
+			id : "full_width_height_css"
+		},
+		".fullw" : {
+			marginLeft : "0px",
+			marginRight : "0px",
+			width : "100%",
+		},
+		".fullw .header" : {
+			backgroundColor : "#CDE",
+			height : "500px",
+		}
+	};
 
 
 	/*
@@ -236,6 +359,15 @@ function Raiz(){
 			INIT FUNCTION
 	*/
 	this.init = function(config){
+		//CSS SHEETS
+		this.css.structure = new this.Sheet(this.structureCSS);
+		this.css.text = new this.Sheet(this.textCSS);
+		this.css.menu = new this.Sheet(this.menuCSS);
+		this.css.form = new this.Sheet(this.formCSS);
+		this.css.modal = new this.Sheet(this.modalCSS);
+		this.css.full = new this.Sheet(this.fullCSS);
+		
+		//BUG
 		if(config == undefined)
 			return this.bug([
 				"YOU MUST CALL init() WITH A CONFIGURATION OBJECT!",
@@ -385,7 +517,11 @@ function Raiz(){
 					break;
 					
 					case "text":
-						parent.innerText += obj[k];
+						try {
+							parent.textContent += obj[k];
+						} catch (e) {
+							parent.innerText += obj[k];
+						}
 					break;
 					
 					case "html":
@@ -438,6 +574,11 @@ function Raiz(){
 					case "media":
 						config.media = obj.$.media;
 						delete obj.$.media;
+					break;
+					
+					case "id":
+						config.id = obj.$.id;
+						delete obj.$.title;
 					break;
 					
 					default:
@@ -558,6 +699,49 @@ function Raiz(){
 		}
 		
 		return logo;
+	}
+
+	/*
+			MENU FUNCTION
+	*/
+	this.menu = function(ops){
+		var bt,
+				menuNode = {$:{tag : "ul", classes : "menu"}};
+				
+		if("$" in ops){
+			for(conf in ops.$){
+				switch(conf){
+					case "classes":
+						menuNode.$.classes += ' ' + ops.$.classes;
+					break;
+					
+					default:
+						menuNode.$[conf] = ops.$[conf];
+				}
+			}
+			delete ops.$;
+		}
+		
+		for(item in ops){
+			console.log(item, ops[item]);
+			bt = {$ : {tag : "li"}, a : { $ : {text : item} } };
+			if(typeof ops[item] === "object"){
+				for(conf in ops[item] ){
+					switch (conf){
+						case "url":
+							bt.a.$.href = ops[item][conf];
+						break;
+
+						case "label":
+							bt.a.$.text = ops[item][conf];
+						break;
+					}
+				}
+			}
+			menuNode[item] = bt;
+		}
+		
+		return menuNode;
 	}
 
 	/*		
