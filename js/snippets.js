@@ -798,3 +798,11 @@ __super.e = 50;
 console.log(__super);
 console.log(window);
 
+
+/*
+*
+* INSTANCEOF 
+*
+*/
+__super instanceof Function
+[] instanceof Array
