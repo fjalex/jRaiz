@@ -23,7 +23,7 @@ j.bug = function(err){
 j.modes = {
   strict : true,
   
-  html4 :{
+  html4 : {
     acronym : {},
     applet : {},
     basefont : {},
@@ -73,7 +73,7 @@ j.modes = {
     summary : {},
   },
 
-  tags :{
+  tags : {
     a : {},
     abbr : {},
     address : {},
@@ -388,8 +388,49 @@ j.init = function(config){
   return true;
 };
 
-j.nodes = function(){};
-j.element = function(){};
+j.element = function(ops){
+  ops = ops || {};
+  ops.tag = ops.tag || "div";
+  
+  if(j.strict && j.modes.tags[ops.tag] == undefined)
+    return j.bug("STRICT HTML DOES NOT ALLOW THE TAG: " + ops.tag);
+  
+  if(!j.strict && ops.tag in j.modes.html4)
+    return j.bug("HTML 5 DOES NOT ALLOW THE TAG: " + ops.tag);
+  
+  var Element = document.createElement(ops.tag),
+      nodeName = Element.nodeName.toLowerCase();
+  
+  if(ops.classes != undefined) Element.className += ops.classes.trim();
+  
+  //SELF CLOSING TAGS
+  if(ops.text != undefined && !('self' in j.modes.tags[nodeName]) )
+    Element.appendChild( document.createTextNode(ops.text));
+  
+  for(var attr in ops){
+    try{
+      if(attr in Element) Element[attr] = ops[attr];
+    } catch(e){
+      return j.bug([
+        "THE ELEMENT: " + Element,
+        "DOES NOT ACCEPT THE ATTRIBUTE: " + attr,
+        "WITH THIS VALUE: " + ops[attr]
+        ]);
+    }
+  }
+
+  if("parent" in ops){
+    ops.parent.appendChild(Element);
+  }
+  
+  return Element;
+ 
+};
+
+j.nodes = function(){
+  
+};
+
 
 /*
  *  WINDOW LOAD FUNCTION 
@@ -417,114 +458,6 @@ window.addEventListener('load', j.windowLoad);
 function Raiz(){
 
 
-  /*
-      ONLOAD FUNCTION
-  */
-  window.onload = function(){
-    var children = raiz.body.children;
-    if( children.length > 0 )
-      for( var element in children)
-        document.body.appendChild( children[element] );
-    
-    raiz.body = document.body;
-  };
-
-  /*
-      DEBUGGER FUNCTION
-  */
-  this.bug = function(err){
-    if(this.debug && err != undefined){
-      var msg = "jRaiz\n";
-      if(Array.isArray(err)){
-        for(var k in err){
-          msg += "\n\t" + err[k];
-        }
-      } else {
-        msg += "\n\t" + err;
-      }
-      console.error( msg );
-    }
-    return false;
-  };
-
-  /*
-      INIT FUNCTION
-  */
-  this.init = function(config){
-    //CSS SHEETS
-    this.css.structure = new this.Sheet(this.structureCSS);
-    this.css.text = new this.Sheet(this.textCSS);
-    this.css.menu = new this.Sheet(this.menuCSS);
-    this.css.form = new this.Sheet(this.formCSS);
-    this.css.modal = new this.Sheet(this.modalCSS);
-    this.css.full = new this.Sheet(this.fullCSS);
-    
-    //BUG
-    if(config == undefined)
-      return this.bug([
-        "YOU MUST CALL init() WITH A CONFIGURATION OBJECT!",
-        "SOMETHING LIKE THIS: init({var1: val, var2: val})"
-        ]);
-    
-    //IF SECTIONS == TRUE, AUTOMATICALLY SETS TO HTML 5
-    if(config.sections != undefined && config.sections){
-      config.strict = false;
-      for(var section in this.sections)
-        this.tags[section] = this.sections[section];
-    }
-    
-    //IF CONFIG.STRICT == FALSE ~ HTML 5!
-    if(config.strict != undefined && !config.strict){
-      this.strict = false;
-      for(var tag in this.html5)
-        this.tags[tag] = this.html5[tag];
-      
-      var nodeDoctype = document.implementation.createDocumentType("HTML","","");
-      if(document.doctype) {
-        document.replaceChild(nodeDoctype, document.doctype);
-      } else {
-        document.insertBefore(nodeDoctype, document.childNodes[0]);
-      }
-    }
-    
-    //IF STRICT == TRUE ~ HTML 4
-    if(this.strict){
-      for(var tag in this.html4)
-        this.tags[tag] = this.html4[tag];
-    }
-    
-    if(config.external != undefined && Array.isArray(config.external) ){
-      for(var k in config.external){
-        var ext = config.external[k].slice(-4);
-        if(ext[1] == "c" && ext[2] == "s" && ext[3] == "s"){ //WHEN CSS
-          var imprt = {tag: "link", rel: "stylesheet"};
-          
-          if(ext[0] == "."){
-            imprt.href = config.external[k]; //WHEN .CSS
-          } else if(ext[0] == "|"){
-            imprt.href = config.external[k].slice(0,-4); //WHEN |CSS
-          }
-        } else if(ext[2] == "j" && ext[3] == "s"){ //WHEN JS
-          var imprt = {tag: "script", type: "text/javascript"};
-          
-          if(ext[1] == "."){
-            imprt.src = config.external[k];
-          } else if(ext[1] == "|"){
-            imprt.src = config.external[k].slice(0,-3);
-          }
-        }
-        
-        imprt = this.element(imprt);
-        document.head.appendChild(imprt);
-      }
-    }
-    
-    if(config.structure != undefined){
-      this.nodes(config.structure);
-    }
-    
-    return true;
-  };
 
   /*
       HTML ELEMENT FUNCTION
