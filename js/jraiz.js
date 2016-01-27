@@ -286,6 +286,36 @@ j.css = {
         fontWeight : "600",
       },
     },
+    
+    menu : {
+      $ : {
+        media : "",
+        id : "menu_css"
+      },
+      ".menubar" : {
+        backgroundColor : "#EEE",
+        margin : "0px",
+        //display : "none",
+      },
+      ".menubar>ul" : {
+        fontSize : "16px",
+        margin : "0px auto",
+        padding : "0px",
+        width : (this.width - 2*this.margin)+ 'px',
+      },
+      ".menubar>ul>li" : {
+        display : "inline-block",
+        listStyle : "none outside none",
+        padding: "8px 2px",
+        marginRight : this.margin*2 + "px",
+        textTransform: "capitalize",
+      },
+      ".menubar>ul>li>a" : {
+      },
+      ".menubar>ul>li>a:hover" : {
+        
+      },
+    },
 
     form : {
       $ : {
