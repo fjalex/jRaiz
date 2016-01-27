@@ -7,6 +7,7 @@ j.debug = false;
 j.bug = function(err){
   if(j.debug && err != undefined){
     var msg = "jRaiz\n";
+    
     if(err instaceof Array){
       for(var k in err){
         msg += "\n\t" + err[k];
@@ -15,6 +16,8 @@ j.bug = function(err){
       msg += "\n\t" + err;
     }
     console.error( msg );
+  } else {
+    console.error("jRaiz\n\tError Message not defined!");
   }
   return false;
 };
@@ -593,110 +596,6 @@ function Raiz(){
 
 
 
-  /*
-      CREATES ONE <style> TAG AND ADD IT TO THE DOCUMENT HEAD
-      RETURN styleSheet STYLE ELEMENT
-      THE constructor CAN RECEIVE ONE OBJECT WITH RULES AND PROPERTIES:
-      {
-        rule : {
-          property:value,
-          property:value,
-          property:value,
-        },
-        '#id.class>element' : {
-          property:value,
-          property:value,
-          property:value,
-        },
-      }
-      
-      ELEMENT.style ACCESS THE RULES OBJECT
-  */
-  this.Sheet = function(obj){
-    var config = {
-      tag : "style",
-      type : "text/css",
-      parent : document.head
-    };
-    
-    if("$" in obj){
-      for(conf in obj.$){
-        switch(conf){
-          case "media":
-            config.media = obj.$.media;
-            delete obj.$.media;
-          break;
-          
-          case "id":
-            config.id = obj.$.id;
-            delete obj.$.title;
-          break;
-          
-          default:
-            if(conf[0] == "$"){
-              raiz.vars.add(conf, obj.$[conf]);
-              //console.log(conf);
-            }
-        }
-      }
-      delete obj.$;
-    }
-    
-    this.styleTag = raiz.element(config);
-    this.style = this.styleTag.sheet;
-    this.length = this.style.cssRules.length;
-
-    this.rules = function(obj){
-      if(obj !== undefined){
-        //console.log(obj);
-        
-        for(rule in obj){
-          try {
-            this.style.insertRule(rule + "{}", this.length);
-            this.length = this.style.cssRules.length;
-            
-            //console.groupCollapsed(rule);
-            
-            if("float" in obj[rule]){
-              obj[rule]["cssFloat"] = obj[rule]["float"];
-              delete obj[rule]["float"];
-            }
-            
-            if("text" in obj[rule]){
-              obj[rule]["cssText"] = obj[rule]["text"];
-              delete obj[rule]["text"];
-            }
-            
-            if(typeof obj[rule] == "object" ){
-              ruleStyle = this.style.cssRules[this.length - 1].style;
-              
-              for(prop in obj[rule]){
-                if(prop in ruleStyle){
-                  //console.log(prop + ":", obj[rule][prop]);
-                  ruleStyle[prop] = obj[rule][prop];
-                } else {
-                  raiz.bug("THIS BROWSER DOESN'T SUPPORT THE '" + prop + "' PROPERTY.");
-                }
-              }
-              
-              //console.info(ruleStyle);
-            }
-            
-            //console.groupEnd();
-            //console.info(this.style.insertRule('body { background-color: lightgrey }'));
-          
-          }catch(err){
-            //for(a in err) console.info(a, ":", err[a]);
-            //raiz.bug("THIS BROWSER DOESN'T SUPPORT THE '" + prop + "' PROPERTY.");
-            //console.error(err.name + "\n\n" + err.message);
-          }
-          
-        }
-      }
-    };
-    
-    this.rules(obj);
-  };
 
 
   /*
