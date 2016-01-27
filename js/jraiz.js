@@ -23,7 +23,7 @@ function Raiz(){
 		basefont : {},
 		dir : {},
 		font : {},
-		frame : {},
+		'frame' : {},
 		frameset : {},
 		noframes : {},
 		strike : {},
@@ -37,15 +37,15 @@ function Raiz(){
 		canvas : {},
 		datalist : {},
 		dialog : {},
-		keygen : {self:true},
+		keygen : {'self':true},
 		meter : {},
 		output : {},
 		progress : {},
-		source : {self:true},
+		source : {'self':true},
 		time : {},
-		track : {self:true},
+		track : {'self':true},
 		video : {},
-		wbr : {self:true}
+		wbr : {'self':true}
 	};
 
 	//HTML5 SECTIONS
@@ -74,22 +74,22 @@ function Raiz(){
 		a : {},
 		abbr : {},
 		address : {},
-		area : {self:true},
+		'area' : {'self':true},
 		b : {},
-		base : {self:true},
+		base : {'self':true},
 		bdo : {},
 		big : {},
 		blockquote : {},
 		body : {},
-		br : {self:true},
-		button : {},
+		br : {'self':true},
+		'button' : {},
 		caption : {},
 		center : {},
 		cite : {},
 		code : {},
-		col : {self:true},
+		col : {'self':true},
 		colgroup : {},
-		command : {self:true},
+		command : {'self':true},
 		dd : {},
 		del : {},
 		dfn : {},
@@ -97,9 +97,9 @@ function Raiz(){
 		dl : {},
 		dt : {},
 		em : {},
-		embed : {self:true},
+		'embed' : {'self':true},
 		fieldset : {},
-		form : {},
+		'form' : {},
 		h1 : {},
 		h2 : {},
 		h3 : {},
@@ -107,33 +107,33 @@ function Raiz(){
 		h5 : {},
 		h6 : {},
 		head : {},
-		hr : {self:true},
+		hr : {'self':true},
 		//html : {},
 		i : {},
 		iframe : {},
-		img : {self:true},
-		input : {self:true},
+		img : {'self':true},
+		input : {'self':true},
 		ins : {},
 		kbd : {},
 		label : {},
 		legend : {},
 		li : {},
-		link : {self:true},
+		'link' : {'self':true},
 		map : {},
-		meta : {self:true},
+		meta : {'self':true},
 		noscript : {},
 		object : {},
 		ol : {},
 		optgroup : {},
-		option : {},
+		'option' : {},
 		p : {},
-		param : {self:true},
+		param : {'self':true},
 		pre : {},
 		q : {},
 		s : {},
 		samp : {},
 		script : {},
-		select : {},
+		'select' : {},
 		small : {},
 		span : {},
 		strong : {},
@@ -143,7 +143,7 @@ function Raiz(){
 		table : {},
 		tbody : {},
 		td : {},
-		textarea : {},
+		'textarea' : {},
 		tfoot : {},
 		th : {},
 		thead : {},
@@ -153,17 +153,50 @@ function Raiz(){
 		ul : {},
 		'var' : {},
 	};
+
+	/*
+			DEBUGGER FUNCTION
+	*/
+	this.bug = function(err){
+		if(this.debug && err != undefined){
+			var msg = "jRaiz\n";
+			if(Array.isArray(err)){
+				for(var k in err){
+					msg += "\n\t" + err[k];
+				}
+			} else {
+				msg += "\n\t" + err;
+			}
+			console.error( msg );
+		}
+		return false;
+	}
+
+	/*
+			VIEWPORT RESIZE FUNCTION
+	*/
+	this.windowResize = function(ev){
+		raiz.vport_w = window.innerWidth
+		|| document.documentElement.clientWidth
+		|| document.body.clientWidth;
+
+		raiz.vport_h = window.innerHeight
+		|| document.documentElement.clientHeight
+		|| document.body.clientHeight;
+	};
+	
+	this.windowResize();
 	
 	/*
 			BASIC CSS
 	*/
-	this.css = {};
+	this.css = { obj : {} };
 	
 	this.width = 960;
 	this.margin = 10;
 	this.nCols = 12;
 	this.colW = this.width / this.nCols;
-	
+
 	this.structureCSS = {
 		$ : {
 			media : "",
@@ -209,7 +242,7 @@ function Raiz(){
 		body : {
 			color : "#5A6277",
 			fontFamily : "'Helvetica Neue',Helvetica,Arial,sans-serif",
-			fontSize : "12px",
+			fontSize : "14px",
 			lineHeight : "2",
 		},
 		a : {
@@ -226,7 +259,7 @@ function Raiz(){
 		},
 		"h1, h2, h3, h4, h5, h6" : {
 			fontWeight : "500",
-			lineHeight : "1",
+			lineHeight : "1.5",
 			padding : "5px 0px",
 			margin: "10px 0px",
 		},
@@ -260,28 +293,27 @@ function Raiz(){
 		".menubar" : {
 			backgroundColor : "#EEE",
 			margin : "0px",
-			//display : "none",
 		},
-		".menubar>ul" : {
+		".menu" : {
 			fontSize : "16px",
 			margin : "0px auto",
 			padding : "0px",
 			width : (this.width - 2*this.margin)+ 'px',
 		},
-		".menubar>ul>li" : {
+		".menu>li" : {
 			display : "inline-block",
 			listStyle : "none outside none",
-			padding: "8px 2px",
-			marginRight : this.margin*2 + "px",
+			//marginRight : this.margin*2 + "px",
 			textTransform: "capitalize",
 		},
-		".menubar>ul>li>a" : {
+		".menu>li>a" : {
+			display : "block",
+			padding : "10px 20px",
 		},
-		".menubar>ul>li>a:hover" : {
-			
+		".menu>li>a:hover" : {
+			backgroundColor : "#DDD"
 		},
-	};
-	
+	}
 	this.formCSS = {
 		$ : {
 			media : "",
@@ -305,8 +337,14 @@ function Raiz(){
 	};
 	this.modalCSS = {
 		".modal" : {
-			position : "absolute",
-			
+			border : "solid 1px #909090",
+			backgroundColor : "#F9F9F9",
+			height : "200px",
+			position : "fixed",
+			width : "200px",
+			padding : "20px",
+			left : (this.vport_w / 2 - 100) + 'px',
+			'top': (this.vport_h / 2 - 100) + 'px',
 		},
 	};
 	this.fullCSS = {
@@ -322,40 +360,12 @@ function Raiz(){
 		".fullw .header" : {
 			backgroundColor : "#CDE",
 			height : "500px",
+		},
+		".fullh" : {
+			height : this.vport_h + 'px'
 		}
 	};
-
-
-	/*
-			ONLOAD FUNCTION
-	*/
-	window.onload = function(){
-		var children = raiz.body.children;
-		if( children.length > 0 )
-			for( var element in children)
-				document.body.appendChild( children[element] );
-		
-		raiz.body = document.body;
-	};
-
-	/*
-			DEBUGGER FUNCTION
-	*/
-	this.bug = function(err){
-		if(this.debug && err != undefined){
-			var msg = "jRaiz\n";
-			if(Array.isArray(err)){
-				for(var k in err){
-					msg += "\n\t" + err[k];
-				}
-			} else {
-				msg += "\n\t" + err;
-			}
-			console.error( msg );
-		}
-		return false;
-	};
-
+	
 	/*
 			INIT FUNCTION
 	*/
@@ -376,14 +386,14 @@ function Raiz(){
 				]);
 		
 		//IF SECTIONS == TRUE, AUTOMATICALLY SETS TO HTML 5
-		if(config.sections != undefined && config.sections){
+		if('sections' in config && config.sections){
 			config.strict = false;
 			for(var section in this.sections)
 				this.tags[section] = this.sections[section];
 		}
 		
 		//IF CONFIG.STRICT == FALSE ~ HTML 5!
-		if(config.strict != undefined && !config.strict){
+		if( 'strict' in config && !config.strict ){
 			this.strict = false;
 			for(var tag in this.html5)
 				this.tags[tag] = this.html5[tag];
@@ -402,7 +412,7 @@ function Raiz(){
 				this.tags[tag] = this.html4[tag];
 		}
 		
-		if(config.external != undefined && Array.isArray(config.external) ){
+		if( 'external' in config && Array.isArray(config.external) ){
 			for(var k in config.external){
 				var ext = config.external[k].slice(-4);
 				if(ext[1] == "c" && ext[2] == "s" && ext[3] == "s"){ //WHEN CSS
@@ -419,7 +429,7 @@ function Raiz(){
 					if(ext[1] == "."){
 						imprt.src = config.external[k];
 					} else if(ext[1] == "|"){
-						imprt.src = config.external[k].slice(0,-3);
+						imprt.src = config.external[k].slice(0,-3)
 					}
 				}
 				
@@ -428,12 +438,12 @@ function Raiz(){
 			}
 		}
 		
-		if(config.structure != undefined){
+		if( 'structure' in config ){
 			this.nodes(config.structure);
 		}
 		
 		return true;
-	};
+	}
 
 	/*
 			HTML ELEMENT FUNCTION
@@ -481,7 +491,7 @@ function Raiz(){
 		}
 		
 		return Element;
-	};
+	}
 
 	/*
 			NODES FUNCTION
@@ -495,7 +505,7 @@ function Raiz(){
 	this.nodes = function(obj, parent){
 		parent = parent || this.body;
 
-		if(obj == undefined) return this.bug("EMPTY ARGUMENT!");
+		if(obj == undefined) return this.bug("EMPTY ARGUMENT FOR nodes()");
 		
 		if(typeof obj == "object")
 			for(var k in obj){
@@ -541,6 +551,41 @@ function Raiz(){
 			}
 		
 		return this;
+	};
+	
+	this.cssParser = function(str){
+		//console.log(arguments);
+		//elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d]+[\'\"]\]|[\w]+|#[\w]+|\.[\w]+/g);
+		elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d]+[\'\"]\]|[#.:]*\w+/g);
+		fncs = {
+			'#' : function(inp){elem.$.id = inp.slice(1);},
+			'.' : function(inp){elem.$.classes += ' '+inp.slice(1);},
+			'[' : function(inp){
+				a = inp.match(/\w+|[\=\!\~\|\^\$\*]+/g);
+				console.log(a);
+				elem.$.attrs.push(a);
+				},
+		};
+		elem = {$ : {id : '', classes : '', attrs : [] } };
+		if(elemSelector != null){
+			console.log(elemSelector);
+			for(i in elemSelector){
+				firstC = elemSelector[i][0];
+				item = elemSelector[i];
+				//console.log(firstC);
+				if(firstC in fncs) fncs[firstC](item);
+					else elem.$.tag = item;
+			}
+			console.log(elem);
+		}
+		return str;
+	};
+	
+	this.fromSelector = function(selector){
+		//mt = selc.match(/[\w\#\.\:\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g);
+		mt = selc.replace(/[\w\#\.\:\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.cssParser);
+		console.info(selc, mt);
+
 	};
 
 	/*
@@ -609,7 +654,7 @@ function Raiz(){
 						
 						if("float" in obj[rule]){
 							obj[rule]["cssFloat"] = obj[rule]["float"];
-							delete obj[rule]["float"];
+							delete obj[rule]["float"]
 						}
 						
 						if("text" in obj[rule]){
@@ -656,7 +701,7 @@ function Raiz(){
 				RETURN PAGE
 	*/
 	this.page = function(){
-	};
+	}
 
 	/*
 			MODAL FUNCTION
@@ -666,10 +711,17 @@ function Raiz(){
 	*/
 	this.modal = function(){
 		
-	};
+	}
 
 	/*
 			LOGO FUNCTION
+			ops = {
+				id : newID,
+				classes : newClasses,
+				link : url,
+				title : link title,
+				h1 : 
+			}
 	*/
 	this.logo = function(ops){
 		ops = ops || {};
@@ -678,16 +730,21 @@ function Raiz(){
 		ops.link = ops.link || "/";
 		ops.title = ops.title || "Home";
 		ops.h1 = ops.h1 == undefined ? true : ops.h1;
+		ops.img = ops.img || false;
 		
-		var logo = {},
-				c = {
-					id : ops.id,
-					classes : ops.classes
-				},
-				link = {
+		var
+			logo = {},
+			c = {
+				id : ops.id,
+				classes : ops.classes
+			},
+			link = {
+				$ : {
 					href : ops.link,
 					title : ops.title
-				};
+					//text : ops.
+				}
+			};
 		
 		if(ops.h1){
 			logo["h1"] = {
@@ -706,8 +763,16 @@ function Raiz(){
 			MENU FUNCTION
 	*/
 	this.menu = function(ops){
-		var bt,
+		var btTemplate = function(){return {$ : {tag : "li"}, a : { $ : {text : 'Button'} } } },
 				menuNode = {$:{tag : "ul", classes : "menu"}};
+		
+		if(ops == undefined){
+			for(i = 1; i <= 5; i++){
+				menuNode['bt_' + i] = btTemplate();
+				menuNode['bt_' + i].a.$.href = "#";
+			}
+			return menuNode;
+		}
 				
 		if("$" in ops){
 			for(conf in ops.$){
@@ -724,8 +789,9 @@ function Raiz(){
 		}
 		
 		for(item in ops){
-			console.log(item, ops[item]);
-			bt = {$ : {tag : "li"}, a : { $ : {text : item} } };
+			bt = btTemplate();
+			bt.a.$.text = item;
+			
 			if(typeof ops[item] === "object"){
 				for(conf in ops[item] ){
 					switch (conf){
@@ -744,6 +810,52 @@ function Raiz(){
 		
 		return menuNode;
 	};
+	
+	this.menubar = function(ops){
+		var menubar = {
+			$ : {
+				classes : "menubar"
+			},
+			header : {
+				$ : {},
+				inner : {
+					logo : this.logo(),
+					
+				}
+			},
+			menu : this.menu(),
+		};
+		
+		if(ops == undefined) return menubar;
+		
+		var ops = ops || {};
+	
+		if('header' in ops){
+			menubar.$.classes += " fullw";
+			menubar.header = { $ : {} };
+		} else {
+			delete menubar.header;
+		}
+		
+		if('menu' in ops && typeof ops.menu == 'object' ){
+			menubar.menu = this.menu(ops.menu);
+		}
+		
+		return menubar;
+	}
+	
+	console.log( this.menubar() );
+	
+	console.log( this.menubar({
+		//header : {},
+		menu : {
+			home : {url : "#",},
+			a_empresa : {url : "#", label : "A Empresa"},
+			produtos : {url : "#",},
+			localizacao : {url : "#", label : "Localização"},
+			contato : {url : "#",},
+		}
+	}) );
 
 	/*		
 			FORM FUNCTION
@@ -785,7 +897,7 @@ function Raiz(){
 						formNode.$.onsubmit = function(ev){
 							console.info(ev);
 							return false;
-						};
+						}
 					break;
 					
 					case "post":
@@ -837,8 +949,8 @@ function Raiz(){
 		formNode.reset.$.value = form.reset.label || "Clear";
 		
 		//console.info(formNode, this.formFields.submit);
-		return formNode;
-	};
+		return formNode
+	}
 
 	/*
 			VARS OBJECT
@@ -940,7 +1052,7 @@ function Raiz(){
 				exprArr.push( raiz.vars.expression(finalMatch) );
 				
 				return finalMatch;
-			};
+			}
 		},
 		
 		css : function(rule, parent){
@@ -985,6 +1097,25 @@ function Raiz(){
 	for(func in this.vars)
 		Object.defineProperty(this.vars, func, {enumerable : false, writable : false});
 
+	/*
+			ONLOAD EVENT LISTENER
+	*/
+	this.windowLoad = function(ev){
+		var children = raiz.body.children;
+		if( children.length > 0 )
+			for( var element in children)
+				document.body.appendChild( children[element] );
+		
+		raiz.body = document.body;
+	};
+	
+	window.addEventListener('load', this.windowLoad );
+
+	/*
+			ONRESIZE EVENT LISTENER
+	*/
+	window.addEventListener('resize', this.windowResize );
+	
 /*
 		TREE END
 */
