@@ -1,3 +1,6 @@
+j.debug = true;
+
+
 cssRules  = {
 	$ : {
 		media : "screen and (min-width:800px)",
@@ -62,7 +65,7 @@ struct = {
 	modal : {
 		button : {
 			$ : {
-				onclick : function(e){console.log(e)},
+				onclick : function(e){console.log(e);},
 				classes : "super classes",
 				id : "inpID",
 				text : "SUPER BUTTON",
