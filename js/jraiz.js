@@ -427,8 +427,53 @@ j.element = function(ops){
  
 };
 
-j.nodes = function(){
+j.nodes = function(obj, parent){
+  parent = parent || j.body;
+
+  if(obj == undefined) return j.bug("EMPTY ARGUMENT!");
   
+  if(obj instanceof Object){    
+    for(var k in obj){
+      if(obj[k] instanceof Object && "$" in obj[k]) ops = obj[k].$;
+        else ops = {};
+
+      ops.classes = ops.classes || "";
+      
+      switch(k){
+        case "$":
+          for(v in obj[k]){
+            //WHEN $VARS
+            if(v[0] == '$'){
+              j.vars.add(v, obj[k][v]);
+            } else if(v == "css"){
+              j.vars.css(obj[k][v], parent);
+            }
+          }
+        break;
+        
+        case "text":
+          try {
+            parent.textContent += obj[k];
+          } catch (e) {
+            parent.innerText += obj[k];
+          }
+        break;
+        
+        case "html":
+          parent.innerHTML += obj[k];
+        break;
+        
+        default:
+          if(k in j.modes.tags) ops.tag = k;
+            else ops.classes += ' ' + k;
+
+          var Element = j.element(ops);
+          parent.appendChild(Element);
+          j.nodes(obj[k], Element);
+      }
+      
+    }
+  }
 };
 
 
@@ -458,54 +503,6 @@ window.addEventListener('load', j.windowLoad);
 function Raiz(){
 
 
-
-  /*
-      HTML ELEMENT FUNCTION
-      - VERIFIES IF THE TAG BELONGS TO STRICT
-      - VERIFIES IF THE TAG BELONGS TO HTML 5
-      - CREATES ELEMENT AND NODE NAME
-      - ADD CLASSES TO ELEMENT
-      - ADD TEXT NODE ONLY IF IT'S NOT SELF CLOSING TAG
-      - ITERATE ELEMENT ATTRIBUTES
-      - RETURN ELEMENT
-  */
-  this.element = function(ops){
-    ops = ops || {};
-    ops.tag = ops.tag || "div";
-    
-    if(this.strict && this.tags[ops.tag] == undefined)
-      return this.bug("STRICT HTML DOES NOT ALLOW THE TAG: " + ops.tag);
-    
-    if(!this.strict && ops.tag in this.html4)
-      return this.bug("HTML 5 DOES NOT ALLOW THE TAG: " + ops.tag);
-    
-    var Element = document.createElement(ops.tag),
-        nodeName = Element.nodeName.toLowerCase();
-    
-    if(ops.classes != undefined) Element.className += ops.classes.trim();
-    
-    //SELF CLOSING TAGS
-    if(ops.text != undefined && !('self' in this.tags[nodeName]) )
-      Element.appendChild( document.createTextNode(ops.text));
-    
-    for(var attr in ops){
-      try{
-        if(attr in Element) Element[attr] = ops[attr];
-      } catch(e){
-        return this.bug([
-          "THE ELEMENT: " + Element,
-          "DOES NOT ACCEPT THE ATTRIBUTE: " + attr,
-          "WITH THIS VALUE: " + ops[attr]
-          ]);
-      }
-    }
-    
-    if("parent" in ops){
-      ops.parent.appendChild(Element);
-    }
-    
-    return Element;
-  };
 
   /*
       NODES FUNCTION
