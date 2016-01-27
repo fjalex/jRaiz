@@ -329,14 +329,14 @@ j.init = function(config){
       ]);
   
   //IF SECTIONS == TRUE, AUTOMATICALLY SETS TO HTML 5
-  if(config.sections != undefined && config.sections){
+  if('sections' in config && config.sections){
     config.strict = false;
     for(var section in j.sections)
       j.tags[section] = j.sections[section];
   }
   
   //IF CONFIG.STRICT == FALSE ~ HTML 5!
-  if(config.strict != undefined && !config.strict){
+  if('strict' in config && !config.strict){
     j.strict = false;
     for(var tag in j.html5)
       j.tags[tag] = j.html5[tag];
@@ -355,7 +355,7 @@ j.init = function(config){
       j.tags[tag] = j.html4[tag];
   }
   
-  if(config.external != undefined && Array.isArray(config.external) ){
+  if('external' in config && Array.isArray(config.external) ){
     for(var k in config.external){
       var ext = config.external[k].slice(-4);
       if(ext[1] == "c" && ext[2] == "s" && ext[3] == "s"){ //WHEN CSS
@@ -390,6 +390,28 @@ j.init = function(config){
 
 j.nodes = function(){};
 j.element = function(){};
+
+/*
+ *  WINDOW LOAD FUNCTION 
+ * */
+j.windowLoad = function(){
+  var children = j.body.children;
+  if( children.length > 0 )
+    for(var element in children)
+      document.body.appendChild( children[element] );
+  
+  j.body = document.body;
+}
+
+window.addEventListener('load', j.windowLoad);
+
+/*
+ *  WINDOW RESIZE FUNCTION
+ * */
+
+
+
+
 
 
 function Raiz(){
