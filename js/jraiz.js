@@ -292,9 +292,97 @@ j.css = {
   }
 };
 
+j.css.__sheet = function(obj){
+
+  var config = {
+    tag : "style",
+    type : "text/css",
+    parent : document.head
+  };
+  
+  if("$" in obj){
+    for(conf in obj.$){
+      switch(conf){
+        case "media":
+          config.media = obj.$.media;
+          delete obj.$.media;
+        break;
+        
+        case "id":
+          config.id = obj.$.id;
+          delete obj.$.title;
+        break;
+        
+        default:
+          if(conf[0] == "$"){
+            j.vars.add(conf, obj.$[conf]);
+            //console.log(conf);
+          }
+      }
+    }
+    delete obj.$;
+  }
+  
+  this.styleTag = j.element(config);
+  this.style = this.styleTag.sheet;
+  this.length = this.style.cssRules.length;
+
+  this.rules = function(obj){
+    if(obj !== undefined){
+      //console.log(obj);
+      
+      for(rule in obj){
+        try {
+          this.style.insertRule(rule + "{}", this.length);
+          this.length = this.style.cssRules.length;
+          
+          //console.groupCollapsed(rule);
+          
+          if("float" in obj[rule]){
+            obj[rule]["cssFloat"] = obj[rule]["float"];
+            delete obj[rule]["float"];
+          }
+          
+          if("text" in obj[rule]){
+            obj[rule]["cssText"] = obj[rule]["text"];
+            delete obj[rule]["text"];
+          }
+          
+          if(typeof obj[rule] == "object" ){
+            ruleStyle = this.style.cssRules[this.length - 1].style;
+            
+            for(prop in obj[rule]){
+              if(prop in ruleStyle){
+                //console.log(prop + ":", obj[rule][prop]);
+                ruleStyle[prop] = obj[rule][prop];
+              } else {
+                j.bug("THIS BROWSER DOESN'T SUPPORT THE '" + prop + "' PROPERTY.");
+              }
+            }
+            
+            //console.info(ruleStyle);
+          }
+          
+          //console.groupEnd();
+          //console.info(this.style.insertRule('body { background-color: lightgrey }'));
+        
+        }catch(err){
+          //for(a in err) console.info(a, ":", err[a]);
+          //j.bug("THIS BROWSER DOESN'T SUPPORT THE '" + prop + "' PROPERTY.");
+          //console.error(err.name + "\n\n" + err.message);
+        }
+        
+      }
+    }
+  };
+  
+  this.rules(obj);
+};
+
+
 with(j.css.__base){
   for(i = 1; i <= j.grid.nCols; i++){
-    j.css.__base.structureCSS[".col_" + i] = { width : j.grid.colW * i - ( 2 * j.grid.margin ) + "px" };
+    structureCSS[".col_" + i] = { width : j.grid.colW * i - ( 2 * j.grid.margin ) + "px" };
     
     if(i == 12) continue; //EXCLUDES 12th CLASSES
   
@@ -504,65 +592,6 @@ function Raiz(){
 
 
 
-  /*
-      NODES FUNCTION
-      - GETS OBJ
-      - TEST IF CONFIGURATION ($)
-      - TEST IF TEXT OR HTML CODE
-      - TEST IF TAG NAME EXISTS
-      - IF NOT A TAG NAME, CREATES A DIV
-      - APPEND NEW ELEMENT TO PARENT;
-  */
-  this.nodes = function(obj, parent){
-    parent = parent || this.body;
-
-    if(obj == undefined) return this.bug("EMPTY ARGUMENT!");
-    
-    if(typeof obj == "object")
-      for(var k in obj){
-
-        if(typeof obj[k] == "object" && "$" in obj[k]) ops = obj[k].$;
-          else ops = {};
-
-        ops.classes = ops.classes || "";
-        
-        switch(k){
-          case "$":
-            for(v in obj[k]){
-              //WHEN $VARS
-              if(v[0] == '$'){
-                this.vars.add(v, obj[k][v]);
-              } else if(v == "css"){
-                this.vars.css(obj[k][v], parent);
-              }
-            }
-          break;
-          
-          case "text":
-            try {
-              parent.textContent += obj[k];
-            } catch (e) {
-              parent.innerText += obj[k];
-            }
-          break;
-          
-          case "html":
-            parent.innerHTML += obj[k];
-          break;
-          
-          default:
-            if(k in this.tags) ops.tag = k;
-              else ops.classes += ' ' + k;
-
-            var Element = this.element(ops);
-            parent.appendChild(Element);
-            this.nodes(obj[k], Element);
-        }
-        
-      }
-    
-    return this;
-  };
 
   /*
       CREATES ONE <style> TAG AND ADD IT TO THE DOCUMENT HEAD
