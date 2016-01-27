@@ -664,7 +664,7 @@ catch(e){
 	var Element = document.createElement(code);
 }
 finally{
-	console.log(Element)
+	console.log(Element);
 }
 
 
@@ -675,7 +675,19 @@ finally{
 *
 */
 a = document.createElement("link");
-a.type = "text/css"
-a.rel = "stylesheet"
-a.href = "data:text/css;charset=utf-8, body { background-color:red; }"
+a.type = "text/css";
+a.rel = "stylesheet";
+a.href = "data:text/css;charset=utf-8, body { background-color:red; }";
 document.head.appendChild(a);
+
+
+/*
+*
+* FUNCTION RETURNING ITSELF 
+*
+*/
+a = {
+  f : function(){
+    return this.f;
+  }
+};
