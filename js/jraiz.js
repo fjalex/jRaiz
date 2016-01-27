@@ -162,11 +162,13 @@ j.grid = {
   width : 960,
   margin : 10,
   nCols : 12,
-  colW : this.width / this.nCols,
+  colW : j.grid.width / j.grid.nCols,
 };
 
 j.css = {
   __base : {
+    i : 0,
+    
     structure : {
       $ : {
         media : "",
@@ -178,13 +180,13 @@ j.css = {
       },
       ".container" : {
         margin: "0px auto",
-        width: this.width + 'px',
+        width: j.grid.width + 'px',
       },
       ".cols" : {
         //backgroundColor : "lightgrey", // EXAMPLE
         float : "left",
         minHeight : "40px", // EXAMPLE
-        margin : "0px " + this.margin + "px 10px",
+        margin : "0px " + j.grid.margin + "px 10px",
       },
       ".clear" : {
         clear : "both",
@@ -192,7 +194,7 @@ j.css = {
       }
     },
     
-    textCSS : {
+    text : {
       $ : {
         media : "",
         id : "text_css"
@@ -243,7 +245,7 @@ j.css = {
       },
     }
 
-    formCSS : {
+    form : {
       $ : {
         media : "",
         id : "form_css"
@@ -265,14 +267,14 @@ j.css = {
       },
     },
     
-    modalCSS : {
+    modal : {
       ".modal" : {
         position : "absolute",
         
       },
     },
     
-    fullCSS : {
+    full : {
       $ : {
         media : "",
         id : "full_width_height_css"
@@ -290,219 +292,34 @@ j.css = {
   }
 };
 
-for(j.i = 1; j.i <= this.nCols; j.i++){
-  this.structureCSS[".col_" + j.i] = { width : this.colW * j.i - (2*this.margin) + "px" };
+with(j.css.__base){
+  for(i = 1; i <= j.grid.nCols; i++){
+    j.css.__base.structureCSS[".col_" + i] = { width : j.grid.colW * i - ( 2 * j.grid.margin ) + "px" };
+    
+    if(i == 12) continue; //EXCLUDES 12th CLASSES
   
-  if(j.i == 12) continue; //EXCLUDES 12th CLASSES
-
-  this.structureCSS[".mleft_" + j.i] = { marginLeft : this.colW * j.i + this.margin + "px" };
-  this.structureCSS[".mright_" + j.i] = { marginRight : this.colW * j.i + this.margin + "px" };
-
-  //this.structureCSS[".pleft_" + j.i] = { display: "block", paddingLeft : this.colW * j.i + "px" };
-  //this.structureCSS[".pright_" + j.i] = { paddingRight : this.colW * j.i + "px" };
+    structureCSS[".mleft_" + i] = { marginLeft : j.grid.colW * i + j.grid.margin + "px" };
+    structureCSS[".mright_" + i] = { marginRight : j.grid.colW * i + j.grid.margin + "px" };
+  
+    //structureCSS[".pleft_" + i] = { display: "block", paddingLeft : j.grid.colW * i + "px" };
+    //structureCSS[".pright_" + i] = { paddingRight : j.grid.colW * i + "px" };
+  }
 }
 
 
 j.body = {
   appendChild : function( element ){
-    this.children.push( element );
+    j.body.children.push( element );
   },
   children : []
 };
 
+j.init = function(){};
 j.nodes = function(){};
 j.element = function(){};
 
 
 function Raiz(){
-  //PROTOTYPE REFERENCE
-  var raiz = this;
-
-  //DEBUG MODE
-  this.debug = false;
-  
-  //STRICT ~ HTML5 = false | HTML4 = true
-  this.strict = true;
-  
-  //FAKE BODY TAG
-  this.body = {
-    appendChild : function( element ){
-      this.children.push( element );
-    },
-    children : []
-  };
-  
-  
-  /*
-      BASIC CSS
-  */
-  this.css = {};
-  
-  this.width = 960;
-  this.margin = 10;
-  this.nCols = 12;
-  this.colW = this.width / this.nCols;
-  
-  this.structureCSS = {
-    $ : {
-      media : "",
-      id : "basic_css"
-    },
-    "body" : {
-      margin : "0px",
-      padding : "0px",
-    },
-    ".container" : {
-      margin: "0px auto",
-      width: this.width + 'px',
-    },
-    ".cols" : {
-      //backgroundColor : "lightgrey", // EXAMPLE
-      float : "left",
-      minHeight : "40px", // EXAMPLE
-      margin : "0px " + this.margin + "px 10px",
-    },
-    ".clear" : {
-      clear : "both",
-      display : "block",
-    }
-  };
-  
-  for(i = 1; i <= this.nCols; i++){
-    this.structureCSS[".col_" + i] = { width : this.colW * i - (2*this.margin) + "px" };
-    
-    if(i == 12) continue; //EXCLUDES 12th CLASSES
-
-    this.structureCSS[".mleft_" + i] = { marginLeft : this.colW * i + this.margin + "px" };
-    this.structureCSS[".mright_" + i] = { marginRight : this.colW * i + this.margin + "px" };
-
-    //this.structureCSS[".pleft_" + i] = { display: "block", paddingLeft : this.colW * i + "px" };
-    //this.structureCSS[".pright_" + i] = { paddingRight : this.colW * i + "px" };
-  }
-  
-  this.textCSS = {
-    $ : {
-      media : "",
-      id : "text_css"
-    },
-    body : {
-      color : "#5A6277",
-      fontFamily : "'Helvetica Neue',Helvetica,Arial,sans-serif",
-      fontSize : "12px",
-      lineHeight : "2",
-    },
-    a : {
-      color : "#2E4172",
-      textDecoration : "none",
-    },
-    "a:hover" : {
-      color : "#4F628E",
-    },
-    p : {
-      marginBottom : "20",
-      //padding : "5px",
-      textAlign : "justify",
-    },
-    "h1, h2, h3, h4, h5, h6" : {
-      fontWeight : "500",
-      lineHeight : "1",
-      padding : "5px 0px",
-      margin: "10px 0px",
-    },
-    h1 : {
-      fontSize : "36px",
-    },
-    h2 : {
-      fontSize : "30px",
-    },
-    h3 : {
-      fontSize : "26px",
-    },
-    h4 : {
-      fontSize : "20px",
-    },
-    h5 : {
-      fontSize : "16px",
-      fontWeight : "600",
-    },
-    h6 : {
-      fontSize : "14px",
-      fontWeight : "600",
-    },
-  };
-
-  this.menuCSS = {
-    $ : {
-      media : "",
-      id : "menu_css"
-    },
-    ".menubar" : {
-      backgroundColor : "#EEE",
-      margin : "0px",
-      //display : "none",
-    },
-    ".menubar>ul" : {
-      fontSize : "16px",
-      margin : "0px auto",
-      padding : "0px",
-      width : (this.width - 2*this.margin)+ 'px',
-    },
-    ".menubar>ul>li" : {
-      display : "inline-block",
-      listStyle : "none outside none",
-      padding: "8px 2px",
-      marginRight : this.margin*2 + "px",
-      textTransform: "capitalize",
-    },
-    ".menubar>ul>li>a" : {
-    },
-    ".menubar>ul>li>a:hover" : {
-      
-    },
-  };
-  
-  this.formCSS = {
-    $ : {
-      media : "",
-      id : "form_css"
-    },
-    "form>label " : {
-      display : "block",
-      padding : "10px",
-    },
-    "form>label>*" : {
-      display : "inline-block",
-      width : "400px",
-      verticalAlign: "top",
-      textTransform: "capitalize",
-    },
-    "form>label>span" : {
-      padding : "0px 20px",
-      width : "100px",
-      textAlign: "right"
-    },
-  };
-  this.modalCSS = {
-    ".modal" : {
-      position : "absolute",
-      
-    },
-  };
-  this.fullCSS = {
-    $ : {
-      media : "",
-      id : "full_width_height_css"
-    },
-    ".fullw" : {
-      marginLeft : "0px",
-      marginRight : "0px",
-      width : "100%",
-    },
-    ".fullw .header" : {
-      backgroundColor : "#CDE",
-      height : "500px",
-    }
-  };
 
 
   /*
