@@ -314,7 +314,80 @@ j.body = {
   children : []
 };
 
-j.init = function(){};
+j.init = function(config){
+  with(j.css){
+    for(cssObjName in __base){
+      j.css[cssObjName] = new __sheet( __base(cssObjName) );
+    }
+  }
+  
+  //BUG
+  if(config == undefined)
+    return j.bug([
+      "YOU MUST CALL init() WITH A CONFIGURATION OBJECT!",
+      "SOMETHING LIKE THIS: init({var1: val, var2: val})"
+      ]);
+  
+  //IF SECTIONS == TRUE, AUTOMATICALLY SETS TO HTML 5
+  if(config.sections != undefined && config.sections){
+    config.strict = false;
+    for(var section in j.sections)
+      j.tags[section] = j.sections[section];
+  }
+  
+  //IF CONFIG.STRICT == FALSE ~ HTML 5!
+  if(config.strict != undefined && !config.strict){
+    j.strict = false;
+    for(var tag in j.html5)
+      j.tags[tag] = j.html5[tag];
+    
+    var nodeDoctype = document.implementation.createDocumentType("HTML","","");
+    if(document.doctype) {
+      document.replaceChild(nodeDoctype, document.doctype);
+    } else {
+      document.insertBefore(nodeDoctype, document.childNodes[0]);
+    }
+  }
+  
+  //IF STRICT == TRUE ~ HTML 4
+  if(j.strict){
+    for(var tag in j.html4)
+      j.tags[tag] = j.html4[tag];
+  }
+  
+  if(config.external != undefined && Array.isArray(config.external) ){
+    for(var k in config.external){
+      var ext = config.external[k].slice(-4);
+      if(ext[1] == "c" && ext[2] == "s" && ext[3] == "s"){ //WHEN CSS
+        var imprt = {tag: "link", rel: "stylesheet"};
+        
+        if(ext[0] == "."){
+          imprt.href = config.external[k]; //WHEN .CSS
+        } else if(ext[0] == "|"){
+          imprt.href = config.external[k].slice(0,-4); //WHEN |CSS
+        }
+      } else if(ext[2] == "j" && ext[3] == "s"){ //WHEN JS
+        var imprt = {tag: "script", type: "text/javascript"};
+        
+        if(ext[1] == "."){
+          imprt.src = config.external[k];
+        } else if(ext[1] == "|"){
+          imprt.src = config.external[k].slice(0,-3);
+        }
+      }
+      
+      imprt = j.element(imprt);
+      document.head.appendChild(imprt);
+    }
+  }
+  
+  if(config.structure != undefined){
+    j.nodes(config.structure);
+  }
+  
+  return true;
+};
+
 j.nodes = function(){};
 j.element = function(){};
 
