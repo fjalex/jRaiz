@@ -939,3 +939,14 @@ function Raiz(){
 */
   return this;
 }
+
+
+//NOTATION
+function rz(){
+  this.z = function(){}
+  this.z.ddd = {};
+  
+  return this.z;
+}
+a = new rz();
+console.log(a);
