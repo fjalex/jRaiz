@@ -8,7 +8,7 @@ j.bug = function(err){
   if(j.debug && err != undefined){
     var msg = "jRaiz\n";
     
-    if(err instaceof Array){
+    if(err instanceof Array){
       for(var k in err){
         msg += "\n\t" + err[k];
       }
@@ -165,8 +165,8 @@ j.grid = {
   width : 960,
   margin : 10,
   nCols : 12,
-  colW : j.grid.width / j.grid.nCols,
 };
+j.grid.colW = j.grid.width / j.grid.nCols,
 
 j.css = {
   __base : {
@@ -246,7 +246,7 @@ j.css = {
         fontSize : "14px",
         fontWeight : "600",
       },
-    }
+    },
 
     form : {
       $ : {
@@ -385,15 +385,15 @@ j.css.__sheet = function(obj){
 
 with(j.css.__base){
   for(i = 1; i <= j.grid.nCols; i++){
-    structureCSS[".col_" + i] = { width : j.grid.colW * i - ( 2 * j.grid.margin ) + "px" };
+    structure[".col_" + i] = { width : j.grid.colW * i - ( 2 * j.grid.margin ) + "px" };
     
     if(i == 12) continue; //EXCLUDES 12th CLASSES
   
-    structureCSS[".mleft_" + i] = { marginLeft : j.grid.colW * i + j.grid.margin + "px" };
-    structureCSS[".mright_" + i] = { marginRight : j.grid.colW * i + j.grid.margin + "px" };
+    structure[".mleft_" + i] = { marginLeft : j.grid.colW * i + j.grid.margin + "px" };
+    structure[".mright_" + i] = { marginRight : j.grid.colW * i + j.grid.margin + "px" };
   
-    //structureCSS[".pleft_" + i] = { display: "block", paddingLeft : j.grid.colW * i + "px" };
-    //structureCSS[".pright_" + i] = { paddingRight : j.grid.colW * i + "px" };
+    //structure[".pleft_" + i] = { display: "block", paddingLeft : j.grid.colW * i + "px" };
+    //structure[".pright_" + i] = { paddingRight : j.grid.colW * i + "px" };
   }
 }
 
@@ -939,10 +939,3 @@ function Raiz(){
 */
   return this;
 }
-
-
-/*
-    INITIALIZATION
-*/
-j = new Raiz();
-j.debug = true;
