@@ -729,7 +729,9 @@ a.apiFunc(16);
 
 /*
 *
-* KIND OF MAGIC METHODS/PROPERTIES
+* KIND OF MAGIC METHODS
+* MORE OF A CACHE OF OBJECTS.
+* WHEN A UNDEFINED OBJECT PROPERTY IS CALLED, IT IS AUTOMATICALLY CREATED
 *
 */
 masked = {
@@ -738,11 +740,61 @@ masked = {
   }
 };
 api = function(name){
+  return masked[name];
+  /*
   if(name in masked)
     return masked[name];
   else
-    return masked[name] = new Function('msg', 'console.log(msg);');
-}
+    return masked[name];
+    //return masked[name] = new Function('msg', 'console.log(msg);');
+    */
+};
 api('a')('calling a');
 api('x')('calling x');
 console.log(masked);
+
+/*
+*
+* FUNCTION AS OBJECT PROTOTYPE
+* BETTER THAN OBJECT
+*
+*/
+a = function(){
+  x = 30;
+  console.log(this.a.e, this.a.p);
+  return this.a.e + this.a.p + x;
+};
+a.e = 50;
+a.p = 90;
+a.r = function(){
+  console.log(this, this.e, this.p ); //THIS ACCESS PARENT FUNCTION ~ a
+};
+a.r();
+
+//console.log(a, a.e, a.p);
+t = a();
+
+/*
+*
+* FUNCTION CONSTRUCTOR 
+* Without the new operator, Function gives exactly the same result.
+* You can use array functions like push(), unshift() or splice()
+* to modify the array before passing it to apply. 
+*
+*/
+args = ['a', 'b', 'return(a + b);'];
+myFunc = Function.apply(null, args);
+
+/*
+*
+* MAIN OBJECT NOT WRITABLE/CONFIGURABLE
+*
+*/
+__super = function(){
+  
+};
+Object.defineProperty(window, '__super', {writable : true, enumerable : false, configurable : false});
+__super.e = 50;
+console.log(__super);
+console.log(window);
+
