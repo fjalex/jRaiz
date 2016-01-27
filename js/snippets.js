@@ -704,7 +704,7 @@ var obj2 = {
   bar: "obj2"
 };
 
-foo.call( obj2 );   // "obj2"
+foo.call( obj2 );   // "obj2" ~ this === obj2
 
 
 /*
@@ -772,7 +772,12 @@ a.r = function(){
 a.r();
 
 //console.log(a, a.e, a.p);
-t = a();
+a();
+
+//Examples
+a('tag#id.class').actions();
+a.tag#id.actions();
+a['tag#id.class'].actions();
 
 /*
 *
