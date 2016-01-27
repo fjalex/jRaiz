@@ -691,3 +691,58 @@ a = {
     return this.f;
   }
 };
+
+/*
+*
+* FUNCTION CALL METHOD
+*
+*/
+function foo() {
+  console.log( this.bar );
+}
+var obj2 = {
+  bar: "obj2"
+};
+
+foo.call( obj2 );   // "obj2"
+
+
+/*
+*
+* CLOSURE 
+*
+*/
+    
+Closure = function(a){
+  var x = 40;
+  
+  return {
+    apiFunc : function(b){
+      console.info(a,x,b);
+      return b*a;
+    }
+  };
+};
+
+a = Closure(8);
+a.apiFunc(16);
+
+/*
+*
+* KIND OF MAGIC METHODS/PROPERTIES
+*
+*/
+masked = {
+  a : function(msg){
+    console.log(msg);
+  }
+};
+api = function(name){
+  if(name in masked)
+    return masked[name];
+  else
+    return masked[name] = new Function('msg', 'console.log(msg);');
+}
+api('a')('calling a');
+api('x')('calling x');
+console.log(masked);
