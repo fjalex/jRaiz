@@ -280,7 +280,8 @@ function Raiz(){
 		".menubar>ul>li>a:hover" : {
 			
 		},
-	}
+	};
+	
 	this.formCSS = {
 		$ : {
 			media : "",
@@ -353,7 +354,7 @@ function Raiz(){
 			console.error( msg );
 		}
 		return false;
-	}
+	};
 
 	/*
 			INIT FUNCTION
@@ -418,7 +419,7 @@ function Raiz(){
 					if(ext[1] == "."){
 						imprt.src = config.external[k];
 					} else if(ext[1] == "|"){
-						imprt.src = config.external[k].slice(0,-3)
+						imprt.src = config.external[k].slice(0,-3);
 					}
 				}
 				
@@ -432,7 +433,7 @@ function Raiz(){
 		}
 		
 		return true;
-	}
+	};
 
 	/*
 			HTML ELEMENT FUNCTION
@@ -480,7 +481,7 @@ function Raiz(){
 		}
 		
 		return Element;
-	}
+	};
 
 	/*
 			NODES FUNCTION
@@ -540,7 +541,7 @@ function Raiz(){
 			}
 		
 		return this;
-	}
+	};
 
 	/*
 			CREATES ONE <style> TAG AND ADD IT TO THE DOCUMENT HEAD
@@ -608,7 +609,7 @@ function Raiz(){
 						
 						if("float" in obj[rule]){
 							obj[rule]["cssFloat"] = obj[rule]["float"];
-							delete obj[rule]["float"]
+							delete obj[rule]["float"];
 						}
 						
 						if("text" in obj[rule]){
@@ -655,7 +656,7 @@ function Raiz(){
 				RETURN PAGE
 	*/
 	this.page = function(){
-	}
+	};
 
 	/*
 			MODAL FUNCTION
@@ -665,7 +666,7 @@ function Raiz(){
 	*/
 	this.modal = function(){
 		
-	}
+	};
 
 	/*
 			LOGO FUNCTION
@@ -699,7 +700,7 @@ function Raiz(){
 		}
 		
 		return logo;
-	}
+	};
 
 	/*
 			MENU FUNCTION
@@ -742,7 +743,7 @@ function Raiz(){
 		}
 		
 		return menuNode;
-	}
+	};
 
 	/*		
 			FORM FUNCTION
@@ -784,7 +785,7 @@ function Raiz(){
 						formNode.$.onsubmit = function(ev){
 							console.info(ev);
 							return false;
-						}
+						};
 					break;
 					
 					case "post":
@@ -836,8 +837,8 @@ function Raiz(){
 		formNode.reset.$.value = form.reset.label || "Clear";
 		
 		//console.info(formNode, this.formFields.submit);
-		return formNode
-	}
+		return formNode;
+	};
 
 	/*
 			VARS OBJECT
@@ -939,7 +940,7 @@ function Raiz(){
 				exprArr.push( raiz.vars.expression(finalMatch) );
 				
 				return finalMatch;
-			}
+			};
 		},
 		
 		css : function(rule, parent){
