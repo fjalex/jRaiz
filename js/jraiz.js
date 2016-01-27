@@ -2,6 +2,12 @@ function j(selector){
   
 }
 
+/*
+* 
+* DEBUG FUNCTION
+* bug(str) | bug([strLine, strLine, strLine])
+* 
+* */
 j.debug = false;
 
 j.bug = function(err){
@@ -23,6 +29,16 @@ j.bug = function(err){
 };
 
 
+/*
+* 
+* HTML TAGS {
+*   strict    when true ~ html4 | when false ~ html5   
+*   html4     tags only present in html4
+*   html5     tags only present in html5
+*   sections  semantic tags - html5 only
+*   tags      tags present in both versions
+*  }
+* */
 j.modes = {
   strict : true,
   
@@ -161,6 +177,17 @@ j.modes = {
   }
 };
 
+/*
+* 
+* GRID {
+*   width   container div
+*   margin  between columns
+*   nCols   number of columns inside container
+*   colW    width of the column + both sides margin ~ usually 80px
+* }
+* 
+* */
+
 j.grid = {
   width : 960,
   margin : 10,
@@ -168,10 +195,22 @@ j.grid = {
 };
 j.grid.colW = j.grid.width / j.grid.nCols,
 
+/*
+* CSS {
+*   __base : {    css code as objects
+*     structure     container + columns + col_[n]
+*     text          font size, color, family, etc.
+*     form          form elements: input, textarea, etc.
+*     modal         modal window
+*     full          full width or height classes
+*   }
+* } 
+* 
+* */
 j.css = {
   __base : {
     i : 0,
-    
+
     structure : {
       $ : {
         media : "",
@@ -271,9 +310,11 @@ j.css = {
     },
     
     modal : {
+      $ : {
+        id : "modal_css"
+      },
       ".modal" : {
         position : "absolute",
-        
       },
     },
     
@@ -295,14 +336,43 @@ j.css = {
   }
 };
 
+// POPULATES CSS STRUCTURE WITH col_[n] CLASSES
+with(j.css.__base){
+  for(i = 1; i <= j.grid.nCols; i++){
+    structure[".col_" + i] = { width : j.grid.colW * i - ( 2 * j.grid.margin ) + "px" };
+    
+    if(i == 12) continue; //EXCLUDES 12th CLASSES
+  
+    structure[".mleft_" + i] = { marginLeft : j.grid.colW * i + j.grid.margin + "px" };
+    structure[".mright_" + i] = { marginRight : j.grid.colW * i + j.grid.margin + "px" };
+  
+    //structure[".pleft_" + i] = { display: "block", paddingLeft : j.grid.colW * i + "px" };
+    //structure[".pright_" + i] = { paddingRight : j.grid.colW * i + "px" };
+  }
+}
+
+/*
+* CSS SHEET
+*   __sheet({
+*     $ : {
+*       media : 'screen and (...)',
+*       id : 'idString'
+*     },
+*     'css selector' : {
+*       property : value,
+*       ...
+*      }
+*   })
+* 
+* */
 j.css.__sheet = function(obj){
 
   var config = {
     tag : "style",
     type : "text/css",
-    parent : document.head
+    parent : document.head,
   };
-  
+
   if("$" in obj){
     for(conf in obj.$){
       switch(conf){
@@ -382,22 +452,11 @@ j.css.__sheet = function(obj){
   this.rules(obj);
 };
 
-
-with(j.css.__base){
-  for(i = 1; i <= j.grid.nCols; i++){
-    structure[".col_" + i] = { width : j.grid.colW * i - ( 2 * j.grid.margin ) + "px" };
-    
-    if(i == 12) continue; //EXCLUDES 12th CLASSES
-  
-    structure[".mleft_" + i] = { marginLeft : j.grid.colW * i + j.grid.margin + "px" };
-    structure[".mright_" + i] = { marginRight : j.grid.colW * i + j.grid.margin + "px" };
-  
-    //structure[".pleft_" + i] = { display: "block", paddingLeft : j.grid.colW * i + "px" };
-    //structure[".pright_" + i] = { paddingRight : j.grid.colW * i + "px" };
-  }
-}
-
-
+/*
+* BODY
+*   body substitute while 
+*   the real body element is not loaded
+* */
 j.body = {
   appendChild : function( element ){
     j.body.children.push( element );
@@ -405,10 +464,24 @@ j.body = {
   children : []
 };
 
+/*
+* INIT
+*   init({
+*     ~ populates css with new __sheet objects, from j.css.__base objects
+*     ~ chech if the arguments array is empty
+*     ~ sections true - sets to html 5
+*     ~ strict false - sets to html 5, with or without sections
+*     ~ strict true - sets to html 4
+*     ~ external - import css and javascript files
+*     ~ structure - creates html from objects
+*   })
+* 
+* */
 j.init = function(config){
   with(j.css){
     for(cssObjName in __base){
-      j.css[cssObjName] = new __sheet( __base(cssObjName) );
+      if(cssObjName == 'i') continue;
+      j.css[cssObjName] = new __sheet( __base[cssObjName] );
     }
   }
   
@@ -422,15 +495,15 @@ j.init = function(config){
   //IF SECTIONS == TRUE, AUTOMATICALLY SETS TO HTML 5
   if('sections' in config && config.sections){
     config.strict = false;
-    for(var section in j.sections)
-      j.tags[section] = j.sections[section];
+    for(var section in j.modes.sections)
+      j.modes.tags[section] = j.modes.sections[section];
   }
   
   //IF CONFIG.STRICT == FALSE ~ HTML 5!
   if('strict' in config && !config.strict){
-    j.strict = false;
+    j.modes.strict = false;
     for(var tag in j.html5)
-      j.tags[tag] = j.html5[tag];
+      j.modes.tags[tag] = j.modes.html5[tag];
     
     var nodeDoctype = document.implementation.createDocumentType("HTML","","");
     if(document.doctype) {
@@ -441,12 +514,12 @@ j.init = function(config){
   }
   
   //IF STRICT == TRUE ~ HTML 4
-  if(j.strict){
-    for(var tag in j.html4)
-      j.tags[tag] = j.html4[tag];
+  if(j.modes.strict){
+    for(var tag in j.modes.html4)
+      j.modes.tags[tag] = j.modes.html4[tag];
   }
   
-  if('external' in config && Array.isArray(config.external) ){
+  if('external' in config && config.external instanceof Array  ){
     for(var k in config.external){
       var ext = config.external[k].slice(-4);
       if(ext[1] == "c" && ext[2] == "s" && ext[3] == "s"){ //WHEN CSS
@@ -472,13 +545,24 @@ j.init = function(config){
     }
   }
   
-  if(config.structure != undefined){
+  if('structure' in config){
     j.nodes(config.structure);
   }
   
   return true;
 };
 
+/*
+*  ELEMENT
+*   element({
+*     tag       ~ string
+*     classes   ~ string
+*     id        ~ string
+*     parent    ~ DOM element
+*     on[event] ~ function
+*   }) 
+* 
+* */
 j.element = function(ops){
   ops = ops || {};
   ops.tag = ops.tag || "div";
@@ -518,6 +602,16 @@ j.element = function(ops){
  
 };
 
+/*
+* NODES
+*   nodes({
+*     tagName : object,
+*     class : object
+*   }
+*   [, parent]
+*   ) 
+* 
+* */
 j.nodes = function(obj, parent){
   parent = parent || j.body;
 
@@ -569,6 +663,324 @@ j.nodes = function(obj, parent){
 
 
 /*
+*  LOGO
+* 
+* */
+j.logo = function(ops){
+  ops = ops || {};
+  ops.id = ops.id || "logo";
+  ops.classes = ops.classes || " ";
+  ops.link = ops.link || "/";
+  ops.title = ops.title || "Home";
+  ops.h1 = ops.h1 == undefined ? true : ops.h1;
+  
+  var logo = {},
+      c = {
+        id : ops.id,
+        classes : ops.classes
+      },
+      link = {
+        href : ops.link,
+        title : ops.title
+      };
+  
+  if(ops.h1){
+    logo["h1"] = {
+      $ : c,
+      a : link
+    };
+  } else {
+    logo["a"] = link;
+    logo.a["$"] = c;
+  }
+  
+  return logo;
+};
+
+/*
+* MENU
+* 
+* */
+j.menu = function(ops){
+  if(ops == undefined) return j.bug('menu() MUST HAVE AN OBJECT AS ARGUMENT');
+  
+  var bt,
+      menuNode = {$:{tag : "ul", classes : "menu"}};
+      
+  if("$" in ops){
+    for(conf in ops.$){
+      switch(conf){
+        case "classes":
+          menuNode.$.classes += ' ' + ops.$.classes;
+        break;
+        
+        default:
+          menuNode.$[conf] = ops.$[conf];
+      }
+    }
+    delete ops.$;
+  }
+  
+  for(item in ops){
+    console.log(item, ops[item]);
+    bt = {$ : {tag : "li"}, a : { $ : {text : item} } };
+    if(typeof ops[item] === "object"){
+      for(conf in ops[item] ){
+        switch (conf){
+          case "url":
+            bt.a.$.href = ops[item][conf];
+          break;
+
+          case "label":
+            bt.a.$.text = ops[item][conf];
+          break;
+        }
+      }
+    }
+    menuNode[item] = bt;
+  }
+  
+  return menuNode;
+};
+
+/*
+* FORM 
+* 
+* */
+j.form = function(form){
+  var formNode = {$:{classes:""}},
+      inline = false;
+  
+  if("$" in form){
+    for(conf in form.$){
+      switch(conf){
+        case "url":
+          formNode.$.action = form.$.url;
+        break;
+        
+        case "inline":
+          if(form.$.inline){
+            inline = true;
+            formNode.$.classes += " inline";
+          } else{
+            formNode.$.classes += " block";
+          }
+        break;
+        
+        case "ajax":
+          if(!form.$.ajax) break;
+          formNode.$.onsubmit = function(ev){
+            console.info(ev);
+            return false;
+          };
+        break;
+        
+        case "post":
+          if(!form.$.post){
+            formNode.$.method = "GET";
+            break;
+          } else {
+            formNode.$.method = "POST";
+            formNode.$.enctype = "multipart/form-data";
+          }
+        break;
+        
+        case "classes":
+          formNode.$.classes += ' ' + form.$.classes;
+        break;
+        
+        default:
+          formNode.$[conf] = form.$[conf];
+      }
+    }
+    
+    delete form.$;
+  }
+  
+  for(f in form){
+    switch(f){
+      case "submit" :
+      case "reset" :
+        //if(form[f].label !== undefined) console.log(form[f].label);
+      break;
+      
+      default:
+        if(inline){
+          var field = formNode[f] = {};
+        } else {
+          var label = (form[f].label === undefined) ? f : form[f].label;
+          formNode[f] = {$ : {tag : "label"}, span : {text : label} };
+          var field = formNode[f][f] = {};
+        }
+        field.$ = j.form.fields[form[f]["type"]];
+        field.$.name = f;
+    }
+  }
+  
+  formNode.submit = {$ : j.form.fields.submit};
+  formNode.submit.$.value = form.submit.label || "Send";
+  
+  formNode.reset = {$ : j.form.fields.reset};
+  formNode.reset.$.value = form.reset.label || "Clear";
+  
+  //console.info(formNode, j.form.fields.submit);
+  return formNode;
+};
+
+//FORM FIELDS PRE-CONFIGURED OBJECTS
+j.form.fields = {
+  name : {tag : "input", type: "text", classes : "field name"},
+  firstName : {tag : "input", type: "text", classes : "field first-name"},
+  familyName : {tag : "input", type: "text", classes : "field family-name"},
+  email : {tag : "input", type: "text", classes : "field email"},
+  phone : {tag : "input", type: "text", classes : "field phone"},
+  date : {tag : "input", type: "text", classes : "field date"},
+  text : {tag : "textarea", classes : "field text"},
+  submit : {tag : "input", type: "submit", classes : "button", value : "Send"},
+  reset : {tag : "input", type: "reset", classes : "button", value: "Clear"}
+};
+
+/*
+* VARS 
+* 
+* */
+j.vars = {
+  add : function(pName, value){
+    value = value || "";
+    
+    var VVar = pName + "V";
+    var LVar = pName + "L";
+    
+    if( pName in this ){
+      if(value !== "")
+          this[pName] = value;
+      
+      return false;
+    }
+    
+    pDescription = {};
+    
+    pDescription[pName] = {
+      get : function(){
+        return this[VVar];
+      },
+      set : function(newVal){
+        this[VVar] = newVal;
+        
+        var list = this[LVar];
+        
+        for(i in list)
+          if(list[i].finalExpr === undefined )
+            list[i].objPath.style[ list[i].property ] = this[VVar];
+          else
+            list[i].objPath.style[ list[i].property ] = list[i].finalExpr.join(" ");
+            
+      },
+      enumerable : true,
+      configurable : true
+    };
+    
+    pDescription[VVar] = {value: value, writable: true, enumerable: false, configurable: true};
+    pDescription[LVar] = {value: [], writable: true, enumerable: false, configurable: true};
+    
+    Object.defineProperties(this, pDescription);
+    
+    return true;
+  },
+  
+  del : function(pName){
+    delete this[pName];
+    delete this[pName + "V"];
+    delete this[pName + "L"];
+    
+    return true;
+  },
+  
+  bind : function(objPath, property, pName, finalExpr){
+    if(!(pName in this)) this.add(pName);
+    
+    bindObj = {
+      objPath : objPath,
+      property : property
+    };
+    
+    if(finalExpr !== undefined) bindObj.finalExpr = finalExpr;
+    
+    this[pName + "L"].push(bindObj);
+    this[pName] += "";
+  },
+  
+  unbind : function(objPath){},
+  
+  afix : function(exprArr){
+    var exprArr = exprArr || [];
+    
+    return function(expr){
+      if( arguments[0] === "{}" ) return '\0';
+      
+      var finalMatch = "";
+      
+      if( arguments[5] ){
+        exprArr.push(arguments[5]);
+        return arguments[5];
+      }
+      
+      if( arguments[1] ) finalMatch += "'" + arguments[1] + "' + ";
+      if( arguments[2] ) finalMatch += "Number(" + arguments[2] + ")";
+      if( arguments[3] ) finalMatch += " + '" + arguments[3] + "'";
+      
+      if( arguments[4] ) finalMatch = arguments[4];
+      
+      exprArr.push( raiz.vars.expression(finalMatch) );
+      
+      return finalMatch;
+    };
+  },
+  
+  css : function(rule, parent){
+    /*
+      TODO: ADD INLINE CSS
+    */
+    for(var property in rule){
+      var pString = rule[property];
+      
+      if( pString.indexOf("$") < 0 && pString.indexOf("{") < 0 ) continue;
+      
+      onlyVars = pString.match(/\$[\w]+/g);
+      
+      exprArr = [];
+      
+      // REPLACE ['] AND ["] FOR [\'] AND [\"] - escape quote marks
+      // REPLACE sufix{expr}postfix | $var | word - populates exprArr with words and expressions
+      pString = pString.replace(/(\'|\")/g, "\\$1")
+          .replace(/(|[\w\S]+)\{(?!\})(.*?)\}([\w\S]+|)|(\$[\w]+)|([\w\S]+)/g, this.afix(exprArr));
+      
+      for(var i in onlyVars) this.bind(parent, property, onlyVars[i], exprArr);
+      
+    } //1st FOR()
+  },
+  
+  expression : function(expr){
+    var exprVars = expr.match(/\$[\w]+/g);
+    if(exprVars !== null)
+      for(i in exprVars){
+        this.add(exprVars[i]);
+      }
+    
+    exprObj = {
+      parent : this,
+      toString : new Function("with(this.parent) return " + expr + ";")
+    };
+    
+    return Object.create(exprObj);
+  }
+};
+
+for(func in this.vars)
+  Object.defineProperty(this.vars, func, {enumerable : false, writable : false});
+
+
+/*
  *  WINDOW LOAD FUNCTION 
  * */
 j.windowLoad = function(){
@@ -578,364 +990,12 @@ j.windowLoad = function(){
       document.body.appendChild( children[element] );
   
   j.body = document.body;
-}
+};
 
 window.addEventListener('load', j.windowLoad);
+
 
 /*
  *  WINDOW RESIZE FUNCTION
  * */
 
-
-
-
-
-
-function Raiz(){
-
-
-
-
-
-
-  /*
-      PAGE FUNCTION
-        CREATES PAGE
-        REGISTER PAGE
-        RETURN PAGE
-  */
-  this.page = function(){
-  };
-
-  /*
-      MODAL FUNCTION
-        CREATES MODAL
-        REGISTER MODAL
-        RETURN MODAL
-  */
-  this.modal = function(){
-    
-  };
-
-  /*
-      LOGO FUNCTION
-  */
-  this.logo = function(ops){
-    ops = ops || {};
-    ops.id = ops.id || "logo";
-    ops.classes = ops.classes || " ";
-    ops.link = ops.link || "/";
-    ops.title = ops.title || "Home";
-    ops.h1 = ops.h1 == undefined ? true : ops.h1;
-    
-    var logo = {},
-        c = {
-          id : ops.id,
-          classes : ops.classes
-        },
-        link = {
-          href : ops.link,
-          title : ops.title
-        };
-    
-    if(ops.h1){
-      logo["h1"] = {
-        $ : c,
-        a : link
-      };
-    } else {
-      logo["a"] = link;
-      logo.a["$"] = c;
-    }
-    
-    return logo;
-  };
-
-  /*
-      MENU FUNCTION
-  */
-  this.menu = function(ops){
-    var bt,
-        menuNode = {$:{tag : "ul", classes : "menu"}};
-        
-    if("$" in ops){
-      for(conf in ops.$){
-        switch(conf){
-          case "classes":
-            menuNode.$.classes += ' ' + ops.$.classes;
-          break;
-          
-          default:
-            menuNode.$[conf] = ops.$[conf];
-        }
-      }
-      delete ops.$;
-    }
-    
-    for(item in ops){
-      console.log(item, ops[item]);
-      bt = {$ : {tag : "li"}, a : { $ : {text : item} } };
-      if(typeof ops[item] === "object"){
-        for(conf in ops[item] ){
-          switch (conf){
-            case "url":
-              bt.a.$.href = ops[item][conf];
-            break;
-
-            case "label":
-              bt.a.$.text = ops[item][conf];
-            break;
-          }
-        }
-      }
-      menuNode[item] = bt;
-    }
-    
-    return menuNode;
-  };
-
-  /*    
-      FORM FUNCTION
-  */
-  this.formFields = {
-    name : {tag : "input", type: "text", classes : "field name"},
-    firstName : {tag : "input", type: "text", classes : "field first-name"},
-    familyName : {tag : "input", type: "text", classes : "field family-name"},
-    email : {tag : "input", type: "text", classes : "field email"},
-    phone : {tag : "input", type: "text", classes : "field phone"},
-    date : {tag : "input", type: "text", classes : "field date"},
-    text : {tag : "textarea", classes : "field text"},
-    submit : {tag : "input", type: "submit", classes : "button", value : "Send"},
-    reset : {tag : "input", type: "reset", classes : "button", value: "Clear"}
-  };
-
-  this.form = function(form){
-    var formNode = {$:{classes:""}},
-        inline = false;
-    
-    if("$" in form){
-      for(conf in form.$){
-        switch(conf){
-          case "url":
-            formNode.$.action = form.$.url;
-          break;
-          
-          case "inline":
-            if(form.$.inline){
-              inline = true;
-              formNode.$.classes += " inline";
-            } else{
-              formNode.$.classes += " block";
-            }
-          break;
-          
-          case "ajax":
-            if(!form.$.ajax) break;
-            formNode.$.onsubmit = function(ev){
-              console.info(ev);
-              return false;
-            };
-          break;
-          
-          case "post":
-            if(!form.$.post){
-              formNode.$.method = "GET";
-              break;
-            } else {
-              formNode.$.method = "POST";
-              formNode.$.enctype = "multipart/form-data";
-            }
-          break;
-          
-          case "classes":
-            formNode.$.classes += ' ' + form.$.classes;
-          break;
-          
-          default:
-            formNode.$[conf] = form.$[conf];
-        }
-      }
-      
-      delete form.$;
-    }
-    
-    for(f in form){
-      switch(f){
-        case "submit" :
-        case "reset" :
-          //if(form[f].label !== undefined) console.log(form[f].label);
-        break;
-        
-        default:
-          if(inline){
-            var field = formNode[f] = {};
-          } else {
-            var label = (form[f].label === undefined) ? f : form[f].label;
-            formNode[f] = {$ : {tag : "label"}, span : {text : label} };
-            var field = formNode[f][f] = {};
-          }
-          field.$ = this.formFields[form[f]["type"]];
-          field.$.name = f;
-      }
-    }
-    
-    formNode.submit = {$ : this.formFields.submit};
-    formNode.submit.$.value = form.submit.label || "Send";
-    
-    formNode.reset = {$ : this.formFields.reset};
-    formNode.reset.$.value = form.reset.label || "Clear";
-    
-    //console.info(formNode, this.formFields.submit);
-    return formNode;
-  };
-
-  /*
-      VARS OBJECT
-      function add()
-      function del()
-      function bind()
-      function unbind()
-      function afix()
-      function css()
-      
-  */
-  this.vars = {
-    add : function(pName, value){
-      value = value || "";
-      
-      var VVar = pName + "V";
-      var LVar = pName + "L";
-      
-      if( pName in this ){
-        if(value !== "")
-            this[pName] = value;
-        
-        return false;
-      }
-      
-      pDescription = {};
-      
-      pDescription[pName] = {
-        get : function(){
-          return this[VVar];
-        },
-        set : function(newVal){
-          this[VVar] = newVal;
-          
-          var list = this[LVar];
-          
-          for(i in list)
-            if(list[i].finalExpr === undefined )
-              list[i].objPath.style[ list[i].property ] = this[VVar];
-            else
-              list[i].objPath.style[ list[i].property ] = list[i].finalExpr.join(" ");
-              
-        },
-        enumerable : true,
-        configurable : true
-      };
-      
-      pDescription[VVar] = {value: value, writable: true, enumerable: false, configurable: true};
-      pDescription[LVar] = {value: [], writable: true, enumerable: false, configurable: true};
-      
-      Object.defineProperties(this, pDescription);
-      
-      return true;
-    },
-    
-    del : function(pName){
-      delete this[pName];
-      delete this[pName + "V"];
-      delete this[pName + "L"];
-      
-      return true;
-    },
-    
-    bind : function(objPath, property, pName, finalExpr){
-      if(!(pName in this)) this.add(pName);
-      
-      bindObj = {
-        objPath : objPath,
-        property : property
-      };
-      
-      if(finalExpr !== undefined) bindObj.finalExpr = finalExpr;
-      
-      this[pName + "L"].push(bindObj);
-      this[pName] += "";
-    },
-    
-    unbind : function(objPath){},
-    
-    afix : function(exprArr){
-      var exprArr = exprArr || [];
-      
-      return function(expr){
-        if( arguments[0] === "{}" ) return '\0';
-        
-        var finalMatch = "";
-        
-        if( arguments[5] ){
-          exprArr.push(arguments[5]);
-          return arguments[5];
-        }
-        
-        if( arguments[1] ) finalMatch += "'" + arguments[1] + "' + ";
-        if( arguments[2] ) finalMatch += "Number(" + arguments[2] + ")";
-        if( arguments[3] ) finalMatch += " + '" + arguments[3] + "'";
-        
-        if( arguments[4] ) finalMatch = arguments[4];
-        
-        exprArr.push( raiz.vars.expression(finalMatch) );
-        
-        return finalMatch;
-      };
-    },
-    
-    css : function(rule, parent){
-      /*
-        TODO: ADD INLINE CSS
-      */
-      for(var property in rule){
-        var pString = rule[property];
-        
-        if( pString.indexOf("$") < 0 && pString.indexOf("{") < 0 ) continue;
-        
-        onlyVars = pString.match(/\$[\w]+/g);
-        
-        exprArr = [];
-        
-        // REPLACE ['] AND ["] FOR [\'] AND [\"] - escape quote marks
-        // REPLACE sufix{expr}postfix | $var | word - populates exprArr with words and expressions
-        pString = pString.replace(/(\'|\")/g, "\\$1")
-            .replace(/(|[\w\S]+)\{(?!\})(.*?)\}([\w\S]+|)|(\$[\w]+)|([\w\S]+)/g, this.afix(exprArr));
-        
-        for(var i in onlyVars) this.bind(parent, property, onlyVars[i], exprArr);
-        
-      } //1st FOR()
-    },
-    
-    expression : function(expr){
-      var exprVars = expr.match(/\$[\w]+/g);
-      if(exprVars !== null)
-        for(i in exprVars){
-          this.add(exprVars[i]);
-        }
-      
-      exprObj = {
-        parent : this,
-        toString : new Function("with(this.parent) return " + expr + ";")
-      };
-      
-      return Object.create(exprObj);
-    }
-  };
-
-  for(func in this.vars)
-    Object.defineProperty(this.vars, func, {enumerable : false, writable : false});
-
-/*
-    TREE END
-*/
-  return this;
-}
