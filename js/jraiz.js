@@ -209,8 +209,6 @@ j.grid.colW = j.grid.width / j.grid.nCols,
 * */
 j.css = {
   __base : {
-    i : 0,
-
     structure : {
       $ : {
         media : "",
@@ -301,13 +299,13 @@ j.css = {
         fontSize : "16px",
         margin : "0px auto",
         padding : "0px",
-        width : (this.width - 2*this.margin)+ 'px',
+        width : (j.grid.width - 2*j.grid.margin)+ 'px',
       },
       ".menubar>ul>li" : {
         display : "inline-block",
         listStyle : "none outside none",
         padding: "8px 2px",
-        marginRight : this.margin*2 + "px",
+        marginRight : j.grid.margin*2 + "px",
         textTransform: "capitalize",
       },
       ".menubar>ul>li>a" : {
@@ -368,7 +366,7 @@ j.css = {
 
 // POPULATES CSS STRUCTURE WITH col_[n] CLASSES
 with(j.css.__base){
-  for(i = 1; i <= j.grid.nCols; i++){
+  for(var i = 1; i <= j.grid.nCols; i++){
     structure[".col_" + i] = { width : j.grid.colW * i - ( 2 * j.grid.margin ) + "px" };
     
     if(i == 12) continue; //EXCLUDES 12th CLASSES
@@ -404,7 +402,7 @@ j.css.__sheet = function(obj){
   };
 
   if("$" in obj){
-    for(conf in obj.$){
+    for(var conf in obj.$){
       switch(conf){
         case "media":
           config.media = obj.$.media;
@@ -434,7 +432,7 @@ j.css.__sheet = function(obj){
     if(obj !== undefined){
       //console.log(obj);
       
-      for(rule in obj){
+      for(var rule in obj){
         try {
           this.style.insertRule(rule + "{}", this.length);
           this.length = this.style.cssRules.length;
@@ -454,7 +452,7 @@ j.css.__sheet = function(obj){
           if(typeof obj[rule] == "object" ){
             ruleStyle = this.style.cssRules[this.length - 1].style;
             
-            for(prop in obj[rule]){
+            for(var prop in obj[rule]){
               if(prop in ruleStyle){
                 //console.log(prop + ":", obj[rule][prop]);
                 ruleStyle[prop] = obj[rule][prop];
@@ -470,7 +468,7 @@ j.css.__sheet = function(obj){
           //console.info(this.style.insertRule('body { background-color: lightgrey }'));
         
         }catch(err){
-          //for(a in err) console.info(a, ":", err[a]);
+          //for(var a in err) console.info(a, ":", err[a]);
           //j.bug("THIS BROWSER DOESN'T SUPPORT THE '" + prop + "' PROPERTY.");
           //console.error(err.name + "\n\n" + err.message);
         }
@@ -509,7 +507,7 @@ j.body = {
 * */
 j.init = function(config){
   with(j.css){
-    for(cssObjName in __base){
+    for(var cssObjName in __base){
       if(cssObjName == 'i') continue;
       j.css[cssObjName] = new __sheet( __base[cssObjName] );
     }
@@ -656,7 +654,7 @@ j.nodes = function(obj, parent){
       
       switch(k){
         case "$":
-          for(v in obj[k]){
+          for(var v in obj[k]){
             //WHEN $VARS
             if(v[0] == '$'){
               j.vars.add(v, obj[k][v]);
@@ -738,7 +736,7 @@ j.menu = function(ops){
       menuNode = {$:{tag : "ul", classes : "menu"}};
       
   if("$" in ops){
-    for(conf in ops.$){
+    for(var conf in ops.$){
       switch(conf){
         case "classes":
           menuNode.$.classes += ' ' + ops.$.classes;
@@ -751,11 +749,11 @@ j.menu = function(ops){
     delete ops.$;
   }
   
-  for(item in ops){
+  for(var item in ops){
     console.log(item, ops[item]);
     bt = {$ : {tag : "li"}, a : { $ : {text : item} } };
     if(typeof ops[item] === "object"){
-      for(conf in ops[item] ){
+      for(var conf in ops[item] ){
         switch (conf){
           case "url":
             bt.a.$.href = ops[item][conf];
@@ -782,7 +780,7 @@ j.form = function(form){
       inline = false;
   
   if("$" in form){
-    for(conf in form.$){
+    for(var conf in form.$){
       switch(conf){
         case "url":
           formNode.$.action = form.$.url;
@@ -827,7 +825,7 @@ j.form = function(form){
     delete form.$;
   }
   
-  for(f in form){
+  for(var f in form){
     switch(f){
       case "submit" :
       case "reset" :
@@ -899,7 +897,7 @@ j.vars = {
         
         var list = this[LVar];
         
-        for(i in list)
+        for(var i in list)
           if(list[i].finalExpr === undefined )
             list[i].objPath.style[ list[i].property ] = this[VVar];
           else
@@ -993,7 +991,7 @@ j.vars = {
   expression : function(expr){
     var exprVars = expr.match(/\$[\w]+/g);
     if(exprVars !== null)
-      for(i in exprVars){
+      for(var i in exprVars){
         this.add(exprVars[i]);
       }
     
@@ -1006,7 +1004,7 @@ j.vars = {
   }
 };
 
-for(func in this.vars)
+for(var func in this.vars)
   Object.defineProperty(this.vars, func, {enumerable : false, writable : false});
 
 
