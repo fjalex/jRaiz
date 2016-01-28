@@ -776,7 +776,7 @@ a();
 
 //Examples
 a('tag#id.class').actions();
-a.tag#id.actions();
+//a.tag#id.actions();
 a['tag#id.class'].actions();
 
 /*
