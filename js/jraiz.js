@@ -1009,6 +1009,7 @@ for(var func in j.vars)
 
 
 /*
+<<<<<<< HEAD
  *  WINDOW LOAD FUNCTION 
  * */
 j.windowLoad = function(){
@@ -1027,3 +1028,20 @@ window.addEventListener('load', j.windowLoad);
  *  WINDOW RESIZE FUNCTION
  * */
 
+=======
+    TREE END
+*/
+  return this;
+}
+
+
+//NOTATION
+function rz(){
+  this.z = function(){}
+  this.z.ddd = {};
+  
+  return this.z;
+}
+a = new rz();
+console.log(a);
+>>>>>>> de286f45f9fe276ab15044e6413ce2dc31e1bb7b
