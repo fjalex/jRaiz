@@ -487,12 +487,11 @@ function __j(){
   *   body substitute while 
   *   the real body element is not loaded
   * */
-  j.body = {
-    appendChild : function( element ){
-      j.body.children.push( element );
-    },
-    children : []
-  };
+  j.body = [];
+  Object.defineProperty(j.body, 'appendChild', {value : function( element ){
+    this.push( element );
+  }, enumerable : false });
+  
   
   /*
   * INIT
@@ -695,43 +694,68 @@ function __j(){
    *  CSS PARSER FUNCTIONS 
    *
    * */
-  
+  j.cssParserOBJ = [];
   
   j.cssParser = function(str){
-    //console.log(arguments);
-    //elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d]+[\'\"]\]|[\w]+|#[\w]+|\.[\w]+/g);
-    elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d]+[\'\"]\]|[#.:]*\w+/g);
+    
+    var elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d]+[\'\"]\]|[#.:]*\w+/g);
+
     fncs = {
-      '#' : function(inp){elem.$.id = inp.slice(1);},
-      '.' : function(inp){elem.$.classes += ' '+inp.slice(1);},
+      '#' : function(inp){
+        elem.$.id = inp.slice(1);
+      },
+      
+      '.' : function(inp){
+        elem.$.classes += ' '+inp.slice(1);
+      },
+      
       '[' : function(inp){
-        a = inp.match(/\w+|[\=\!\~\|\^\$\*]+/g);
+        var a = inp.match(/\w+|[\=\!\~\|\^\$\*]+/g);
         console.log(a);
         elem.$.attrs.push(a);
-        },
+      },
+      
+      ':' : function(inp){
+        //elem.$.id = inp.slice(1);
+      },
     };
-    elem = {$ : {id : '', classes : '', attrs : [] } };
+    
+    var elem = {$ : {id : '', classes : '', attrs : [] } };
+    
     if(elemSelector != null){
       console.log(elemSelector);
-      for(i in elemSelector){
-        firstC = elemSelector[i][0];
-        item = elemSelector[i];
+      
+      for(var i in elemSelector){
+        var firstC = elemSelector[i][0];
+        var item = elemSelector[i];
+        
         //console.log(firstC);
+        
         if(firstC in fncs) fncs[firstC](item);
           else elem.$.tag = item;
       }
-      console.log(elem);
+      console.log(elem.$);
+
+      j.cssParserOBJ[str] = elem;
+      j.cssParserOBJ[j.cssParserOBJ.length] = elem;
+    } else {
+      j.cssParserOBJ[j.cssParserOBJ.length] = str;
     }
+    
     return str;
   };
   
   j.fromSelector = function(selector){
-    //mt = selc.match(/[\w\#\.\:\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g);
-    mt = selc.replace(/[\w\#\.\:\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.cssParser);
-    console.info(selc, mt);
-
+    var mt = selector.replace(/[\w\#\.\:\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.cssParser);
+    console.info(selector);
+    console.info(mt);
+    console.info(j.cssParserOBJ);
+    for(var v in j.cssParserOBJ) console.log(v);
   };
-
+  
+  //var selc = ' #id.class body div#id.class1.class2 >  ul>li >a:hover span :hover + tag#id, body div#none.class[attr$="val"] ~ abc > * div#id.class[attr!="85"][attr^="val"][attr="val"]';
+  var selc = ' #header, ul.menu>li>a[href="url.com"]';
+  j.fromSelector(selc);
   
   /*
   *  LOGO
@@ -1055,10 +1079,10 @@ function __j(){
    *  WINDOW LOAD FUNCTION 
    * */
   j.windowLoad = function(){
-    var children = j.body.children;
-    if( children.length > 0 )
-      for(var element in children)
-        document.body.appendChild( children[element] );
+    var len = j.body.length;
+    if( len > 0 )
+      for(var element in j.body)
+        document.body.appendChild( j.body[element] );
     
     j.body = document.body;
   };
