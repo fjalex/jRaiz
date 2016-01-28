@@ -826,3 +826,35 @@ function rz(){
 }
 a = new rz();
 console.log(a);
+
+/*
+* GETTER / SETTER + FUNCTION OBJ 
+* 
+**/
+Object.defineProperties(this, { zed : {
+ get : function(){
+
+  var f = function(aa){
+    console.log(aa);
+    console.info(arguments);
+  };
+  
+  f.a = 30;
+  f.b = 80;
+  f.c = {$ : 356564};
+
+  return f;
+ },
+ set : function(v){
+   console.log(arguments,v);
+   }
+} });
+
+console.log(zed);
+zed();
+zed('zed argument');
+
+with(zed)
+  console.log(a,b,c);
+
+zed = 80;
