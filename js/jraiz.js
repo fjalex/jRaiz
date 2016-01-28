@@ -450,7 +450,7 @@ j.css.__sheet = function(obj){
           }
           
           if(typeof obj[rule] == "object" ){
-            ruleStyle = this.style.cssRules[this.length - 1].style;
+            var ruleStyle = this.style.cssRules[this.length - 1].style;
             
             for(var prop in obj[rule]){
               if(prop in ruleStyle){
@@ -592,7 +592,7 @@ j.init = function(config){
 * 
 * */
 j.element = function(ops){
-  ops = ops || {};
+  var ops = ops || {};
   ops.tag = ops.tag || "div";
   
   if(j.strict && j.modes.tags[ops.tag] == undefined)
@@ -641,14 +641,14 @@ j.element = function(ops){
 * 
 * */
 j.nodes = function(obj, parent){
-  parent = parent || j.body;
+  var parent = parent || j.body;
 
   if(obj == undefined) return j.bug("EMPTY ARGUMENT!");
   
   if(obj instanceof Object){    
     for(var k in obj){
-      if(obj[k] instanceof Object && "$" in obj[k]) ops = obj[k].$;
-        else ops = {};
+      if(obj[k] instanceof Object && "$" in obj[k]) var ops = obj[k].$;
+        else var ops = {};
 
       ops.classes = ops.classes || "";
       
@@ -695,7 +695,7 @@ j.nodes = function(obj, parent){
 * 
 * */
 j.logo = function(ops){
-  ops = ops || {};
+  var ops = ops || {};
   ops.id = ops.id || "logo";
   ops.classes = ops.classes || " ";
   ops.link = ops.link || "/";
@@ -874,7 +874,7 @@ j.form.fields = {
 * */
 j.vars = {
   add : function(pName, value){
-    value = value || "";
+    var value = value || "";
     
     var VVar = pName + "V";
     var LVar = pName + "L";
@@ -886,7 +886,7 @@ j.vars = {
       return false;
     }
     
-    pDescription = {};
+    var pDescription = {};
     
     pDescription[pName] = {
       get : function(){
@@ -927,7 +927,7 @@ j.vars = {
   bind : function(objPath, property, pName, finalExpr){
     if(!(pName in this)) this.add(pName);
     
-    bindObj = {
+    var bindObj = {
       objPath : objPath,
       property : property
     };
@@ -974,9 +974,9 @@ j.vars = {
       
       if( pString.indexOf("$") < 0 && pString.indexOf("{") < 0 ) continue;
       
-      onlyVars = pString.match(/\$[\w]+/g);
+      var onlyVars = pString.match(/\$[\w]+/g);
       
-      exprArr = [];
+      var exprArr = [];
       
       // REPLACE ['] AND ["] FOR [\'] AND [\"] - escape quote marks
       // REPLACE sufix{expr}postfix | $var | word - populates exprArr with words and expressions
@@ -995,7 +995,7 @@ j.vars = {
         this.add(exprVars[i]);
       }
     
-    exprObj = {
+    var exprObj = {
       parent : this,
       toString : new Function("with(this.parent) return " + expr + ";")
     };
@@ -1004,8 +1004,8 @@ j.vars = {
   }
 };
 
-for(var func in this.vars)
-  Object.defineProperty(this.vars, func, {enumerable : false, writable : false});
+for(var func in j.vars)
+  Object.defineProperty(j.vars, func, {enumerable : false, writable : false});
 
 
 /*
