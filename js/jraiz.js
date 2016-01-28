@@ -691,6 +691,47 @@ function __j(){
     }
   };
   
+  /*
+   *  CSS PARSER FUNCTIONS 
+   *
+   * */
+  
+  
+  j.cssParser = function(str){
+    //console.log(arguments);
+    //elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d]+[\'\"]\]|[\w]+|#[\w]+|\.[\w]+/g);
+    elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d]+[\'\"]\]|[#.:]*\w+/g);
+    fncs = {
+      '#' : function(inp){elem.$.id = inp.slice(1);},
+      '.' : function(inp){elem.$.classes += ' '+inp.slice(1);},
+      '[' : function(inp){
+        a = inp.match(/\w+|[\=\!\~\|\^\$\*]+/g);
+        console.log(a);
+        elem.$.attrs.push(a);
+        },
+    };
+    elem = {$ : {id : '', classes : '', attrs : [] } };
+    if(elemSelector != null){
+      console.log(elemSelector);
+      for(i in elemSelector){
+        firstC = elemSelector[i][0];
+        item = elemSelector[i];
+        //console.log(firstC);
+        if(firstC in fncs) fncs[firstC](item);
+          else elem.$.tag = item;
+      }
+      console.log(elem);
+    }
+    return str;
+  };
+  
+  j.fromSelector = function(selector){
+    //mt = selc.match(/[\w\#\.\:\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g);
+    mt = selc.replace(/[\w\#\.\:\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.cssParser);
+    console.info(selc, mt);
+
+  };
+
   
   /*
   *  LOGO
