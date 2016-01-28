@@ -858,3 +858,29 @@ with(zed)
   console.log(a,b,c);
 
 zed = 80;
+
+
+/*
+*   OBJECT TREE
+*   ACCESS AS ARRAY AND OBJECT
+*  
+* */
+var body = [];
+body.push(/*CONTAINER OBJ*/);
+body.container = [];
+body.container.header = [];
+body.container.main = [];
+body.container.sidebar = [];
+
+/*
+*   ARRAY INHERITANCE 
+* 
+* */
+var node = []; //CHANGES IN NODE AFFECTS ALL OBJECT CREATED FROM THIS
+node.each = function(){};
+node.find = function(){return this;};
+node.addClass = function(){};
+
+var body = Object.create(node);
+
+
