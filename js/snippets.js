@@ -876,11 +876,67 @@ body.container.sidebar = [];
 *   ARRAY INHERITANCE 
 * 
 * */
+var list = function(){
+  var arrObj = [];
+  
+  arrObj.add = function(){};
+  arrObj.toggle = function(){};
+  arrObj.del = function(){};
+  arrObj.remove = function(){};
+  
+  return arrObj;
+};
+
 var node = []; //CHANGES IN NODE AFFECTS ALL OBJECT CREATED FROM THIS
+
+node.element = 'real object';
+node.render = function(){
+  try {
+    //when node.element exists
+  } catch {
+    //create node.element
+  }
+}
 node.each = function(){};
 node.find = function(){return this;};
-node.addClass = function(){};
+node.parent = function(){};
+node.next = function(){};
+node.prev = function(){};
+node.siblings = function(){};
+node.class = [];
+node.class.add = function(){};
+node.class.toggle = function(){};
+node.class.del = function(){};
+node.class.remove = function(){};
+node.id = function(){};
+node.text = function(){};
+node.html = function(){};
+node.event = [['click', 'fName'], ];
+node.event.add = function(){};
+node.event.toggle = function(){};
+node.event.del = function(){};
+node.event.remove = function(){};
+
+var a = Object.create(node);
+a.href = function(){};
+
+var formText = Object.create(node);
+formText.validate = false;
+
+var table = Object.create(node);
+table.data = {};
+table.stripe = function(){};
+table.row = function(){};
+table.row.list = [];
+table.row.add = function(){};
+table.row.del = function(){};
+table.row.remove = function(){};
+table.row.toggle = function(){};
+table.column = function(){};
+...
+table.filter = function(){};
+
 
 var body = Object.create(node);
-
+body.find();
 
