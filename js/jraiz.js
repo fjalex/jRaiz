@@ -694,68 +694,108 @@ function __j(){
    *  CSS PARSER FUNCTIONS 
    *
    * */
-  j.cssParserOBJ = [];
-  
-  j.cssParser = function(str){
-    
-    var elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d]+[\'\"]\]|[#.:]*\w+/g);
-
-    fncs = {
-      '#' : function(inp){
-        elem.$.id = inp.slice(1);
-      },
-      
-      '.' : function(inp){
-        elem.$.classes += ' '+inp.slice(1);
-      },
-      
-      '[' : function(inp){
-        var a = inp.match(/\w+|[\=\!\~\|\^\$\*]+/g);
-        console.log(a);
-        elem.$.attrs.push(a);
-      },
-      
-      ':' : function(inp){
-        //elem.$.id = inp.slice(1);
-      },
-    };
-    
-    var elem = {$ : {id : '', classes : '', attrs : [] } };
-    
-    if(elemSelector != null){
-      console.log(elemSelector);
-      
-      for(var i in elemSelector){
-        var firstC = elemSelector[i][0];
-        var item = elemSelector[i];
-        
-        //console.log(firstC);
-        
-        if(firstC in fncs) fncs[firstC](item);
-          else elem.$.tag = item;
-      }
-      console.log(elem.$);
-
-      j.cssParserOBJ[str] = elem;
-      j.cssParserOBJ[j.cssParserOBJ.length] = elem;
-    } else {
-      j.cssParserOBJ[j.cssParserOBJ.length] = str;
-    }
-    
-    return str;
-  };
-  
   j.fromSelector = function(selector){
-    var mt = selector.replace(/[\w\#\.\:\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.cssParser);
-    console.info(selector);
-    console.info(mt);
-    console.info(j.cssParserOBJ);
-    for(var v in j.cssParserOBJ) console.log(v);
+    var parsed = [],
+        finalNodes = {},
+        e = finalNodes,
+        _i;
+        
+    var mt = selector.replace(/[\w\#\.\:\/\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.fromSelector.replaceCallback(parsed) );
+    //console.info(selector);
+    //console.info(mt);
+    console.info(parsed);
+
+    for(var v in parsed){
+      v = parseInt(v);
+      _i = '_' + v;
+      
+      //console.log(v,parsed[v]);
+      
+      if(parsed[v] instanceof Object){
+        e[_i] = parsed[v];
+        
+        switch(parsed[v+1]){
+          case ">":
+            e = e[_i];
+          break;
+          
+          case "+":
+            //continue;
+          break;
+          
+          case ",":
+            e = finalNodes;
+          break;
+          
+          default:
+            e = e[_i];
+        }
+        
+      }
+      
+    }//FOR
+    
+    return finalNodes;
+  };
+
+  j.fromSelector.replaceCallback = function(parsed){
+    var parsed = parsed || [];
+    
+    return function(str){
+      var elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d\.\:\/]+[\'\"]\]|[#.:]*\w+/g);
+  
+      var fncs = {
+        '#' : function(inp){
+          elem.$.id = inp.slice(1);
+        },
+        
+        '.' : function(inp){
+          elem.$.classes += ' '+inp.slice(1);
+        },
+        
+        '[' : function(inp){
+          var a = inp.match(/[\w\d\.\:\/]+|[\=\!\~\|\^\$\*]+/g);
+          //console.log(a);
+          elem.$.attrs.push(a);
+        },
+        
+        ':' : function(inp){
+          //elem.$.id = inp.slice(1);
+        },
+      };
+      
+      var elem = {$ : {id : '', classes : '', attrs : [] } };
+      
+      if(elemSelector != null){
+        //console.log(elemSelector);
+        
+        for(var i in elemSelector){
+          var firstC = elemSelector[i][0];
+          var item = elemSelector[i];
+          
+          //console.log(firstC);
+          
+          if(firstC in fncs) fncs[firstC](item);
+            else elem.$.tag = item;
+        }
+        
+        //console.log(elem.$);
+  
+        parsed[parsed.length] = elem;
+      } else {
+        parsed[parsed.length] = str;
+      }
+      
+      return str;
+    };
   };
   
   //var selc = ' #id.class body div#id.class1.class2 >  ul>li >a:hover span :hover + tag#id, body div#none.class[attr$="val"] ~ abc > * div#id.class[attr!="85"][attr^="val"][attr="val"]';
-  var selc = ' #header, ul.menu>li>a[href="url.com"]';
-  j.fromSelector(selc);
+  //var selc = ' #header, ul.menu>li>a[href="https://www.url.com/"]';
+  var selc = ' #header, ul.menu>li>a[href="https://www.url.com/"][text="superLink"] + a.link + a.obj + a.hd';
+  var result = j.fromSelector(selc);
+  console.log(result);
+  j.nodes(result);
   
   /*
   *  LOGO
