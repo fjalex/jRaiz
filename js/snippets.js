@@ -22,6 +22,28 @@ with(obj){
 
 console.log(obj); //DOESN'T HAVE A var4 PROPERTY
 
+/*
+*   ARRAY SPLICE - adds/removes items to/from an array, and returns the removed item(s).
+*   
+*   splice(index,howmany,item1,.....,itemX)
+*   
+*   ADDS
+*   splice(3,0,newItem1, newItem2)
+*     adds the two new items at the index 3 of the array
+*   
+*   REMOVE
+*   splice(4,1)
+*     removes 1 item from index 4, and reindex it
+* 
+* */
+arr = [5,13,28,64,55];
+
+arr.splice( 3, 0, 98, 17);
+//arr = [ 5, 13, 28, 98, 17, 64, 55 ]
+
+arr.splice(1,2); //returns [ 13, 28 ]
+//arr = [ 5, 98, 17, 64, 55 ]
+
 
 /*
 * TRY/CATCH THROW ~ error handling
@@ -986,5 +1008,3 @@ table.filter = function(){};
 
 var body = Object.create(node);
 body.find();
-
-
