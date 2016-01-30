@@ -73,6 +73,17 @@ struct = {
 			}
 		}
 	},
+	'.menubar.fullw' : {
+	  '#header' : {
+	    
+	  },
+	  //'.menu' : j.menu(
+  	//  {label : 'Home', url : "http://www.url.com/home", },
+  	//  {label : 'A Empresa', url : "http://www.url.com/home" },
+  	//  {label : 'Produtos', url : "http://www.url.com/home" },
+  	//  {label : 'Contato', url : "http://www.url.com/home", target : "_blank" },
+	  //)
+	},
 	menubar : {
 		$ : {
 			classes : "fullw"
