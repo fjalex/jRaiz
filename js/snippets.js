@@ -840,6 +840,7 @@ var oneProps = {
 Object.defineProperties(zed, props);
 Object.defineProperties(zed.one, oneProps);
 
+zed();
 zed.one;
 zed.one();
 zed.two;
@@ -1008,3 +1009,31 @@ table.filter = function(){};
 
 var body = Object.create(node);
 body.find();
+
+
+/*
+*   RECURSIVE FUNCTIONS PARAMETERS 
+* 
+* */
+a = function(){
+  console.log(1);
+  return function(){
+    console.log(2);
+   return function(){
+     console.log(3);
+     return function(){
+       console.log(4);
+     }
+   }
+  }
+}
+
+a()()()();
+
+
+rec = function(val){
+  var i = i || 0;
+  console.log(++i,val, this);
+  return rec;
+}
+rec('1st')('2nd')('3rd')('4th')
