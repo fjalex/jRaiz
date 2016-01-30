@@ -774,10 +774,57 @@ a.r();
 //console.log(a, a.e, a.p);
 a();
 
-//Examples
+//Example
 a('tag#id.class').actions();
 //a.tag#id.actions();
 a['tag#id.class'].actions();
+
+
+//Example
+var zed = function(){
+  
+};
+
+var props = {
+  one : {
+    value : function(){
+      
+    }, enumerate : false, writable : false, configurable : false
+  },
+  two : {
+    get : function(){
+      console.log(this);
+      return 390;
+    },
+    set : function(v){
+      return 654;
+    }, enumerable : false, configurable : false
+  }
+};
+
+var oneProps = {
+  beta : {
+    value : function(){
+      
+    }, enumerable : false, writable : false, configurable : false
+  },
+  tetha : {
+    value : function(){
+      
+    }, enumerable : false, writable : false, configurable : false
+  }
+};
+
+Object.defineProperties(zed, props);
+Object.defineProperties(zed.one, oneProps);
+
+zed.one;
+zed.one();
+zed.two;
+zed.two = 40;
+
+delete this.props;
+
 
 /*
 *
@@ -939,4 +986,5 @@ table.filter = function(){};
 
 var body = Object.create(node);
 body.find();
+
 
