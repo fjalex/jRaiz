@@ -1,7 +1,20 @@
 function __j(){
-  function j(selector){
+  var j = function(selector){
     
-  }
+    if(typeof selector == 'number'){
+      
+    }
+    
+    if(typeof selector == 'string'){
+      
+    }
+    
+    if(selector instanceof Object){
+      
+    }
+    
+    return this;
+  };
   
   /*
   * 
@@ -492,7 +505,6 @@ function __j(){
     this.push( element );
   }, enumerable : false });
   
-  
   /*
   * INIT
   *   init({
@@ -689,6 +701,67 @@ function __j(){
       }
     }
   };
+  
+  /*
+  *   HTML ELEMENTS WRAPPERS 
+  *   BASIC NODES
+  * */
+  j.nodes.basic = {
+    element : {value : undefined, enumerable : false, configurable : false},
+    parent : {value : undefined, enumerable : false, configurable : false},
+
+    id : {get : function(){ return this.element.id; }, set : function(v){ this.element.id = v; return true; }, enumerable : false, configurable : false},
+    class : {value : [], enumerable : false, writable : false, configurable : false},
+    attr : {value : {}, enumerable : false, writable : false, configurable : false},
+
+    iterate : {value : function(){}, enumerable : false, writable : false, configurable : false},
+    
+    find : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
+    next : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
+    prev : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
+    siblings : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
+    
+    text : {value : function(){}, enumerable : false, writable : false, configurable : false},
+    html : {value : function(){}, enumerable : false, writable : false, configurable : false},
+
+    event : {value : {}, enumerable : false, writable : false, configurable : false},
+    //iterate : {value : function(){}, enumerable : false, writable : false, configurable : false},
+  };
+  j.nodes.basic.P = {};
+  
+  j.nodes.basic.P.class = {
+    add : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+    del : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+    remove : this.del,
+    toggle : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+  };
+  
+  j.nodes.basic.P.attr = {
+    add : {value : function(a){}, enumerable : false, writable : false, configurable : false},
+    del : {value : function(a){}, enumerable : false, writable : false, configurable : false},
+    remove : this.del,
+    toggle : {value : function(a){}, enumerable : false, writable : false, configurable : false},
+  };
+  
+  j.nodes.basic.P.text = {
+    pre : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+    pos : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+  };
+
+  j.nodes.basic.P.html = {
+    pre : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+    pos : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+  };
+  
+  j.nodes.basic.P.event = {
+    add : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
+    del : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
+    remove : this.del,
+    toggle : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
+  };
+  
+  j.nodes.a = {};
+  
   
   /*
    *  CSS PARSER FUNCTIONS 
