@@ -190,6 +190,50 @@ function __j(){
     }
   };
   
+  
+  /*
+   *  WINDOW LOAD FUNCTION 
+   * */
+  j.windowLoad = function(){
+    var len = j.body.length;
+    if( len > 0 )
+      for(var element in j.body)
+        document.body.appendChild( j.body[element] );
+    
+    j.body = document.body;
+  };
+  
+  window.addEventListener('load', j.windowLoad);
+  
+  
+  /*
+   *  WINDOW RESIZE FUNCTION
+   * */
+  j.windowResize = function(ev){
+    j.grid.vport_w = window.innerWidth
+    || document.documentElement.clientWidth
+    || document.body.clientWidth;
+    
+    j.grid.vport_h = window.innerHeight
+    || document.documentElement.clientHeight
+    || document.body.clientHeight;
+    
+    j.grid.center.x = j.grid.vport_w/2 + 'px';
+    j.grid.center.y = j.grid.vport_h/2 + 'px';
+    
+    j.grid.center.top.x = j.grid.center.x;
+    
+    j.grid.center.bottom.x = j.grid.center.x;
+    j.grid.center.bottom.y = j.grid.vport_h + 'px';
+    
+    j.grid.center.left.y = j.grid.center.y;
+    
+    j.grid.center.right.x = j.grid.vport_w + 'px';
+    j.grid.center.right.y = j.grid.center.y;
+  };
+  
+  window.addEventListener('resize', j.windowResize);
+
   /*
   * 
   * GRID {
@@ -200,13 +244,36 @@ function __j(){
   * }
   * 
   * */
-  
   j.grid = {
     width : 960,
     margin : 10,
     nCols : 12,
+    
+    center : {
+      x : null,
+      y : null,
+      top : {
+        x : null,
+        y : 0 + 'px'
+      },
+      bottom : {
+        x : null,
+        y : null
+      },
+      left : {
+        x : 0 + 'px',
+        y : null
+      },
+      right : {
+        x : null,
+        y : null
+      },
+    },
   };
-  j.grid.colW = j.grid.width / j.grid.nCols,
+  
+  j.grid.colW = j.grid.width / j.grid.nCols;
+  
+  j.windowResize();
   
   /*
   * CSS {
@@ -355,10 +422,10 @@ function __j(){
           id : "modal_css"
         },
         ".modal" : {
-          position : "absolute",
+          position : "fixed",
           height : '200px',
           width : '500px',
-          backgroundColor : "#CDC"
+          backgroundColor : "#CDC",
         },
       },
       
@@ -1188,38 +1255,6 @@ function __j(){
   
   for(var func in j.vars)
     Object.defineProperty(j.vars, func, {enumerable : false, writable : false});
-  
-  
-  /*
-   *  WINDOW LOAD FUNCTION 
-   * */
-  j.windowLoad = function(){
-    var len = j.body.length;
-    if( len > 0 )
-      for(var element in j.body)
-        document.body.appendChild( j.body[element] );
-    
-    j.body = document.body;
-  };
-  
-  window.addEventListener('load', j.windowLoad);
-  
-  
-  /*
-   *  WINDOW RESIZE FUNCTION
-   * */
-  j.windowResize = function(ev){
-    j.grid.vport_w = window.innerWidth
-    || document.documentElement.clientWidth
-    || document.body.clientWidth;
-
-    j.grid.vport_h = window.innerHeight
-    || document.documentElement.clientHeight
-    || document.body.clientHeight;
-  };
-  
-  j.windowResize();
-  window.addEventListener('resize', j.windowResize);
   
   /*
   * END OF __j() 
