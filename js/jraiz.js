@@ -25,20 +25,19 @@ function __j(){
   j.debug = false;
   
   j.bug = function(err){
-    if(j.debug && err != undefined){
+    if(j.debug && arguments.length > 0){
       var msg = "jRaiz\n";
       
-      if(err instanceof Array){
-        for(var k in err){
-          msg += "\n\t" + err[k];
-        }
-      } else {
-        msg += "\n\t" + err;
+      for(var k in arguments){
+        msg += "\n\t" + arguments[k];
       }
+      
       console.error( msg );
+      
     } else {
       console.error("jRaiz\n\tError Message not defined!");
     }
+    
     return false;
   };
   
@@ -357,6 +356,9 @@ function __j(){
         },
         ".modal" : {
           position : "absolute",
+          height : '200px',
+          width : '500px',
+          backgroundColor : "#CDC"
         },
       },
       
@@ -528,10 +530,10 @@ function __j(){
     
     //BUG
     if(config == undefined)
-      return j.bug([
+      return j.bug(
         "YOU MUST CALL init() WITH A CONFIGURATION OBJECT!",
         "SOMETHING LIKE THIS: init({var1: val, var2: val})"
-        ]);
+        );
     
     //IF SECTIONS == TRUE, AUTOMATICALLY SETS TO HTML 5
     if('sections' in config && config.sections){
@@ -581,7 +583,7 @@ function __j(){
           }
         }
         
-        imprt = j.element(imprt);
+        var imprt = j.element(imprt);
         document.head.appendChild(imprt);
       }
     }
@@ -600,7 +602,7 @@ function __j(){
   *     classes   ~ string
   *     id        ~ string
   *     parent    ~ DOM element
-  *     on[event] ~ function
+  *     on"event" ~ function
   *   }) 
   * 
   * */
@@ -617,21 +619,21 @@ function __j(){
     var Element = document.createElement(ops.tag),
         nodeName = Element.nodeName.toLowerCase();
     
-    if(ops.classes != undefined) Element.className += ops.classes.trim();
+    if('classes' in ops && ops.classes != '') Element.className += ops.classes.trim();
     
     //SELF CLOSING TAGS
-    if(ops.text != undefined && !('self' in j.modes.tags[nodeName]) )
+    if('text' in ops && !('self' in j.modes.tags[nodeName]) )
       Element.appendChild( document.createTextNode(ops.text));
     
     for(var attr in ops){
       try{
         if(attr in Element) Element[attr] = ops[attr];
       } catch(e){
-        return j.bug([
+        return j.bug(
           "THE ELEMENT: " + Element,
           "DOES NOT ACCEPT THE ATTRIBUTE: " + attr,
           "WITH THIS VALUE: " + ops[attr]
-          ]);
+          );
       }
     }
   
@@ -655,15 +657,13 @@ function __j(){
   * */
   j.nodes = function(obj, parent){
     var parent = parent || j.body;
-  
+    
     if(obj == undefined) return j.bug("EMPTY ARGUMENT!");
     
-    if(obj instanceof Object){    
+    if(obj instanceof Object){
       for(var k in obj){
-        if(obj[k] instanceof Object && "$" in obj[k]) var ops = obj[k].$;
-          else var ops = {};
-  
-        ops.classes = ops.classes || "";
+        
+        var ops = obj[k].$ || {};
         
         switch(k){
           case "$":
@@ -690,14 +690,20 @@ function __j(){
           break;
           
           default:
-            if(k in j.modes.tags) ops.tag = k;
-              else ops.classes += ' ' + k;
-  
+            var elemObj = j.fromSelector(k)['_0'];
+            
+            if('classes' in ops){
+              ops.classes += elemObj.$.classes;
+            }
+            
+            for(conf in elemObj.$){
+              if(!(conf in ops)) ops[conf] = elemObj.$[conf];
+            }
+            
             var Element = j.element(ops);
             parent.appendChild(Element);
             j.nodes(obj[k], Element);
         }
-        
       }
     }
   };
@@ -727,6 +733,7 @@ function __j(){
     event : {value : {}, enumerable : false, writable : false, configurable : false},
     //iterate : {value : function(){}, enumerable : false, writable : false, configurable : false},
   };
+  
   j.nodes.basic.P = {};
   
   j.nodes.basic.P.class = {
@@ -773,10 +780,10 @@ function __j(){
         e = finalNodes,
         _i;
         
-    var mt = selector.replace(/[\w\#\.\:\/\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.fromSelector.replaceCallback(parsed) );
+    var mt = selector.replace(/[\w\#\.\-\_\:\/\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.fromSelector.replaceCallback(parsed) );
     //console.info(selector);
     //console.info(mt);
-    console.info(parsed);
+    //console.info(parsed);
 
     for(var v in parsed){
       v = parseInt(v);
@@ -815,8 +822,8 @@ function __j(){
     var parsed = parsed || [];
     
     return function(str){
-      var elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d\.\:\/]+[\'\"]\]|[#.:]*\w+/g);
-  
+      var elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d\.\:\/\-\_]+[\'\"]\]|[#.:]*[\w\-\_]+/g);
+      //console.log(str, elemSelector);
       var fncs = {
         '#' : function(inp){
           elem.$.id = inp.slice(1);
@@ -827,17 +834,16 @@ function __j(){
         },
         
         '[' : function(inp){
-          var a = inp.match(/[\w\d\.\:\/]+|[\=\!\~\|\^\$\*]+/g);
-          //console.log(a);
-          elem.$.attrs.push(a);
+          var attr = inp.match(/[\w\d\.\:\/]+|[\=\!\~\|\^\$\*]+/g);
+          elem.$.attrs.push(attr);
         },
         
         ':' : function(inp){
-          //elem.$.id = inp.slice(1);
+          //elem.$.... = inp.slice(1);
         },
       };
       
-      var elem = {$ : {id : '', classes : '', attrs : [] } };
+      var elem = {$ : {classes : '', attrs : [] } };
       
       if(elemSelector != null){
         //console.log(elemSelector);
@@ -846,13 +852,18 @@ function __j(){
           var firstC = elemSelector[i][0];
           var item = elemSelector[i];
           
-          //console.log(firstC);
-          
-          if(firstC in fncs) fncs[firstC](item);
-            else elem.$.tag = item;
+          if(firstC in fncs){
+            fncs[firstC](item);            
+          } else if(item in j.modes.tags){
+            elem.$.tag = item;
+          }
         }
         
-        //console.log(elem.$);
+        if(!('tag' in elem.$)){
+          elem.$.tag = 'div';
+        }
+        
+        //console.log(elem);
   
         parsed[parsed.length] = elem;
       } else {
@@ -867,8 +878,8 @@ function __j(){
   //var selc = ' #header, ul.menu>li>a[href="https://www.url.com/"]';
   var selc = ' #header, ul.menu>li>a[href="https://www.url.com/"][text="superLink"] + a.link + a.obj + a.hd';
   var result = j.fromSelector(selc);
-  console.log(result);
-  j.nodes(result);
+  //console.log(result);
+  //j.nodes(result);
   
   /*
   *  LOGO
@@ -909,43 +920,36 @@ function __j(){
   * MENU
   * 
   * */
-  j.menu = function(ops){
-    if(ops == undefined) return j.bug('menu() MUST HAVE AN OBJECT AS ARGUMENT');
+  j.menu = function(){
+    if(arguments.length == 0) return j.bug('menu() MUST HAVE AN OBJECT AS ARGUMENT');
     
-    var bt,
-        menuNode = {$:{tag : "ul", classes : "menu"}};
+    var btTemplate = function(){ return {$ : {tag : "li"}, a : { $ : {} } }; },
+        menuNode = { $ : {tag : "ul", zed : 850} };
         
-    if("$" in ops){
-      for(var conf in ops.$){
-        switch(conf){
-          case "classes":
-            menuNode.$.classes += ' ' + ops.$.classes;
-          break;
-          
-          default:
-            menuNode.$[conf] = ops.$[conf];
-        }
-      }
-      delete ops.$;
-    }
-    
-    for(var item in ops){
-      console.log(item, ops[item]);
-      bt = {$ : {tag : "li"}, a : { $ : {text : item} } };
-      if(typeof ops[item] === "object"){
-        for(var conf in ops[item] ){
+    for(var i in arguments){
+      var item = arguments[i];
+      bt = btTemplate();
+
+      if( item instanceof Object ){
+        for(var conf in item ){
           switch (conf){
+            case "href":
             case "url":
-              bt.a.$.href = ops[item][conf];
+              bt.a.$.href = item.url;
             break;
   
+            case "text":
             case "label":
-              bt.a.$.text = ops[item][conf];
+              bt.a.$.text = item.label;
             break;
+            
+            default:
+              bt.a.$[conf] = item[conf];
           }
         }
       }
-      menuNode[item] = bt;
+      
+      menuNode['_' + i] = bt;
     }
     
     return menuNode;
@@ -1031,7 +1035,7 @@ function __j(){
     formNode.reset = {$ : j.form.fields.reset};
     formNode.reset.$.value = form.reset.label || "Clear";
     
-    //console.info(formNode, j.form.fields.submit);
+    //console.info(formNode);
     return formNode;
   };
   
@@ -1146,9 +1150,7 @@ function __j(){
     },
     
     css : function(rule, parent){
-      /*
-        TODO: ADD INLINE CSS
-      */
+      //TODO ADD INLINE CSS
       for(var property in rule){
         var pString = rule[property];
         
@@ -1206,8 +1208,23 @@ function __j(){
   /*
    *  WINDOW RESIZE FUNCTION
    * */
+  j.windowResize = function(ev){
+    j.grid.vport_w = window.innerWidth
+    || document.documentElement.clientWidth
+    || document.body.clientWidth;
 
-return j;
+    j.grid.vport_h = window.innerHeight
+    || document.documentElement.clientHeight
+    || document.body.clientHeight;
+  };
+  
+  j.windowResize();
+  window.addEventListener('resize', j.windowResize);
+  
+  /*
+  * END OF __j() 
+  * */
+  return j;
 }
 
 j = __j();
