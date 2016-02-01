@@ -8,50 +8,8 @@ cssRules  = {
 		$mainColor : "#FCADEB"
 	},
 	body : {
-		//backgroundColor : "lightgrey",
+		backgroundColor : "lightgrey",
 		//padding: '50px'
-	},
-	".container>div" : {
-		backgroundColor: "orange",
-		float : "left",
-		margin: "10px"
-	},
-	".container" : {
-		border: "solid 1px blue",
-		margin: "0px auto",
-		width: "960px"
-	},
-	".header" : {
-		height: "200px",
-		width: "940px"
-	},
-	".main" : {
-		width : "640px",
-		height : "1000px",
-	},
-	".sidebar" : {
-		minHeight : "500px",
-		width : "280px",
-	},
-	".footer" : {
-		width : "940px",
-	},
-	".modal" : {
-		position : "absolute",
-	},
-	"form>label " : {
-		display : "block",
-		padding : "10px",
-	},
-	"form>label>*" : {
-		display : "inline-block",
-		width : "400px",
-		verticalAlign: "top",
-	},
-	"form>label>span" : {
-		padding : "0px 20px",
-		width : "100px",
-		textAlign: "right"
 	},
 	"#anySelector>div>ul>li" : {
 		border : "solid {$bWidth * 2 + px } $mainColor",
@@ -60,49 +18,40 @@ cssRules  = {
 	}
 };
 
-
 struct = {
-	modal : {
-		button : {
+	'.modal' : {
+		'button#inpID.super.classes' : {
 			$ : {
 				onclick : function(e){console.log(e);},
-				classes : "super classes",
-				id : "inpID",
 				text : "SUPER BUTTON",
 				type : "submit"
 			}
 		}
 	},
+	'.menubar.fullw #header + .menu' : [
+      {},
+      //j.menu(
+      //  {label : 'Home', url : "http://www.url.com/home"},
+      //  {label : 'A Empresa', url : "http://www.url.com/home" },
+      //  {label : 'Produtos', url : "http://www.url.com/home", sub : [] },
+      //  {label : 'Contato', url : "http://www.url.com/home", target : "_blank" },
+      //)
+	],
 	'.menubar.fullw' : {
-	  '#header' : {
-	    
+	  '.header' : {
+	    $ : {
+	      classes : "zed beta alpha"
+	    }
 	  },
-	  //'.menu' : j.menu(
-  	//  {label : 'Home', url : "http://www.url.com/home", },
-  	//  {label : 'A Empresa', url : "http://www.url.com/home" },
-  	//  {label : 'Produtos', url : "http://www.url.com/home" },
-  	//  {label : 'Contato', url : "http://www.url.com/home", target : "_blank" },
-	  //)
+	  '.menu' : j.menu(
+  	  {label : 'Home', url : "http://www.url.com/home" },
+  	  {label : 'A Empresa', url : "http://www.url.com/home" },
+  	  {label : 'Produtos', url : "http://www.url.com/home", sub : [] },
+  	  {label : 'Contato', url : "http://www.url.com/home", target : "_blank" }
+  	)
 	},
-	menubar : {
+	'#superDIV.container.class01.class-n02' : {
 		$ : {
-			classes : "fullw"
-		},
-		header : {
-			$ : {}
-		},
-		menu : j.menu({
-			home : {url : "#",},
-			a_empresa : {url : "#", label : "A Empresa"},
-			produtos : {url : "#",},
-			localizacao : {url : "#", label : "Localização"},
-			contato : {url : "#",},
-		}),
-	},
-	container : {
-		$ : {
-			classes : "class01 class02",
-			id : "superDiv",
 			css : {
 				//marginA : "30px 40px",
 				//margin : "30px {30 +20}",
@@ -118,9 +67,8 @@ struct = {
 			$var2 : "15px",
 			$var3 : "green"
 		},
-		header : {
+		'.header.cols.col_12' : {
 			$ : {
-				classes : "cols col_12",
 				dir: "ltr",
 				onclick : function(e){
 					console.log(e,e.offsetX, e.x, e.clientX, e.layerX, e.movementX);
@@ -134,24 +82,23 @@ struct = {
 					//backgroundColor : "$var3"
 				}
 			},
-			logo : j.logo(),
-			menu : {}
+			'.logo' : j.logo(),
+			'.menu' : {}
 		},
-		main : {
+		'.main.cols.col_8' : {
 			$ : {
-				classes : "cols col_8",
 				css : {
 					//backgroundColor : "$lightColor"
 					//backgroundColor : "$var3",
 					//border : "solid $var2 $var3",
 				}
 			},
-			article1 : {
+			'.article1' : {
 				text : 'TEXT TEXT TEXT TEXT TEXT ',
 				html : '|| HTML HTML HTML <a href="#">LINK</a> \n <code> Super code </code>',
 				a : {}
 			},
-			article2 : {
+			'.article2' : {
 				form : j.form({
 					$ : { // [$] IS ALWAYS USED FOR CONFIGURATION
 						id : "superForm",
@@ -192,7 +139,7 @@ struct = {
 					}
 				})
 			},
-			article3 : {
+			'.article3' : {
 				h1 : { $ : {text : "header 1"}},
 				h2 : { $ : {text : "header 2"}},
 				h3 : { $ : {text : "header 3"}},
@@ -200,52 +147,45 @@ struct = {
 				h5 : { $ : {text : "header 5"}},
 				h6 : { $ : {text : "header 6"}},
 			},
-			article4 : {
-				t1 : {
+			'.article4' : {
+				'p.t1' : {
 					$ : {
-						tag : "p",
 						text : "dictum at. Nam euismod pulvinar ante sed iaculis. Vestibulum euismod, lacus nec condimentum dapibus, lectus nibh imperdiet neque, non dapibus dui augue id ante. Phasellus tristique turpis eu lectus luctus, quis eleifend lacus pretium. Phasellus et arcu malesuada, consectetur leo ut, molestie ante. Nunc bibendum ultrices metus, a mattis enim pretium accumsan. Quisque eget aliquet felis. Quisque viverra magna mauris, a accumsan dolor gravida at. Nunc non rhoncus libero. Cras consectetur mauris nec risus congue eleifend. Ut egestas tristique accumsan. Praesent finibus felis sem, ut suscipit neque accumsan ut."
 					}
 				},
-				t2 : {
+				'p.t2' : {
 					$ : {
 						tag : "p",
 						text : "dictum at. Nam euismod pulvinar ante sed iaculis. Vestibulum euismod, lacus nec condimentum dapibus, lectus nibh imperdiet neque, non dapibus dui augue id ante. Phasellus tristique turpis eu lectus luctus, quis eleifend lacus pretium. Phasellus et arcu malesuada, consectetur leo ut, molestie ante. Nunc bibendum ultrices metus, a mattis enim pretium accumsan. Quisque eget aliquet felis. Quisque viverra magna mauris, a accumsan dolor gravida at. Nunc non rhoncus libero. Cras consectetur mauris nec risus congue eleifend. Ut egestas tristique accumsan. Praesent finibus felis sem, ut suscipit neque accumsan ut."
 					}
 				}
 			},
-			article5 : {}
+			'.article5' : {}
 		},
-		sidebar : {
-			$ : {
-				classes : "cols col_4",
-			},
-			ad1 : {
+		'.sidebar.cols.col_4' : {
+			'.ad1' : {
 				img : {}
 			},
-			ad2 : {
+			'.ad2' : {
 				//embed : {}
 			},
-			ad3 : {
+			'.ad3' : {
 				//applet : {}
 			}
 		},
-		"div#elmID.class1.class2" : {}, // TEST
-		footer : {
-			$ : {
-				//classes : "cols col_12",
-				classes : "clear",
-			},
-			col1 : {
+		'.footer.clear' : {
+			'.cols.col_4.col1' : {
 				$ : {classes : "cols col_4"}
 			},
-			col2 : {
+			'.cols.col_4.col2' : {
 				$ : {classes : "cols col_4"}
 			},
-			col3 : {
+			'.cols.col_4.col3' : {
 				$ : {classes : "cols col_4"}
 			}
-		}
+		},
+    "div#elmID.class1.class2 #elem.class #otherElem.class" : {
+    },
 	},
 };
 //*/
@@ -258,5 +198,5 @@ j.nodes(struct);
 
 //console.log(j.basicCSS);
 //var b = new j.Sheet(cssRules);
-console.info(document.styleSheets);
+//console.info(document.styleSheets);
 //console.info(a);
