@@ -19,7 +19,7 @@ function __j(){
   /*
   * 
   * DEBUG FUNCTION
-  * bug(str) | bug([strLine, strLine, strLine])
+  * bug(str) | bug(strLine, strLine, strLine)
   * 
   * */
   j.debug = false;
@@ -425,6 +425,8 @@ function __j(){
           position : "fixed",
           height : '200px',
           width : '500px',
+          left : j.grid.center.x,
+          top : j.grid.center.y,
           backgroundColor : "#CDC",
         },
       },
@@ -779,63 +781,145 @@ function __j(){
   *   HTML ELEMENTS WRAPPERS 
   *   BASIC NODES
   * */
-  j.nodes.basic = {
-    element : {value : undefined, enumerable : false, configurable : false},
-    parent : {value : undefined, enumerable : false, configurable : false},
-
-    id : {get : function(){ return this.element.id; }, set : function(v){ this.element.id = v; return true; }, enumerable : false, configurable : false},
-    class : {value : [], enumerable : false, writable : false, configurable : false},
-    attr : {value : {}, enumerable : false, writable : false, configurable : false},
-
-    iterate : {value : function(){}, enumerable : false, writable : false, configurable : false},
+  j.nodes.factory = function(type){
+    var node = [];
     
-    find : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
-    next : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
-    prev : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
-    siblings : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
+    var props = {
+      element : {value : undefined, enumerable : false, writable : true, configurable : false},
+      parent : {value : undefined, enumerable : false, writable : true, configurable : false},
+      
+      parents : {
+        value : function(sel){
+          
+        }, enumerable : false, writable : false, configurable : false},
+      
+      id : {
+        get : function(){
+          if('element' in this) return j.bug('Element undefined');
+          return this.element.id;
+        },
+        set : function(v){
+          if('element' in this) return j.bug('Element undefined');
+          this.element.id = v; return true;
+        }, enumerable : false, configurable : false},
+        
+      class : {value : [], enumerable : false, writable : false, configurable : false},
+      attr : {value : {}, enumerable : false, writable : false, configurable : false},
+      css : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      
+      iterate : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      
+      find : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
+      next : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
+      prev : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
+      siblings : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
+      
+      text : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      html : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      
+      event : {value : {}, enumerable : false, writable : false, configurable : false},
+      //prop : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      length : {enumerable : false, configurable : false},
+    };
     
-    text : {value : function(){}, enumerable : false, writable : false, configurable : false},
-    html : {value : function(){}, enumerable : false, writable : false, configurable : false},
+    var subProps = {
+      class : {
+        add : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+        del : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+        //remove : this.del,
+        toggle : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+        length : {enumerable : false, configurable : false},
+      },
+      
+      attr : {
+        add : {value : function(a){}, enumerable : false, writable : false, configurable : false},
+        del : {value : function(a){}, enumerable : false, writable : false, configurable : false},
+        //remove : this.del,
+        toggle : {value : function(a){}, enumerable : false, writable : false, configurable : false},
+      },
+      
+      text : {
+        pre : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+        pos : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+      },
+    
+      html : {
+        pre : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+        pos : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+      },
+      
+      event : {
+        add : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
+        del : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
+        //remove : this.del,
+        toggle : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
+      },
+    };
+    
+    var text = {
+      isEmpty : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      validate : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      value : {
+        get : function(){
+          
+        },
+        set : function(){
+          
+        }, enumerable : false, writable : true, configurable : false},
+    };
+    
+    //TABLE TAG
+    var table = {
+      stripe : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      
+      filter : {
+        value : function(str, regex){
+          var regex = regex || false;
+        }, enumerable : false, writable : false, configurable : false},
+      
+      order : {
+        value : function(col, desc){
+          var desc = desc || false;
+        }, enumerable : false, writable : false, configurable : false},
+      
+      headers : {value : [], enumerable : false, writable : false, configurable : false},
+      data : {get : function(){}, set : function(){}, enumerable : false, configurable : false},
+      dataConf : {value : {data : [], start : 0, end : 0}, enumerable : false, writable : false, configurable : false},
+      pagination : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      row : {value : [], enumerable : false, writable : false, configurable : false},
+      col : {value : [], enumerable : false, writable : false, configurable : false},
+    };
+    
+    var tableProps = {
+      headers : {
+        length : {enumerable : false, configurable : false},
+      },
+      row : {
+        add : {value : function(){}, enumerable : false, writable : false, configurable : false},
+        del : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      },
+      col : {
+        add : {value : function(){}, enumerable : false, writable : false, configurable : false},
+        del : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      },
+    };
+    
+    //TYPES
+    switch(type){
+      case "table":
+        for(prop in table) props[prop] = table[prop];
+        for(prop in tableProps) subProps[prop] = tableProps[prop];
+      break;
+    }
 
-    event : {value : {}, enumerable : false, writable : false, configurable : false},
-    //iterate : {value : function(){}, enumerable : false, writable : false, configurable : false},
+    Object.defineProperties(node, props);
+    
+    for(prop in subProps){
+      Object.defineProperties(node[prop], subProps[prop]);
+    }
+    
+    return node;    
   };
-  
-  j.nodes.basic.P = {};
-  
-  j.nodes.basic.P.class = {
-    add : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-    del : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-    remove : this.del,
-    toggle : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-  };
-  
-  j.nodes.basic.P.attr = {
-    add : {value : function(a){}, enumerable : false, writable : false, configurable : false},
-    del : {value : function(a){}, enumerable : false, writable : false, configurable : false},
-    remove : this.del,
-    toggle : {value : function(a){}, enumerable : false, writable : false, configurable : false},
-  };
-  
-  j.nodes.basic.P.text = {
-    pre : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-    pos : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-  };
-
-  j.nodes.basic.P.html = {
-    pre : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-    pos : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-  };
-  
-  j.nodes.basic.P.event = {
-    add : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
-    del : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
-    remove : this.del,
-    toggle : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
-  };
-  
-  j.nodes.a = {};
-  
   
   /*
    *  CSS PARSER FUNCTIONS 
