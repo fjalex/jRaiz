@@ -1,3 +1,5 @@
+console.profile("jRaiz");
+
 j.debug = true;
 
 
@@ -28,14 +30,14 @@ struct = {
 			}
 		}
 	},
-	'.menubar.fullw #header + .menu' : [
+	'.menubar.fullw .header + .menu, .zed .beta + .alpha' : [
       {},
-      //j.menu(
-      //  {label : 'Home', url : "http://www.url.com/home"},
-      //  {label : 'A Empresa', url : "http://www.url.com/home" },
-      //  {label : 'Produtos', url : "http://www.url.com/home", sub : [] },
-      //  {label : 'Contato', url : "http://www.url.com/home", target : "_blank" },
-      //)
+      j.menu(
+        {label : 'Home', url : "http://www.url.com/home"},
+        {label : 'A Empresa', url : "http://www.url.com/home" },
+        {label : 'Produtos', url : "http://www.url.com/home", sub : [] },
+        {label : 'Contato', url : "http://www.url.com/home", target : "_blank" }
+      )
 	],
 	'.menubar.fullw' : {
 	  '.header' : {
@@ -200,3 +202,5 @@ j.nodes(struct);
 //var b = new j.Sheet(cssRules);
 //console.info(document.styleSheets);
 //console.info(a);
+
+console.profileEnd("jRaiz");
