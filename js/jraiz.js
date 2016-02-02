@@ -713,6 +713,117 @@ function __j(){
     return Element;
    
   };
+
+
+  /*
+   *  CSS PARSER FUNCTIONS 
+   *
+   * */
+  j.fromSelector = function(selector){
+    var parsed = [],
+        finalNodes = {},
+        e = finalNodes,
+        _i;
+        
+    var mt = selector.replace(/[\w\#\.\-\_\:\/\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.fromSelector.replaceCallback(parsed) );
+    //console.info(selector);
+    //console.info(mt);
+    //console.info(parsed);
+
+    for(var v in parsed){
+      v = parseInt(v);
+      _i = '_' + v;
+      
+      //console.log(v,parsed[v]);
+      
+      if(parsed[v] instanceof Object){
+        e[_i] = parsed[v];
+        
+        switch(parsed[v+1]){
+          case ">":
+            e = e[_i];
+          break;
+          
+          case "+":
+            //continue;
+          break;
+          
+          case ",":
+            e = finalNodes;
+          break;
+          
+          default:
+            e = e[_i];
+        }
+      }
+    }//FOR
+    
+    return finalNodes;
+  };
+
+  j.fromSelector.replaceCallback = function(parsed){
+    var parsed = parsed || [];
+    
+    return function(str){
+      var elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d\.\:\/\-\_]+[\'\"]\]|[#.:]*[\w\-\_]+/g);
+      //console.log(str, elemSelector);
+      var fncs = {
+        '#' : function(inp){
+          elem.$.id = inp.slice(1);
+        },
+        
+        '.' : function(inp){
+          elem.$.classes += ' '+inp.slice(1);
+        },
+        
+        '[' : function(inp){
+          var attr = inp.match(/[\w\d\.\:\/]+|[\=\!\~\|\^\$\*]+/g);
+          elem.$.attrs.push(attr);
+        },
+        
+        ':' : function(inp){
+          //elem.$.... = inp.slice(1);
+        },
+      };
+      
+      var elem = {$ : {classes : '', attrs : [] } };
+      
+      if(elemSelector != null){
+        //console.log(elemSelector);
+        
+        for(var i in elemSelector){
+          var firstC = elemSelector[i][0];
+          var item = elemSelector[i];
+          
+          if(firstC in fncs){
+            fncs[firstC](item);            
+          } else if(item in j.modes.tags){
+            elem.$.tag = item;
+          }
+        }
+        
+        if(!('tag' in elem.$)){
+          elem.$.tag = 'div';
+        }
+        
+        //console.log(elem);
+  
+        parsed[parsed.length] = elem;
+      } else {
+        parsed[parsed.length] = str;
+      }
+      
+      return str;
+    };
+  };
+  
+  //var selc = ' #id.class body div#id.class1.class2 >  ul>li >a:hover span :hover + tag#id, body div#none.class[attr$="val"] ~ abc > * div#id.class[attr!="85"][attr^="val"][attr="val"]';
+  //var selc = ' #header, ul.menu>li>a[href="https://www.url.com/"]';
+  var selc = ' #header, ul.menu>li>a[href="https://www.url.com/"][text="superLink"] + a.link + a.obj + a.hd';
+  var result = j.fromSelector(selc);
+  //console.log(result);
+  //j.nodes(result);
+  
   
   /*
   * NODES
@@ -759,13 +870,19 @@ function __j(){
           break;
           
           default:
+            var el = j.fromSelector(k);
+            console.info(el);
+            for(var a in el){
+              //console.log(a, el[a]);
+            }
+            
             var elemObj = j.fromSelector(k)['_0'];
             
             if('classes' in ops){
               ops.classes += elemObj.$.classes;
             }
             
-            for(conf in elemObj.$){
+            for(var conf in elemObj.$){
               if(!(conf in ops)) ops[conf] = elemObj.$[conf];
             }
             
@@ -907,130 +1024,19 @@ function __j(){
     //TYPES
     switch(type){
       case "table":
-        for(prop in table) props[prop] = table[prop];
-        for(prop in tableProps) subProps[prop] = tableProps[prop];
+        for(var prop in table) props[prop] = table[prop];
+        for(var prop in tableProps) subProps[prop] = tableProps[prop];
       break;
     }
 
     Object.defineProperties(node, props);
     
-    for(prop in subProps){
+    for(var prop in subProps){
       Object.defineProperties(node[prop], subProps[prop]);
     }
     
     return node;    
   };
-  
-  /*
-   *  CSS PARSER FUNCTIONS 
-   *
-   * */
-  j.fromSelector = function(selector){
-    var parsed = [],
-        finalNodes = {},
-        e = finalNodes,
-        _i;
-        
-    var mt = selector.replace(/[\w\#\.\-\_\:\/\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.fromSelector.replaceCallback(parsed) );
-    //console.info(selector);
-    //console.info(mt);
-    //console.info(parsed);
-
-    for(var v in parsed){
-      v = parseInt(v);
-      _i = '_' + v;
-      
-      //console.log(v,parsed[v]);
-      
-      if(parsed[v] instanceof Object){
-        e[_i] = parsed[v];
-        
-        switch(parsed[v+1]){
-          case ">":
-            e = e[_i];
-          break;
-          
-          case "+":
-            //continue;
-          break;
-          
-          case ",":
-            e = finalNodes;
-          break;
-          
-          default:
-            e = e[_i];
-        }
-        
-      }
-      
-    }//FOR
-    
-    return finalNodes;
-  };
-
-  j.fromSelector.replaceCallback = function(parsed){
-    var parsed = parsed || [];
-    
-    return function(str){
-      var elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d\.\:\/\-\_]+[\'\"]\]|[#.:]*[\w\-\_]+/g);
-      //console.log(str, elemSelector);
-      var fncs = {
-        '#' : function(inp){
-          elem.$.id = inp.slice(1);
-        },
-        
-        '.' : function(inp){
-          elem.$.classes += ' '+inp.slice(1);
-        },
-        
-        '[' : function(inp){
-          var attr = inp.match(/[\w\d\.\:\/]+|[\=\!\~\|\^\$\*]+/g);
-          elem.$.attrs.push(attr);
-        },
-        
-        ':' : function(inp){
-          //elem.$.... = inp.slice(1);
-        },
-      };
-      
-      var elem = {$ : {classes : '', attrs : [] } };
-      
-      if(elemSelector != null){
-        //console.log(elemSelector);
-        
-        for(var i in elemSelector){
-          var firstC = elemSelector[i][0];
-          var item = elemSelector[i];
-          
-          if(firstC in fncs){
-            fncs[firstC](item);            
-          } else if(item in j.modes.tags){
-            elem.$.tag = item;
-          }
-        }
-        
-        if(!('tag' in elem.$)){
-          elem.$.tag = 'div';
-        }
-        
-        //console.log(elem);
-  
-        parsed[parsed.length] = elem;
-      } else {
-        parsed[parsed.length] = str;
-      }
-      
-      return str;
-    };
-  };
-  
-  //var selc = ' #id.class body div#id.class1.class2 >  ul>li >a:hover span :hover + tag#id, body div#none.class[attr$="val"] ~ abc > * div#id.class[attr!="85"][attr^="val"][attr="val"]';
-  //var selc = ' #header, ul.menu>li>a[href="https://www.url.com/"]';
-  var selc = ' #header, ul.menu>li>a[href="https://www.url.com/"][text="superLink"] + a.link + a.obj + a.hd';
-  var result = j.fromSelector(selc);
-  //console.log(result);
-  //j.nodes(result);
   
   /*
   *  LOGO
