@@ -1037,3 +1037,29 @@ rec = function(val){
   return rec;
 }
 rec('1st')('2nd')('3rd')('4th')
+
+
+/*
+*   ARRAY REINDEXING 
+* 
+* */
+var b = [10,11,12,13,14,15];
+b.splice( 2, 0, b.splice(5,1)[0] );
+
+/*
+*   FUNCTION WITH INIT PARAMETERS 
+* 
+* */
+a = function(){
+  for(ar in arguments)
+    console.log(arguments[ar]);
+};
+
+b = function(){
+ var init = [10,20,30];
+ for(var i in arguments)
+  init.push(arguments[i]);
+ return a.apply(this, init);
+}
+//ECMASCRIPT 5 ONLY
+b = a.bind(this, 10,20,30);
