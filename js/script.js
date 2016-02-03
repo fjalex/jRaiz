@@ -22,14 +22,26 @@ cssRules  = {
 
 struct = {
 	'.modal' : {
-		'button#inpID.super.classes' : {
+    'button#otherBT.super.class' : {
+      $ : {
+        text : "FIRST BUTTON",
+        onclick : function(){}
+      }
+    },
+		'button#inpID.super--.classes--' : {
 			$ : {
 				onclick : function(e){console.log(e);},
 				text : "SUPER BUTTON",
 				type : "submit"
 			}
-		}
+		},
 	},
+	'span span, span span' : [
+  	{},
+  	{},
+  	{},
+  	{},
+	],
 	'.menubar.fullw .header + .menu, .zed .beta + .alpha' : [
       {},
       j.menu(
@@ -202,5 +214,8 @@ j.nodes(struct);
 //var b = new j.Sheet(cssRules);
 //console.info(document.styleSheets);
 //console.info(a);
+
+a = j.nodes.factory();
+console.log(a);
 
 console.profileEnd("jRaiz");
