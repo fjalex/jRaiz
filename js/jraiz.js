@@ -719,32 +719,36 @@ function __j(){
    *  CSS PARSER FUNCTIONS 
    *
    * */
-  j.fromSelector = function(selector){
-    var parsed = [],
+  j.fromSelector = function(selector, children){
+    var children = children || null,
+        parsed = [],
+        item,
         finalNodes = {},
         e = finalNodes,
+        i = 0,
         _i;
         
-    var mt = selector.replace(/[\w\#\.\-\_\:\/\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.fromSelector.replaceCallback(parsed) );
+    var mt = selector.replace(/[\w\#\.\-\_\:\/\[\]\=\!\"\'\~\|\^\$\*]+|[\>\+\~\*\,]/g, this.fromSelector.replaceCallback(parsed, children) );
     //console.info(selector);
     //console.info(mt);
     //console.info(parsed);
 
-    for(var v in parsed){
-      v = parseInt(v);
-      _i = '_' + v;
+    while( item = parsed.shift() ){
+      _i = '_' + i++;
       
       //console.log(v,parsed[v]);
       
-      if(parsed[v] instanceof Object){
-        e[_i] = parsed[v];
+      if(item instanceof Object){
+        e[_i] = item;
         
-        switch(parsed[v+1]){
+        switch(parsed[0]){
           case ">":
             e = e[_i];
           break;
           
           case "+":
+          case "*":
+          case "~":
             //continue;
           break;
           
@@ -761,12 +765,14 @@ function __j(){
     return finalNodes;
   };
 
-  j.fromSelector.replaceCallback = function(parsed){
+  j.fromSelector.replaceCallback = function(parsed, children){
     var parsed = parsed || [];
+    var children = children || [];
     
     return function(str){
       var elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d\.\:\/\-\_]+[\'\"]\]|[#.:]*[\w\-\_]+/g);
-      //console.log(str, elemSelector);
+      console.log(str, elemSelector);
+      
       var fncs = {
         '#' : function(inp){
           elem.$.id = inp.slice(1);
@@ -786,9 +792,14 @@ function __j(){
         },
       };
       
-      var elem = {$ : {classes : '', attrs : [] } };
-      
       if(elemSelector != null){
+        //var elem = {$ : {classes : '', attrs : [] } };
+        
+        var elem = children.shift() || {};
+        elem.$ = elem.$ || {};
+        elem.$.classes = elem.$.classes || '';
+        elem.$.attrs = [];
+      
         //console.log(elemSelector);
         
         for(var i in elemSelector){
@@ -802,6 +813,7 @@ function __j(){
           }
         }
         
+        console.info(elem);
         if(!('tag' in elem.$)){
           elem.$.tag = 'div';
         }
@@ -843,52 +855,66 @@ function __j(){
     if(obj instanceof Object){
       for(var k in obj){
         
-        var ops = obj[k].$ || {};
+        var node = obj[k];
         
         switch(k){
           case "$":
-            for(var v in obj[k]){
+            for(var v in node){
               //WHEN $VARS
               if(v[0] == '$'){
-                j.vars.add(v, obj[k][v]);
+                j.vars.add(v, node[v]);
               } else if(v == "css"){
-                j.vars.css(obj[k][v], parent);
+                j.vars.css(node[v], parent);
               }
             }
           break;
           
           case "text":
             try {
-              parent.textContent += obj[k];
+              parent.textContent += node;
             } catch (e) {
-              parent.innerText += obj[k];
+              parent.innerText += node;
             }
           break;
           
           case "html":
-            parent.innerHTML += obj[k];
+            parent.innerHTML += node;
           break;
           
+          //-----------------------------------------------------
           default:
-            var el = j.fromSelector(k);
-            console.info(el);
+            var ops = node.$ || {};
+            
+            if(obj[k] instanceof Array){
+              var el = j.fromSelector(k, node);
+            } else {
+              var el = j.fromSelector(k, [node]);
+            }
+            
             for(var a in el){
               //console.log(a, el[a]);
+              var arr = node;
+              var elem = el[a];
+              
+              var Element = j.element(ops);
+              parent.appendChild(Element); 
+              j.nodes(node, Element);
+ 
             }
-            
-            var elemObj = j.fromSelector(k)['_0'];
-            
-            if('classes' in ops){
-              ops.classes += elemObj.$.classes;
-            }
-            
-            for(var conf in elemObj.$){
-              if(!(conf in ops)) ops[conf] = elemObj.$[conf];
-            }
-            
-            var Element = j.element(ops);
-            parent.appendChild(Element);
-            j.nodes(obj[k], Element);
+            //
+            //var elemObj = j.fromSelector(k)['_0'];
+            //
+            //if('classes' in ops){
+            //  ops.classes += elemObj.$.classes;
+            //}
+            //
+            //for(var conf in elemObj.$){
+            //  if(!(conf in ops)) ops[conf] = elemObj.$[conf];
+            //}
+            //
+            //var Element = j.element(ops);
+            //parent.appendChild(Element);
+            //j.nodes(obj[k], Element);
         }
       }
     }
@@ -1056,8 +1082,10 @@ function __j(){
           classes : ops.classes
         },
         link = {
-          href : ops.link,
-          title : ops.title
+          $ : {
+            href : ops.link,
+            title : ops.title
+          }
         };
     
     if(ops.h1){
