@@ -3,8 +3,8 @@ Basic HTML/CSS constructor from JavaScript configurations.
 
 # Features
 - HTML/CSS from JavaScript objects;
-- CSS selectors as key: tag#id.class01.class02
-- pre-configured objects for logo, headers, forms and more;
+- CSS selectors as key: { 'tag#id.class01.class02' : { /* ELEMENT CONFIG */ } }
+- Pre-configured objects for logo, headers, forms and more;
 - Dynamic css variables and expressions;
 
 # Donate
