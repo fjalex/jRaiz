@@ -3,6 +3,7 @@ Basic HTML/CSS constructor from JavaScript configurations.
 
 # Features
 - HTML/CSS from JavaScript objects;
+- CSS selectors as key: tag#id.class01.class02
 - pre-configured objects for logo, headers, forms and more;
 - Dynamic css variables and expressions;
 
@@ -20,22 +21,20 @@ You add HTML structure and CSS rules from javascript objects, like:
 
 ```javascript
 obj = {
-  div : { // GENERATES <div class="superDiv active" id="header" onclick="function(ev){...}">...</div>
+  'div#header.superDiv.active' : { // GENERATES <div class="superDiv active" id="header" onclick="function(ev){...}">...</div>
     $ : {
-      classes : "superDiv active",
-      id : "header",
       onclick : function(ev){
         alert("click");
         console.log(ev);
       }
     },
-    someLink : { // GENERATES <a class="someLink" href="url.com">First link</a>
+    'a.someLink' : { // GENERATES <a class="someLink" href="url.com">First link</a>
       $ : {
         href : "url.com",
         text : "First link"
       }
     },
-    greenLink : { // GENERATES <a class="greenLink" href="green.link.com">Click here!</a>
+    'a.greenLink' : { // GENERATES <a class="greenLink" href="green.link.com">Click here!</a>
       $ : {
         href : "green.link.com",
         target : "_blank",
@@ -63,18 +62,16 @@ obj = {
     $primColor : "#AAA",
     $secndColor : 753
   },
-  header : {
+  '.header.cols.col_12' : { //GRID CLASSES COMES WITH THE BASE CODE 
     $ : {
-      classes : "cols col_12",
       css : {
         border : "solid 1px $primColor", //OUTPUT: solid 1px #AAA
         color : "{$primColor}BCE" //OUTPUT: #AAABCE
       }
     }
   },
-  main : {
+  '.main.cols.col_8' : {
     $ : {
-      classes : "cols col_8",
       css : {
         backgroundColor : "#{$secndColor * 258}" //OUTPUT: #194274
       }
