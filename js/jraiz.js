@@ -694,6 +694,9 @@ function __j(){
     if('text' in ops && !('self' in j.modes.tags[nodeName]) )
       Element.appendChild( document.createTextNode(ops.text));
     
+    if('html' in ops && !('self' in j.modes.tags[nodeName]) )
+      Element.innerHTML = ops.html;
+    
     for(var attr in ops){
       try{
         if(attr in Element) Element[attr] = ops[attr];
@@ -712,6 +715,22 @@ function __j(){
     
     return Element;
    
+  };
+  
+  /*
+  *   TEXT + HTML FUNCTIONS 
+  * 
+  * */
+  j.text = function(){
+    return {$:{
+      text : Array.prototype.slice.call(arguments).join(' ') 
+    }};
+  };
+
+  j.html = function(){
+    return {$:{
+      html : Array.prototype.slice.call(arguments).join(' ') 
+    }};
   };
 
 
@@ -762,16 +781,18 @@ function __j(){
       }
     }//FOR
     
+    //console.info(finalNodes);
     return finalNodes;
   };
-
+  
+  //FROM SELECTOR - REPLACE CALLBACK
   j.fromSelector.replaceCallback = function(parsed, children){
     var parsed = parsed || [];
     var children = children || [];
     
     return function(str){
       var elemSelector = str.match(/\[[\w]+[\=\!\~\|\^\$\*]+[\'\"][\w\d\.\:\/\-\_]+[\'\"]\]|[#.:]*[\w\-\_]+/g);
-      console.log(str, elemSelector);
+      //console.log(str, elemSelector);
       
       var fncs = {
         '#' : function(inp){
@@ -813,7 +834,7 @@ function __j(){
           }
         }
         
-        console.info(elem);
+        //console.info(elem);
         if(!('tag' in elem.$)){
           elem.$.tag = 'div';
         }
@@ -883,43 +904,27 @@ function __j(){
           
           //-----------------------------------------------------
           default:
+            
             var ops = node.$ || {};
             
-            if(obj[k] instanceof Array){
-              var el = j.fromSelector(k, node);
-            } else {
-              var el = j.fromSelector(k, [node]);
+            var elemObj = j.fromSelector(k)['_0'];
+            
+            if('classes' in ops){
+              ops.classes += elemObj.$.classes;
             }
             
-            for(var a in el){
-              //console.log(a, el[a]);
-              var arr = node;
-              var elem = el[a];
-              
-              var Element = j.element(ops);
-              parent.appendChild(Element); 
-              j.nodes(node, Element);
- 
+            for(var conf in elemObj.$){
+              if(!(conf in ops)) ops[conf] = elemObj.$[conf];
             }
-            //
-            //var elemObj = j.fromSelector(k)['_0'];
-            //
-            //if('classes' in ops){
-            //  ops.classes += elemObj.$.classes;
-            //}
-            //
-            //for(var conf in elemObj.$){
-            //  if(!(conf in ops)) ops[conf] = elemObj.$[conf];
-            //}
-            //
-            //var Element = j.element(ops);
-            //parent.appendChild(Element);
-            //j.nodes(obj[k], Element);
+            
+            var Element = j.element(ops);
+            parent.appendChild(Element);
+            j.nodes(obj[k], Element);
         }
       }
     }
   };
-  
+
   /*
   *   HTML ELEMENTS WRAPPERS 
   *   BASIC NODES
