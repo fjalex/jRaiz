@@ -107,11 +107,7 @@ struct = {
 					//border : "solid $var2 $var3",
 				}
 			},
-			'.article1' : {
-				text : 'TEXT TEXT TEXT TEXT TEXT ',
-				html : '|| HTML HTML HTML <a href="#">LINK</a> \n <code> Super code </code>',
-				a : {}
-			},
+			'.article1' : j.html('HTML HTML HTML <a href="#">LINK</a> \n <code> Super code </code>'),
 			'.article2' : {
 				form : j.form({
 					$ : { // [$] IS ALWAYS USED FOR CONFIGURATION
