@@ -1056,10 +1056,25 @@ a = function(){
 };
 
 b = function(){
- var init = [10,20,30];
- for(var i in arguments)
-  init.push(arguments[i]);
- return a.apply(this, init);
-}
+  var init = [10,20,30];
+  var args = Array.prototype.slice.call(arguments); //ARGUMENTS IS NOT AN ARRAY
+  
+  return a.apply(this, init.concat(args) );
+};
+
+b(80,90,100);
+
 //ECMASCRIPT 5 ONLY
 b = a.bind(this, 10,20,30);
+
+/*
+*   FUNCTION APPLY 
+* 
+* */
+a = {
+  b : function(){ console.log('THIS:', this); return arguments; },
+  c : function(){ return this.b.apply(this, arguments); }
+}
+
+a.b(30,40); //RE
+a.c(50,60);
