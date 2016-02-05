@@ -691,13 +691,26 @@ function __j(){
     if('classes' in ops && ops.classes != '') Element.className += ops.classes.trim();
     
     //SELF CLOSING TAGS
-    if('text' in ops && !('self' in j.modes.tags[nodeName]) )
-      Element.appendChild( document.createTextNode(ops.text));
+    if('text' in ops && !('self' in j.modes.tags[nodeName]) ){
+			try {
+				Element.textContent += ops.text;
+			} catch (e) {
+				Element.innerText += ops.text;
+			}
+      //Element.appendChild( document.createTextNode(ops.text));
+		}
     
     if('html' in ops && !('self' in j.modes.tags[nodeName]) )
       Element.innerHTML = ops.html;
     
     for(var attr in ops){
+			//$VARS
+			if(attr[0] == '$'){
+				j.vars.add(attr, ops[attr]);
+			} else if(attr == "css"){
+				j.vars.css(ops[attr], Element);
+			}
+
       try{
         if(attr in Element) Element[attr] = ops[attr];
       } catch(e){
@@ -708,7 +721,7 @@ function __j(){
           );
       }
     }
-  
+		
     if("parent" in ops){
       ops.parent.appendChild(Element);
     }
@@ -733,6 +746,14 @@ function __j(){
     }};
   };
 
+  j.a = function(text, url, blank){
+    return {$:{
+			tag : 'a',
+			text : text,
+      href : url,
+			target : (blank) ? '_blank' : '',
+    }};
+  };
 
   /*
    *  CSS PARSER FUNCTIONS 
@@ -879,28 +900,6 @@ function __j(){
         var node = obj[k];
         
         switch(k){
-          case "$":
-            for(var v in node){
-              //WHEN $VARS
-              if(v[0] == '$'){
-                j.vars.add(v, node[v]);
-              } else if(v == "css"){
-                j.vars.css(node[v], parent);
-              }
-            }
-          break;
-          
-          case "text":
-            try {
-              parent.textContent += node;
-            } catch (e) {
-              parent.innerText += node;
-            }
-          break;
-          
-          case "html":
-            parent.innerHTML += node;
-          break;
           
           //-----------------------------------------------------
           default:
@@ -918,6 +917,7 @@ function __j(){
             }
             
             var Element = j.element(ops);
+						delete node.$;
             parent.appendChild(Element);
             j.nodes(obj[k], Element);
         }
@@ -949,7 +949,8 @@ function __j(){
         set : function(v){
           if('element' in this) return j.bug('Element undefined');
           this.element.id = v; return true;
-        }, enumerable : false, configurable : false},
+        }, enumerable : false, configurable : false
+			},
         
       class : {value : [], enumerable : false, writable : false, configurable : false},
       attr : {value : {}, enumerable : false, writable : false, configurable : false},
@@ -974,7 +975,6 @@ function __j(){
       class : {
         add : {value : function(c){}, enumerable : false, writable : false, configurable : false},
         del : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-        //remove : this.del,
         toggle : {value : function(c){}, enumerable : false, writable : false, configurable : false},
         length : {enumerable : false, configurable : false},
       },
@@ -982,7 +982,6 @@ function __j(){
       attr : {
         add : {value : function(a){}, enumerable : false, writable : false, configurable : false},
         del : {value : function(a){}, enumerable : false, writable : false, configurable : false},
-        //remove : this.del,
         toggle : {value : function(a){}, enumerable : false, writable : false, configurable : false},
       },
       
@@ -999,7 +998,6 @@ function __j(){
       event : {
         add : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
         del : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
-        //remove : this.del,
         toggle : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
       },
     };
@@ -1118,7 +1116,7 @@ function __j(){
         
     for(var i in arguments){
       var item = arguments[i];
-      bt = btTemplate();
+      var bt = btTemplate();
 
       if( item instanceof Object ){
         for(var conf in item ){
@@ -1340,11 +1338,14 @@ function __j(){
     },
     
     css : function(rule, parent){
-      //TODO ADD INLINE CSS
       for(var property in rule){
         var pString = rule[property];
         
-        if( pString.indexOf("$") < 0 && pString.indexOf("{") < 0 ) continue;
+        //INLINE CSS
+				if( pString.indexOf("$") < 0 && pString.indexOf("{") < 0 ){
+					parent.style[property] = pString;
+					continue;
+				}
         
         var onlyVars = pString.match(/\$[\w]+/g);
         

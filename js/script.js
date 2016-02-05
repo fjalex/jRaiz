@@ -1,4 +1,4 @@
-console.profile("jRaiz");
+//console.profile("jRaiz");
 
 j.debug = true;
 
@@ -70,6 +70,7 @@ struct = {
 				//marginA : "30px 40px",
 				//margin : "30px {30 +20}",
 				//backgroundColor : "$lightColor",
+				backgroundColor : "#EAEAEA",
 				//border : "solid {$bwidth + $ouVar} $lightColor $otherVar $tVar" //REGISTER VAR, WHEN UNDEFINED
 				//border : "$var1 $var2 $var3"
 			},
@@ -158,17 +159,9 @@ struct = {
 				h6 : { $ : {text : "header 6"}},
 			},
 			'.article4' : {
-				'p.t1' : {
-					$ : {
-						text : "dictum at. Nam euismod pulvinar ante sed iaculis. Vestibulum euismod, lacus nec condimentum dapibus, lectus nibh imperdiet neque, non dapibus dui augue id ante. Phasellus tristique turpis eu lectus luctus, quis eleifend lacus pretium. Phasellus et arcu malesuada, consectetur leo ut, molestie ante. Nunc bibendum ultrices metus, a mattis enim pretium accumsan. Quisque eget aliquet felis. Quisque viverra magna mauris, a accumsan dolor gravida at. Nunc non rhoncus libero. Cras consectetur mauris nec risus congue eleifend. Ut egestas tristique accumsan. Praesent finibus felis sem, ut suscipit neque accumsan ut."
-					}
-				},
-				'p.t2' : {
-					$ : {
-						tag : "p",
-						text : "dictum at. Nam euismod pulvinar ante sed iaculis. Vestibulum euismod, lacus nec condimentum dapibus, lectus nibh imperdiet neque, non dapibus dui augue id ante. Phasellus tristique turpis eu lectus luctus, quis eleifend lacus pretium. Phasellus et arcu malesuada, consectetur leo ut, molestie ante. Nunc bibendum ultrices metus, a mattis enim pretium accumsan. Quisque eget aliquet felis. Quisque viverra magna mauris, a accumsan dolor gravida at. Nunc non rhoncus libero. Cras consectetur mauris nec risus congue eleifend. Ut egestas tristique accumsan. Praesent finibus felis sem, ut suscipit neque accumsan ut."
-					}
-				}
+				'p.t1' : j.text("dictum at. Nam euismod pulvinar ante sed iaculis. Vestibulum euismod, lacus nec condimentum dapibus, lectus nibh imperdiet neque, non dapibus dui augue id ante. Phasellus tristique turpis eu lectus luctus, quis eleifend lacus pretium. Phasellus et arcu malesuada, consectetur leo ut, molestie ante. Nunc bibendum ultrices metus, a mattis enim pretium accumsan. Quisque eget aliquet felis. Quisque viverra magna mauris, a accumsan dolor gravida at. Nunc non rhoncus libero. Cras consectetur mauris nec risus congue eleifend. Ut egestas tristique accumsan. Praesent finibus felis sem, ut suscipit neque accumsan ut."),
+				'.cls' : j.a('superLINK', 'http://www.zed.com', true),
+				'p.t2' : j.text("dictum at. Nam euismod pulvinar ante sed iaculis. Vestibulum euismod, lacus nec condimentum dapibus, lectus nibh imperdiet neque, non dapibus dui augue id ante. Phasellus tristique turpis eu lectus luctus, quis eleifend lacus pretium. Phasellus et arcu malesuada, consectetur leo ut, molestie ante. Nunc bibendum ultrices metus, a mattis enim pretium accumsan. Quisque eget aliquet felis. Quisque viverra magna mauris, a accumsan dolor gravida at. Nunc non rhoncus libero. Cras consectetur mauris nec risus congue eleifend. Ut egestas tristique accumsan. Praesent finibus felis sem, ut suscipit neque accumsan ut.")
 			},
 			'.article5' : {}
 		},
@@ -214,4 +207,4 @@ j.nodes(struct);
 a = j.nodes.factory();
 console.log(a);
 
-console.profileEnd("jRaiz");
+//console.profileEnd("jRaiz");
