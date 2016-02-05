@@ -1,7 +1,6 @@
-//console.profile("jRaiz");
+console.profile("jRaiz");
 
 j.debug = true;
-
 
 cssRules  = {
 	$ : {
@@ -207,4 +206,4 @@ j.nodes(struct);
 a = j.nodes.factory();
 console.log(a);
 
-//console.profileEnd("jRaiz");
+console.profileEnd("jRaiz");

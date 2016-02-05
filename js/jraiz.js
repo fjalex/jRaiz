@@ -692,24 +692,24 @@ function __j(){
     
     //SELF CLOSING TAGS
     if('text' in ops && !('self' in j.modes.tags[nodeName]) ){
-			try {
-				Element.textContent += ops.text;
-			} catch (e) {
-				Element.innerText += ops.text;
-			}
       //Element.appendChild( document.createTextNode(ops.text));
-		}
+      try {
+        Element.textContent += ops.text;
+      } catch (e) {
+        Element.innerText += ops.text;
+      }
+    }
     
     if('html' in ops && !('self' in j.modes.tags[nodeName]) )
       Element.innerHTML = ops.html;
     
     for(var attr in ops){
-			//$VARS
-			if(attr[0] == '$'){
-				j.vars.add(attr, ops[attr]);
-			} else if(attr == "css"){
-				j.vars.css(ops[attr], Element);
-			}
+      //$VARS
+      if(attr[0] == '$'){
+        j.vars.add(attr, ops[attr]);
+      } else if(attr == "css"){
+        j.vars.css(ops[attr], Element);
+      }
 
       try{
         if(attr in Element) Element[attr] = ops[attr];
@@ -721,7 +721,7 @@ function __j(){
           );
       }
     }
-		
+    
     if("parent" in ops){
       ops.parent.appendChild(Element);
     }
@@ -748,10 +748,10 @@ function __j(){
 
   j.a = function(text, url, blank){
     return {$:{
-			tag : 'a',
-			text : text,
+      tag : 'a',
+      text : text,
       href : url,
-			target : (blank) ? '_blank' : '',
+      target : (blank) ? '_blank' : '',
     }};
   };
 
@@ -873,8 +873,8 @@ function __j(){
   
   //var selc = ' #id.class body div#id.class1.class2 >  ul>li >a:hover span :hover + tag#id, body div#none.class[attr$="val"] ~ abc > * div#id.class[attr!="85"][attr^="val"][attr="val"]';
   //var selc = ' #header, ul.menu>li>a[href="https://www.url.com/"]';
-  var selc = ' #header, ul.menu>li>a[href="https://www.url.com/"][text="superLink"] + a.link + a.obj + a.hd';
-  var result = j.fromSelector(selc);
+  //var selc = ' #header, ul.menu>li>a[href="https://www.url.com/"][text="superLink"] + a.link + a.obj + a.hd';
+  //var result = j.fromSelector(selc);
   //console.log(result);
   //j.nodes(result);
   
@@ -896,31 +896,22 @@ function __j(){
     
     if(obj instanceof Object){
       for(var k in obj){
-        
         var node = obj[k];
+        var ops = node.$ || {};
+        var elemObj = j.fromSelector(k)['_0'];
         
-        switch(k){
-          
-          //-----------------------------------------------------
-          default:
-            
-            var ops = node.$ || {};
-            
-            var elemObj = j.fromSelector(k)['_0'];
-            
-            if('classes' in ops){
-              ops.classes += elemObj.$.classes;
-            }
-            
-            for(var conf in elemObj.$){
-              if(!(conf in ops)) ops[conf] = elemObj.$[conf];
-            }
-            
-            var Element = j.element(ops);
-						delete node.$;
-            parent.appendChild(Element);
-            j.nodes(obj[k], Element);
+        if('classes' in ops){
+          ops.classes += elemObj.$.classes;
         }
+        
+        for(var conf in elemObj.$){
+          if(!(conf in ops)) ops[conf] = elemObj.$[conf];
+        }
+        
+        var Element = j.element(ops);
+        delete node.$;
+        parent.appendChild(Element);
+        j.nodes(node, Element);
       }
     }
   };
@@ -950,7 +941,7 @@ function __j(){
           if('element' in this) return j.bug('Element undefined');
           this.element.id = v; return true;
         }, enumerable : false, configurable : false
-			},
+      },
         
       class : {value : [], enumerable : false, writable : false, configurable : false},
       attr : {value : {}, enumerable : false, writable : false, configurable : false},
@@ -1342,10 +1333,10 @@ function __j(){
         var pString = rule[property];
         
         //INLINE CSS
-				if( pString.indexOf("$") < 0 && pString.indexOf("{") < 0 ){
-					parent.style[property] = pString;
-					continue;
-				}
+        if( pString.indexOf("$") < 0 && pString.indexOf("{") < 0 ){
+          parent.style[property] = pString;
+          continue;
+        }
         
         var onlyVars = pString.match(/\$[\w]+/g);
         
