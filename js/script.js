@@ -36,10 +36,12 @@ struct = {
 			}
 		},
 	},
-	'span span, span span' : [
+	'span span, span span + span + span' : [
   	{ $ : {classes : 'first _1st primeira'} },
   	{ $ : {classes : 'second _2st segunda'} },
   	{ $ : {classes : 'first _1st primeira'} },
+  	{ $ : {classes : 'second _2st segunda'} },
+  	{ $ : {classes : 'second _2st segunda'} },
   	{ $ : {classes : 'second _2st segunda'} },
 	],
 	'.menubar.fullw .header + .menu' : [

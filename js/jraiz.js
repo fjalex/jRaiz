@@ -1,4 +1,10 @@
 function __j(){
+  /*  J FUNCTION
+  *   |selector ->
+  *   |  selects elements
+  *   |  
+  *   |-> itself
+  */
   var j = function(selector){
     
     if(typeof selector == 'number'){
@@ -13,15 +19,15 @@ function __j(){
       
     }
     
-    return this;
+    return j;
   };
   
-  /*
-  * 
-  * DEBUG FUNCTION
-  * bug(str) | bug(strLine, strLine, strLine)
-  * 
-  * */
+  /*  BUG FUNCTION
+  *   |errorLine, errorLine... ->
+  *   |  display error lines on console
+  *   |  
+  *   |-> false
+  */
   j.debug = false;
   
   j.bug = function(err){
@@ -42,16 +48,13 @@ function __j(){
   };
   
   
-  /*
-  * 
-  * HTML TAGS {
-  *   strict    when true ~ html4 | when false ~ html5   
-  *   html4     tags only present in html4
-  *   html5     tags only present in html5
-  *   sections  semantic tags - html5 only
-  *   tags      tags present in both versions
-  *  }
-  * */
+  /*  HTML TAGS OBJ
+  *   |strict    when true ~ html4 | when false ~ html5   
+  *   |html4     tags only present in html4
+  *   |html5     tags only present in html5
+  *   |sections  semantic tags - html5 only
+  *   |tags      tags present in both versions
+  */
   j.modes = {
     strict : true,
     
@@ -193,7 +196,7 @@ function __j(){
   
   /*
    *  WINDOW LOAD FUNCTION 
-   * */
+   */
   j.windowLoad = function(){
     var len = j.body.length;
     if( len > 0 )
@@ -208,7 +211,7 @@ function __j(){
   
   /*
    *  WINDOW RESIZE FUNCTION
-   * */
+   */
   j.windowResize = function(ev){
     j.grid.vport_w = window.innerWidth
     || document.documentElement.clientWidth
@@ -234,16 +237,12 @@ function __j(){
   
   window.addEventListener('resize', j.windowResize);
 
-  /*
-  * 
-  * GRID {
-  *   width   container div
-  *   margin  between columns
-  *   nCols   number of columns inside container
-  *   colW    width of the column + both sides margin ~ usually 80px
-  * }
-  * 
-  * */
+  /*  GRID OBJ
+  *   |width   container div
+  *   |margin  between columns
+  *   |nCols   number of columns inside container
+  *   |colW    width of the column + both sides margin ~ usually 80px
+  */
   j.grid = {
     width : 960,
     margin : 10,
@@ -275,18 +274,14 @@ function __j(){
   
   j.windowResize();
   
-  /*
-  * CSS {
-  *   __base : {    css code as objects
-  *     structure     container + columns + col_[n]
-  *     text          font size, color, family, etc.
-  *     form          form elements: input, textarea, etc.
-  *     modal         modal window
-  *     full          full width or height classes
-  *   }
-  * } 
-  * 
-  * */
+  /*  CSS OBJ
+  *   |__base : {    css code as objects
+  *     |structure     container + columns + col_[n]
+  *     |text          font size, color, family, etc.
+  *     |form          form elements: input, textarea, etc.
+  *     |modal         modal window
+  *     |full          full width or height classes
+  */
   j.css = {
     __base : {
       structure : {
@@ -465,20 +460,14 @@ function __j(){
   }
   
   
-  /*
-  * CSS SHEET
-  *   __sheet({
-  *     $ : {
-  *       media : 'screen and (...)',
-  *       id : 'idString'
-  *     },
-  *     'css selector' : {
-  *       property : value,
-  *       ...
-  *      }
-  *   })
-  * 
-  * */
+  /*  CSS.__SHEET FUNCTION
+  *   |{$.media : 'screen and (...)',
+  *   |  .id : 'idString'
+  *   |'css selector'.property : value,
+  *   |              .property : value }  ->
+  *   | 
+  *   |-> Style Sheet Element
+  */
   j.css.__sheet = function(obj){
   
     var config = {
@@ -575,7 +564,7 @@ function __j(){
   Object.defineProperty(j.body, 'appendChild', {value : function( element ){
     this.push( element );
   }, enumerable : false });
-  
+
   /*
   * INIT
   *   init({
@@ -890,6 +879,9 @@ function __j(){
         //console.log(elemObj.$);
         
         var Element = j.element(ops);
+        //j.tree.push( j.nodes.factory(ops.tag) );
+        //j.tree[j.tree.length - 1].element = Element;
+        //j.tree[j.tree.length - 1].parent = parent;
         delete node.$;
         parent.appendChild(Element);
         j.nodes(node, Element);
@@ -1142,6 +1134,19 @@ function __j(){
   };
   
   /*
+  * MODAL
+  * 
+  * */
+  j.modal = function(obj){
+    if(obj != undefined){
+      j.nodes(obj, j.body);
+      //CREATE OBJECT
+      //DEFINE DIMENSIONS
+      //REGISTER WINDOW RESIZE LISTENER
+    }
+  }
+    
+  /*
   * FORM 
   * 
   * */
@@ -1377,6 +1382,12 @@ function __j(){
   
   for(var func in j.vars)
     Object.defineProperty(j.vars, func, {enumerable : false, writable : false});
+  
+  /*
+  * TREE OBJ
+  *   object that holds element accessor
+  * */
+  j.tree = j.nodes.factory();
   
   /*
   * END OF __j() 
