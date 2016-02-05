@@ -1,4 +1,4 @@
-console.profile("jRaiz");
+//console.profile("jRaiz");
 
 j.debug = true;
 
@@ -21,6 +21,7 @@ cssRules  = {
 
 struct = {
 	'.modal' : {
+    //$ : {css : {backgroundColor : 'red'} },
     'button#otherBT.super.class' : {
       $ : {
         text : "FIRST BUTTON",
@@ -36,12 +37,13 @@ struct = {
 		},
 	},
 	'span span, span span' : [
-  	{},
-  	{},
-  	{},
-  	{},
+  	{ $ : {classes : 'first _1st primeira'} },
+  	{ $ : {classes : 'second _2st segunda'} },
+  	{ $ : {classes : 'first _1st primeira'} },
+  	{ $ : {classes : 'second _2st segunda'} },
 	],
-	'.menubar.fullw .header + .menu, .zed .beta + .alpha' : [
+	'.menubar.fullw .header + .menu' : [
+      {},
       {},
       j.menu(
         {label : 'Home', url : "http://www.url.com/home"},
@@ -206,4 +208,4 @@ j.nodes(struct);
 a = j.nodes.factory();
 console.log(a);
 
-console.profileEnd("jRaiz");
+//console.profileEnd("jRaiz");

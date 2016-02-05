@@ -642,7 +642,7 @@ function __j(){
           } else if(ext[0] == "|"){
             imprt.href = config.external[k].slice(0,-4); //WHEN |CSS
           }
-        } else if(ext[2] == "j" && ext[3] == "s"){ //WHEN JS
+        } else if(ext[2] == "j" && ext[3] == "s"){ //WHEN .JS
           var imprt = {tag: "script", type: "text/javascript"};
           
           if(ext[1] == "."){
@@ -727,39 +727,15 @@ function __j(){
     }
     
     return Element;
-   
   };
   
-  /*
-  *   TEXT + HTML FUNCTIONS 
-  * 
-  * */
-  j.text = function(){
-    return {$:{
-      text : Array.prototype.slice.call(arguments).join(' ') 
-    }};
-  };
-
-  j.html = function(){
-    return {$:{
-      html : Array.prototype.slice.call(arguments).join(' ') 
-    }};
-  };
-
-  j.a = function(text, url, blank){
-    return {$:{
-      tag : 'a',
-      text : text,
-      href : url,
-      target : (blank) ? '_blank' : '',
-    }};
-  };
-
   /*
    *  CSS PARSER FUNCTIONS 
    *
    * */
   j.fromSelector = function(selector, children){
+    if( selector.search(/^\_\d+$/) != -1 ) return false;
+    
     var children = children || null,
         parsed = [],
         item,
@@ -838,6 +814,7 @@ function __j(){
         //var elem = {$ : {classes : '', attrs : [] } };
         
         var elem = children.shift() || {};
+        //console.log(str, elem);
         elem.$ = elem.$ || {};
         elem.$.classes = elem.$.classes || '';
         elem.$.attrs = [];
@@ -856,9 +833,9 @@ function __j(){
         }
         
         //console.info(elem);
-        if(!('tag' in elem.$)){
-          elem.$.tag = 'div';
-        }
+        //if(!('tag' in elem.$)){
+        //  elem.$.tag = 'div';
+        //}
         
         //console.log(elem);
   
@@ -896,17 +873,21 @@ function __j(){
     
     if(obj instanceof Object){
       for(var k in obj){
+        //if(k != '.modal') return false;
+        
         var node = obj[k];
-        var ops = node.$ || {};
-        var elemObj = j.fromSelector(k)['_0'];
+        //console.info(k, node, ops);
         
-        if('classes' in ops){
-          ops.classes += elemObj.$.classes;
+        if(node instanceof Array){
+          var elemObj = j.fromSelector(k,node);
+          j.nodes(elemObj, parent);
+          continue;
         }
         
-        for(var conf in elemObj.$){
-          if(!(conf in ops)) ops[conf] = elemObj.$[conf];
-        }
+        //WHEN _[0-9], fromSelector RETURNS FALSE
+        var elemObj = j.fromSelector(k, [node])['_0'] || node;
+        var ops = elemObj.$ || {};
+        //console.log(elemObj.$);
         
         var Element = j.element(ops);
         delete node.$;
@@ -1057,7 +1038,33 @@ function __j(){
     
     return node;    
   };
-  
+
+  /*
+  *   TEXT
+  *   HTML
+  *   ANCHOR
+  * */
+  j.text = function(){
+    return {$:{
+      text : Array.prototype.slice.call(arguments).join(' ') 
+    }};
+  };
+
+  j.html = function(){
+    return {$:{
+      html : Array.prototype.slice.call(arguments).join(' ') 
+    }};
+  };
+
+  j.a = function(text, url, blank){
+    return {$:{
+      tag : 'a',
+      text : text,
+      href : url,
+      target : (blank) ? '_blank' : '',
+    }};
+  };
+
   /*
   *  LOGO
   * 
@@ -1200,7 +1207,7 @@ function __j(){
             var field = formNode[f] = {};
           } else {
             var label = (form[f].label === undefined) ? f : form[f].label;
-            formNode[f] = {$ : {tag : "label"}, span : {text : label} };
+            formNode[f] = {$ : {tag : "label"}, span : j.text(label) };
             var field = formNode[f][f] = {};
           }
           field.$ = j.form.fields[form[f]["type"]];
