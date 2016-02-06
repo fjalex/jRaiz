@@ -207,7 +207,16 @@ j.nodes(struct);
 //console.info(document.styleSheets);
 //console.info(a);
 
+bd = j.nodes.factory();
+//bd.element = document.body;
+
 a = j.nodes.factory();
+a.element = j.element({tag : 'div', classes : "CLS01 CLS02 SUPcls", id : "OTDIV", text : "THIS DIV"});
 console.log(a);
+
+b = j.nodes.factory();
+b.element = j.element({tag : 'span', classes : "SUPcls spnner span", id : "OTsp", text : "THIS SPAN"});
+
+console.log(b);
 
 //console.profileEnd("jRaiz");

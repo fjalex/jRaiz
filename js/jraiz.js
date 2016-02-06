@@ -879,9 +879,13 @@ function __j(){
         //console.log(elemObj.$);
         
         var Element = j.element(ops);
-        //j.tree.push( j.nodes.factory(ops.tag) );
-        //j.tree[j.tree.length - 1].element = Element;
-        //j.tree[j.tree.length - 1].parent = parent;
+        
+        //j.tree.last.push( j.nodes.factory(ops.tag) );
+        //j.tree.last = j.tree.last[j.tree.last.length - 1];
+        ////console.log(j.tree.last);
+        //j.tree.last.element = Element;
+        //j.tree.last.parent = parent;
+        
         delete node.$;
         parent.appendChild(Element);
         j.nodes(node, Element);
@@ -897,22 +901,37 @@ function __j(){
     var node = [];
     
     var props = {
-      element : {value : undefined, enumerable : false, writable : true, configurable : false},
+      verify : {get : function(){return (this.e == undefined);}, enumerable : false, configurable : false},
+      empty : {get : function(){return (this.length == 0);}, enumerable : false, configurable : false},
+      
+      //element : {value : undefined, enumerable : false, writable : true, configurable : false},
+      e : {value : undefined, enumerable : false, writable : true, configurable : false},
+      element : {
+        get : function(){
+          return this.e;
+        },
+        set : function(elem){
+          this.e = elem;
+          this.class.add.apply(this.class, this.e.className.split(' ') );
+          this.id = this.e.id;
+          return true;
+        }, enumerable : false, configurable : false},
       parent : {value : undefined, enumerable : false, writable : true, configurable : false},
       
       parents : {
         value : function(sel){
-          
+          if( this.verify ) return j.bug('Element undefined');
         }, enumerable : false, writable : false, configurable : false},
       
       id : {
         get : function(){
-          if('element' in this) return j.bug('Element undefined');
+          if(this.verify) return j.bug('Element undefined');
           return this.element.id;
         },
         set : function(v){
-          if('element' in this) return j.bug('Element undefined');
-          this.element.id = v; return true;
+          if(this.verify) return j.bug('Element undefined');
+          this.element.id = v;
+          return true;
         }, enumerable : false, configurable : false
       },
         
@@ -927,7 +946,22 @@ function __j(){
       prev : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
       siblings : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
       
-      text : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      text : {value : function(){
+        if(arguments.length == 0) return false;
+        var finalText = "";
+        
+        for(var i in arguments){
+          finalText += arguments[i];
+        }
+        
+        try {
+          this.e.textContent = finalText;
+        } catch (err) {
+          this.e.innerText = finalText;
+        }
+        
+        return node;
+      }, enumerable : false, writable : false, configurable : false},
       html : {value : function(){}, enumerable : false, writable : false, configurable : false},
       
       event : {value : {}, enumerable : false, writable : false, configurable : false},
@@ -937,32 +971,201 @@ function __j(){
     
     var subProps = {
       class : {
-        add : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-        del : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-        toggle : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+        has : {value : function(){
+          if(arguments.length == 0) return false;
+          var output = true;
+          
+          for(var i in arguments){
+            var classes = arguments[i];
+            if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
+            
+            classes = classes.split(' ');
+            
+            for(var c in classes ){
+              output = (this.indexOf(classes[c]) > -1 && output);
+            }
+          }
+          
+          return output;
+        }, enumerable : false, writable : false, configurable : false},
+        add : {value : function(){
+          if(arguments.length == 0) return false;
+
+          for(var i in arguments){
+            var classes = arguments[i];
+            if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
+            this.push.apply(this, classes.split(' '));
+          }
+          
+          node.e.className = this.join(' ');
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
+        del : {value : function(){
+          for(i in arguments){
+            var classes = arguments[i];
+            
+            if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
+            
+            classes = classes.split(' ');
+            for(var c in classes ){
+              this.splice( this.indexOf(classes[c]), 1);
+            }
+          }
+          node.e.className = this.join(' ');
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
+        toggle : {value : function(){
+          for(i in arguments){
+            var classes = arguments[i];
+            
+            if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
+            
+            classes = classes.split(' ');
+            for(var c in classes ){
+              var cl = classes[c];
+              if(this.indexOf(classes[c]) == -1){
+                this.add(cl);
+              } else {
+                this.del(cl);
+              }
+            }
+          }
+          node.e.className = this.join(' ');
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
         length : {enumerable : false, configurable : false},
       },
       
       attr : {
-        add : {value : function(a){}, enumerable : false, writable : false, configurable : false},
-        del : {value : function(a){}, enumerable : false, writable : false, configurable : false},
-        toggle : {value : function(a){}, enumerable : false, writable : false, configurable : false},
+        add : {value : function(obj){
+          if(arguments.length == 0) return false;
+
+          for(var name in obj){
+            var value = obj[name];
+            node.e.setAttribute(name, value);
+            this[name] = value;
+          }
+          
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
+        del : {value : function(){
+          if(arguments.length == 0) return false;
+
+          for(var i in arguments){
+            var name = arguments[i];
+            node.e.removeAttribute(name);
+            delete this[name];
+          }
+          
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
+        toggle : {value : function(){
+          if(arguments.length == 0) return false;
+
+          for(var i in arguments){
+            var name = arguments[i];
+            if( node.e.hasAttribute(name) ){
+              node.e.removeAttribute(name);
+            } else {
+              this[name] = this[name] || "";
+              node.e.setAttribute(name, this[name]);
+            }
+          }
+          
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
       },
       
       text : {
-        pre : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-        pos : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+        pre : {value : function(){
+          if(arguments.length == 0) return false;
+
+          var finalText = Array.prototype.join.call(arguments, ' ');
+          
+          try {
+            node.e.textContent = finalText + node.e.textContent;
+          } catch (err) {
+            node.e.innerText = finalText + node.e.textContent;
+          }
+          
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
+        pos : {value : function(){
+          if(arguments.length == 0) return false;
+          
+          var finalText = Array.prototype.join.call(arguments, ' ');
+
+          try {
+            node.e.textContent += finalText;
+          } catch (err) {
+            node.e.innerText += finalText;
+          }
+          
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
       },
     
       html : {
-        pre : {value : function(c){}, enumerable : false, writable : false, configurable : false},
-        pos : {value : function(c){}, enumerable : false, writable : false, configurable : false},
+        pre : {value : function(){
+          if(arguments.length == 0) return false;
+
+          var finalCode = Array.prototype.join.call(arguments, ' ');
+          node.e.innerHTML = finalCode + node.e.innerHTML;
+          
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
+        pos : {value : function(){
+          if(arguments.length == 0) return false;
+
+          var finalCode = Array.prototype.join.call(arguments, ' ');
+          node.e.innerHTML += finalCode;
+          
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
       },
       
       event : {
-        add : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
-        del : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
-        toggle : {value : function(e,f){}, enumerable : false, writable : false, configurable : false},
+        add : {value : function(ev,name,fn){
+          if(arguments.length == 0) return false;
+          if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
+          //if(!(fn instanceof Function)) return j.bug('INVALID FUNCTION FOR event.add(event, name, function)!');
+          
+          this[ev] = this[ev] || {};
+          this[ev][name] = fn || this[ev][name] || new Function;
+          node.e.addEventListener(ev, this[ev][name]);
+          this[ev][name]['active'] = true;
+          
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
+        change : {value : function(ev,name,fn){
+          return this.add(ev,name,fn);
+        }, enumerable : false, writable : false, configurable : false},
+        del : {value : function(ev,name){
+          if(arguments.length == 0) return false;
+          if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
+          if(!(ev in this || ev in this && name in this[ev]))
+            return j.bug('EVENT HANDLER + "' + name + '" NOT','REGISTERED ON THE EVENT "' + ev + '"!');
+          
+          node.e.removeEventListener(ev, this[ev][name]);
+          delete this[ev][name];
+          
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
+        toggle : {value : function(ev,name){
+          if(arguments.length == 0) return false;
+          if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
+
+          this[ev] = this[ev] || {};
+          
+          if(name in this[ev] && this[ev][name]['active']){
+            node.e.removeEventListener(ev, this[ev][name]);
+            this[ev][name]['active'] = false;
+          } else {
+            this.add(ev,name);
+          }
+          
+          return node;
+        }, enumerable : false, writable : false, configurable : false},
       },
     };
     
@@ -1388,6 +1591,7 @@ function __j(){
   *   object that holds element accessor
   * */
   j.tree = j.nodes.factory();
+  j.tree.last = j.tree;
   
   /*
   * END OF __j() 
