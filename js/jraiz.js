@@ -1,4 +1,4 @@
-function __j(){
+j = (function __j(){
   /*  J FUNCTION
   *   |selector ->
   *   |  selects elements
@@ -203,7 +203,7 @@ function __j(){
       for(var element in j.body)
         document.body.appendChild( j.body[element] );
     
-    j.body = document.body;
+    j.tree.element = j.body = document.body;
   };
   
   window.addEventListener('load', j.windowLoad);
@@ -892,7 +892,7 @@ function __j(){
       }
     }
   };
-
+  
   /*
   *   HTML ELEMENTS WRAPPERS 
   *   BASIC NODES
@@ -948,11 +948,8 @@ function __j(){
       
       text : {value : function(){
         if(arguments.length == 0) return false;
-        var finalText = "";
         
-        for(var i in arguments){
-          finalText += arguments[i];
-        }
+        var finalText = Array.prototype.join.call(arguments, ' ');
         
         try {
           this.e.textContent = finalText;
@@ -962,7 +959,12 @@ function __j(){
         
         return node;
       }, enumerable : false, writable : false, configurable : false},
-      html : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      html : {value : function(){
+        if(arguments.length == 0) return false;
+        
+        this.e.innerHTML = Array.prototype.join.call(arguments, ' ');
+        return node;
+      }, enumerable : false, writable : false, configurable : false},
       
       event : {value : {}, enumerable : false, writable : false, configurable : false},
       //prop : {value : function(){}, enumerable : false, writable : false, configurable : false},
@@ -1109,17 +1111,13 @@ function __j(){
         pre : {value : function(){
           if(arguments.length == 0) return false;
 
-          var finalCode = Array.prototype.join.call(arguments, ' ');
-          node.e.innerHTML = finalCode + node.e.innerHTML;
-          
+          node.e.innerHTML = Array.prototype.join.call(arguments, ' ') + node.e.innerHTML;
           return node;
         }, enumerable : false, writable : false, configurable : false},
         pos : {value : function(){
           if(arguments.length == 0) return false;
 
-          var finalCode = Array.prototype.join.call(arguments, ' ');
-          node.e.innerHTML += finalCode;
-          
+          node.e.innerHTML += Array.prototype.join.call(arguments, ' ');
           return node;
         }, enumerable : false, writable : false, configurable : false},
       },
@@ -1128,7 +1126,6 @@ function __j(){
         add : {value : function(ev,name,fn){
           if(arguments.length == 0) return false;
           if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
-          //if(!(fn instanceof Function)) return j.bug('INVALID FUNCTION FOR event.add(event, name, function)!');
           
           this[ev] = this[ev] || {};
           this[ev][name] = fn || this[ev][name] || new Function;
@@ -1591,12 +1588,20 @@ function __j(){
   *   object that holds element accessor
   * */
   j.tree = j.nodes.factory();
+  j.tree.factory = function(arrElm, nItems, depth){
+    if(depth < 0) return false;
+    var parent = arrElm, son;
+    for(var i = 0; i < nItems; i++){
+      parent.push( j.nodes.factory() );
+      son = parent[i];
+      j.nodes.iterator(son, nItems, depth - 1);
+    }
+  };
+  
   j.tree.last = j.tree;
   
   /*
   * END OF __j() 
   * */
   return j;
-}
-
-j = __j();
+})();
