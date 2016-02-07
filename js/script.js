@@ -219,4 +219,7 @@ b.element = j.element({tag : 'span', classes : "SUPcls spnner span", id : "OTsp"
 
 console.log(b);
 
+j.tree.factory(j.tree, 5, 3);
+
+
 //console.profileEnd("jRaiz");

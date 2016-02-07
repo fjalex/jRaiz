@@ -920,7 +920,7 @@ j = (function __j(){
       
       parents : {
         value : function(sel){
-          if( this.verify ) return j.bug('Element undefined');
+          if(this.verify) return j.bug('Element undefined');
         }, enumerable : false, writable : false, configurable : false},
       
       id : {
@@ -939,7 +939,39 @@ j = (function __j(){
       attr : {value : {}, enumerable : false, writable : false, configurable : false},
       css : {value : function(){}, enumerable : false, writable : false, configurable : false},
       
-      iterate : {value : function(){}, enumerable : false, writable : false, configurable : false},
+      append : {value : function(){
+        if(this.verify) return j.bug('Element undefined');
+        if(arguments.length == 0) return false;
+        
+        for(var i in arguments){
+          var element = arguments[i];
+          
+          if(element instanceof HTMLElement){
+            this.e.appendChild(element);
+            this.push(j.nodes.factory(element.nodeName.toLowerCase()));
+          } else {
+            return j.bug('THE ARGUMENT Nº' + i + ' IS NOT AN HTMLElement!')
+          }
+        }
+        
+        return this;
+      }, enumerable : false, writable : false, configurable : false},
+      
+      iterate : {value : function(){
+        if(this.verify) return j.bug('Element undefined');
+        if(arguments.length == 0) return false;
+        
+        var args = Array.prototype.slice.call(arguments);
+        var fn = args[0];
+        if(!(fn instanceof Function)) return j.bug('iterate(): FIRST ARGUMENT NOT A FUNCTION');
+        
+        for(i in this){
+          args[0] = parseInt(i);
+          this[i] = fn.apply(this[i], args) || this[i];
+        }
+        
+        return true;
+      }, enumerable : false, writable : false, configurable : false},
       
       find : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
       next : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
@@ -947,8 +979,9 @@ j = (function __j(){
       siblings : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
       
       text : {value : function(){
+        if(this.verify) return j.bug('Element undefined');
         if(arguments.length == 0) return false;
-        
+      
         var finalText = Array.prototype.join.call(arguments, ' ');
         
         try {
@@ -957,13 +990,14 @@ j = (function __j(){
           this.e.innerText = finalText;
         }
         
-        return node;
+        return this;
       }, enumerable : false, writable : false, configurable : false},
       html : {value : function(){
+        if(this.verify) return j.bug('Element undefined');
         if(arguments.length == 0) return false;
         
         this.e.innerHTML = Array.prototype.join.call(arguments, ' ');
-        return node;
+        return this;
       }, enumerable : false, writable : false, configurable : false},
       
       event : {value : {}, enumerable : false, writable : false, configurable : false},
@@ -974,6 +1008,7 @@ j = (function __j(){
     var subProps = {
       class : {
         has : {value : function(){
+          if(node.verify) return j.bug('Element undefined');
           if(arguments.length == 0) return false;
           var output = true;
           
@@ -991,6 +1026,7 @@ j = (function __j(){
           return output;
         }, enumerable : false, writable : false, configurable : false},
         add : {value : function(){
+          if(node.verify) return j.bug('Element undefined');
           if(arguments.length == 0) return false;
 
           for(var i in arguments){
@@ -1003,6 +1039,7 @@ j = (function __j(){
           return node;
         }, enumerable : false, writable : false, configurable : false},
         del : {value : function(){
+          if(node.verify) return j.bug('Element undefined');
           for(i in arguments){
             var classes = arguments[i];
             
@@ -1017,6 +1054,7 @@ j = (function __j(){
           return node;
         }, enumerable : false, writable : false, configurable : false},
         toggle : {value : function(){
+          if(node.verify) return j.bug('Element undefined');
           for(i in arguments){
             var classes = arguments[i];
             
@@ -1040,6 +1078,7 @@ j = (function __j(){
       
       attr : {
         add : {value : function(obj){
+          if(node.verify) return j.bug('Element undefined');
           if(arguments.length == 0) return false;
 
           for(var name in obj){
@@ -1051,6 +1090,7 @@ j = (function __j(){
           return node;
         }, enumerable : false, writable : false, configurable : false},
         del : {value : function(){
+          if(node.verify) return j.bug('Element undefined');
           if(arguments.length == 0) return false;
 
           for(var i in arguments){
@@ -1062,6 +1102,7 @@ j = (function __j(){
           return node;
         }, enumerable : false, writable : false, configurable : false},
         toggle : {value : function(){
+          if(node.verify) return j.bug('Element undefined');
           if(arguments.length == 0) return false;
 
           for(var i in arguments){
@@ -1080,6 +1121,7 @@ j = (function __j(){
       
       text : {
         pre : {value : function(){
+          if(node.verify) return j.bug('Element undefined');
           if(arguments.length == 0) return false;
 
           var finalText = Array.prototype.join.call(arguments, ' ');
@@ -1093,6 +1135,7 @@ j = (function __j(){
           return node;
         }, enumerable : false, writable : false, configurable : false},
         pos : {value : function(){
+          if(node.verify) return j.bug('Element undefined');
           if(arguments.length == 0) return false;
           
           var finalText = Array.prototype.join.call(arguments, ' ');
@@ -1109,6 +1152,7 @@ j = (function __j(){
     
       html : {
         pre : {value : function(){
+          if(node.verify) return j.bug('Element undefined');
           if(arguments.length == 0) return false;
 
           node.e.innerHTML = Array.prototype.join.call(arguments, ' ') + node.e.innerHTML;
@@ -1124,6 +1168,7 @@ j = (function __j(){
       
       event : {
         add : {value : function(ev,name,fn){
+          if(node.verify) return j.bug('Element undefined');
           if(arguments.length == 0) return false;
           if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
           
@@ -1138,6 +1183,7 @@ j = (function __j(){
           return this.add(ev,name,fn);
         }, enumerable : false, writable : false, configurable : false},
         del : {value : function(ev,name){
+          if(node.verify) return j.bug('Element undefined');
           if(arguments.length == 0) return false;
           if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
           if(!(ev in this || ev in this && name in this[ev]))
@@ -1149,6 +1195,7 @@ j = (function __j(){
           return node;
         }, enumerable : false, writable : false, configurable : false},
         toggle : {value : function(ev,name){
+          if(node.verify) return j.bug('Element undefined');
           if(arguments.length == 0) return false;
           if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
 
@@ -1588,17 +1635,22 @@ j = (function __j(){
   *   object that holds element accessor
   * */
   j.tree = j.nodes.factory();
-  j.tree.factory = function(arrElm, nItems, depth){
-    if(depth < 0) return false;
-    var parent = arrElm, son;
-    for(var i = 0; i < nItems; i++){
-      parent.push( j.nodes.factory() );
-      son = parent[i];
-      j.nodes.iterator(son, nItems, depth - 1);
-    }
-  };
   
-  j.tree.last = j.tree;
+  var tree = {
+    factory : {
+      value : function(arrElm, nItems, depth){
+        if(depth < 0) return false;
+        var parent = arrElm, son;
+        for(var i = 0; i < nItems; i++){
+          parent.push( j.nodes.factory() );
+          son = parent[i];
+          j.tree.factory(son, nItems, depth - 1);
+        }
+      }, enumerable : false, writable : false, configurable : false},
+    last : { value : j.tree, enumerable : false, writable : false, configurable : false }
+  }
+  
+  Object.defineProperties(j.tree, tree);
   
   /*
   * END OF __j() 
