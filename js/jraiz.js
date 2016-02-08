@@ -950,7 +950,7 @@ j = (function __j(){
             this.e.appendChild(element);
             this.push(j.nodes.factory(element.nodeName.toLowerCase()));
           } else {
-            return j.bug('THE ARGUMENT Nº' + i + ' IS NOT AN HTMLElement!')
+            return j.bug('THE ARGUMENT Nï¿½' + i + ' IS NOT AN HTMLElement!');
           }
         }
         
@@ -1660,7 +1660,7 @@ j = (function __j(){
         }
       }, enumerable : false, writable : false, configurable : false},
     last : { value : j.tree, enumerable : false, writable : false, configurable : false }
-  }
+  };
   
   Object.defineProperties(j.tree, tree);
   
