@@ -974,8 +974,20 @@ j = (function __j(){
       }, enumerable : false, writable : false, configurable : false},
       
       find : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
-      next : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
-      prev : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
+      next : {value : function(sel){
+        if(sel == undefined){
+          return this.e.nextElementSibling;
+        } else {
+          
+        }
+      }, enumerable : false, writable : false, configurable : false},
+      prev : {value : function(sel){
+        if(sel == undefined){
+          return this.e.previousElementSibling;
+        } else {
+          
+        }
+      }, enumerable : false, writable : false, configurable : false},
       siblings : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
       
       text : {value : function(){
