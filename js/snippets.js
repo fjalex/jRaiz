@@ -1076,5 +1076,5 @@ a = {
   c : function(){ return this.b.apply(this, arguments); }
 }
 
-a.b(30,40); //RE
+a.b(30,40);
 a.c(50,60);
