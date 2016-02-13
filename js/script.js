@@ -223,3 +223,79 @@ j.tree.factory(j.tree, 5, 3);
 
 
 //console.profileEnd("jRaiz");
+///*
+window.addEventListener('load', function(){
+  
+  var limit = 1000;
+  var obj = {
+    all : '',
+    class01 : true,
+    has : function(c){
+      classes = c.match(/\w+/g);
+
+      if(c == null) return false;
+      var out = true;
+      
+      for(cl in classes){
+        if(cl in this) out = (out && true);
+          else out = (out && false);
+      }
+      
+      return out;
+    },
+    add : function(c){
+      classes = c.match(/\w+/g);
+      for(cl in classes){
+        this[ classes[cl] ] = true;
+      }
+      
+      for(cl in this){
+        this.all += cl + ' ';
+      }
+      //console.log(this.all);
+    },
+  }
+
+  console.profile("jRaiz");
+  for(i = 0; i < limit; i++){
+    obj.add('class0654 othClass');
+  }
+  console.profileEnd("jRaiz");
+  
+  console.info(obj);
+
+  arr = ['class01','class02','class03'];
+  arr.has = function(c){
+    classes = c.match(/\w+/g);
+    //classes = c.split(' ');
+    if(c == null) return false;
+    var out = true;
+    for(cl in classes){
+      if(this.indexOf(classes[cl]) > -1 ) out = (out && true);
+        else out = (out && false);
+    }
+    
+    return out;
+  };
+  arr.add = function(c){
+    classes = c.match(/\w+/g);
+    //classes = c.split(' ');
+    if(c == null) return false;
+
+    for(cl in classes){
+      this.push(classes[cl]);
+    }
+    
+    //console.log(this.join(' ') );
+    this.join(' ');
+  };
+  
+  console.profile("jRaiz2");
+  for(i = 0; i < limit; i++){
+    arr.add('class0654 otherClass');
+  }
+  console.profileEnd("jRaiz2");
+
+
+});
+//*/

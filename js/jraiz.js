@@ -38,8 +38,7 @@ j = (function __j(){
         msg += "\n\t" + arguments[k];
       }
       
-      console.error( msg );
-      
+      console.error( msg );      
     } else {
       console.error("jRaiz\n\tError Message not defined!");
     }
@@ -702,7 +701,7 @@ j = (function __j(){
 
       try{
         if(attr in Element) Element[attr] = ops[attr];
-      } catch(e){
+      } catch(err){
         return j.bug(
           "THE ELEMENT: " + Element,
           "DOES NOT ACCEPT THE ATTRIBUTE: " + attr,
@@ -925,13 +924,19 @@ j = (function __j(){
       
       id : {
         get : function(){
-          if(this.verify) return j.bug('Element undefined');
-          return this.element.id;
+          try {
+            return this.element.id;
+          } catch(err){
+            if(this.verify) return j.bug('Element undefined');
+          }
         },
         set : function(v){
-          if(this.verify) return j.bug('Element undefined');
-          this.element.id = v;
-          return true;
+          try {
+            this.element.id = v;
+            return true;
+          } catch(err){
+            if(this.verify) return j.bug('Element undefined');
+          }
         }, enumerable : false, configurable : false
       },
         
@@ -940,37 +945,41 @@ j = (function __j(){
       css : {value : function(){}, enumerable : false, writable : false, configurable : false},
       
       append : {value : function(){
-        if(this.verify) return j.bug('Element undefined');
-        if(arguments.length == 0) return false;
-        
-        for(var i in arguments){
-          var element = arguments[i];
-          
-          if(element instanceof HTMLElement){
-            this.e.appendChild(element);
-            this.push(j.nodes.factory(element.nodeName.toLowerCase()));
-          } else {
-            return j.bug('THE ARGUMENT Nº' + i + ' IS NOT AN HTMLElement!')
+        try {
+          for(var i in arguments){
+            var element = arguments[i];
+            
+            if(element instanceof HTMLElement){
+              this.e.appendChild(element);
+              this.push(j.nodes.factory(element.nodeName.toLowerCase()));
+            } else {
+              return j.bug('THE ARGUMENT Nº' + i + ' IS NOT AN HTMLElement!')
+            }
           }
+          
+          return this;
+        } catch(err){
+          if(this.verify) return j.bug('Element undefined');
+          if(arguments.length == 0) return false;
         }
-        
-        return this;
       }, enumerable : false, writable : false, configurable : false},
       
       iterate : {value : function(){
-        if(this.verify) return j.bug('Element undefined');
-        if(arguments.length == 0) return false;
-        
-        var args = Array.prototype.slice.call(arguments);
-        var fn = args[0];
-        if(!(fn instanceof Function)) return j.bug('iterate(): FIRST ARGUMENT NOT A FUNCTION');
-        
-        for(i in this){
-          args[0] = parseInt(i);
-          this[i] = fn.apply(this[i], args) || this[i];
+        try {
+          var args = Array.prototype.slice.call(arguments);
+          var fn = args[0];
+          
+          for(var i in this){
+            args[0] = parseInt(i);
+            this[i] = fn.apply(this[i], args) || this[i];
+          }
+          
+          return true;
+        } catch(err){
+          if(this.verify) return j.bug('Element undefined');
+          if(arguments.length == 0) return false;
+          if(!(fn instanceof Function)) return j.bug('iterate(): FIRST ARGUMENT NOT A FUNCTION');
         }
-        
-        return true;
       }, enumerable : false, writable : false, configurable : false},
       
       find : {value : function(sel){}, enumerable : false, writable : false, configurable : false},
@@ -1020,207 +1029,240 @@ j = (function __j(){
     var subProps = {
       class : {
         has : {value : function(){
-          if(node.verify) return j.bug('Element undefined');
-          if(arguments.length == 0) return false;
-          var output = true;
-          
-          for(var i in arguments){
-            var classes = arguments[i];
-            if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
+          try {
+            var output = true;
             
-            classes = classes.split(' ');
-            
-            for(var c in classes ){
-              output = (this.indexOf(classes[c]) > -1 && output);
-            }
-          }
-          
-          return output;
-        }, enumerable : false, writable : false, configurable : false},
-        add : {value : function(){
-          if(node.verify) return j.bug('Element undefined');
-          if(arguments.length == 0) return false;
-
-          for(var i in arguments){
-            var classes = arguments[i];
-            if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
-            this.push.apply(this, classes.split(' '));
-          }
-          
-          node.e.className = this.join(' ');
-          return node;
-        }, enumerable : false, writable : false, configurable : false},
-        del : {value : function(){
-          if(node.verify) return j.bug('Element undefined');
-          for(i in arguments){
-            var classes = arguments[i];
-            
-            if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
-            
-            classes = classes.split(' ');
-            for(var c in classes ){
-              this.splice( this.indexOf(classes[c]), 1);
-            }
-          }
-          node.e.className = this.join(' ');
-          return node;
-        }, enumerable : false, writable : false, configurable : false},
-        toggle : {value : function(){
-          if(node.verify) return j.bug('Element undefined');
-          for(i in arguments){
-            var classes = arguments[i];
-            
-            if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
-            
-            classes = classes.split(' ');
-            for(var c in classes ){
-              var cl = classes[c];
-              if(this.indexOf(classes[c]) == -1){
-                this.add(cl);
-              } else {
-                this.del(cl);
+            for(var i in arguments){
+              var classes = arguments[i];
+              if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
+              
+              classes = classes.split(' ');
+              
+              for(var c in classes ){
+                output = (this.indexOf(classes[c]) > -1 && output);
               }
             }
+            
+            return output;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
           }
-          node.e.className = this.join(' ');
-          return node;
+        }, enumerable : false, writable : false, configurable : false},
+        add : {value : function(){
+          try {
+            for(var i in arguments){
+              var classes = arguments[i];
+              if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
+              this.push.apply(this, classes.split(' '));
+            }
+            
+            node.e.className = this.join(' ');
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
+          }
+        }, enumerable : false, writable : false, configurable : false},
+        del : {value : function(){
+          try {
+            for(var i in arguments){
+              var classes = arguments[i];
+              
+              if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
+              
+              classes = classes.split(' ');
+              for(var c in classes ){
+                this.splice( this.indexOf(classes[c]), 1);
+              }
+            }
+            node.e.className = this.join(' ');
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
+          }
+        }, enumerable : false, writable : false, configurable : false},
+        toggle : {value : function(){
+          try {
+            for(var i in arguments){
+              var classes = arguments[i];
+              
+              if(typeof classes != "string") return j.bug('INVALID CLASS NAME!');
+              
+              classes = classes.split(' ');
+              for(var c in classes ){
+                var cl = classes[c];
+                if(this.indexOf(classes[c]) == -1){
+                  this.add(cl);
+                } else {
+                  this.del(cl);
+                }
+              }
+            }
+            node.e.className = this.join(' ');
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
+          }
         }, enumerable : false, writable : false, configurable : false},
         length : {enumerable : false, configurable : false},
       },
       
       attr : {
         add : {value : function(obj){
-          if(node.verify) return j.bug('Element undefined');
-          if(arguments.length == 0) return false;
-
-          for(var name in obj){
-            var value = obj[name];
-            node.e.setAttribute(name, value);
-            this[name] = value;
+          try {
+            for(var name in obj){
+              var value = obj[name];
+              node.e.setAttribute(name, value);
+              this[name] = value;
+            }
+            
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
           }
-          
-          return node;
         }, enumerable : false, writable : false, configurable : false},
         del : {value : function(){
-          if(node.verify) return j.bug('Element undefined');
-          if(arguments.length == 0) return false;
-
-          for(var i in arguments){
-            var name = arguments[i];
-            node.e.removeAttribute(name);
-            delete this[name];
-          }
-          
-          return node;
-        }, enumerable : false, writable : false, configurable : false},
-        toggle : {value : function(){
-          if(node.verify) return j.bug('Element undefined');
-          if(arguments.length == 0) return false;
-
-          for(var i in arguments){
-            var name = arguments[i];
-            if( node.e.hasAttribute(name) ){
+          try {
+            for(var i in arguments){
+              var name = arguments[i];
               node.e.removeAttribute(name);
-            } else {
-              this[name] = this[name] || "";
-              node.e.setAttribute(name, this[name]);
+              delete this[name];
             }
+            
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
+          }        }, enumerable : false, writable : false, configurable : false},
+        toggle : {value : function(){
+          try {
+            for(var i in arguments){
+              var name = arguments[i];
+              if( node.e.hasAttribute(name) ){
+                node.e.removeAttribute(name);
+              } else {
+                this[name] = this[name] || "";
+                node.e.setAttribute(name, this[name]);
+              }
+            }
+            
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
           }
-          
-          return node;
         }, enumerable : false, writable : false, configurable : false},
       },
       
       text : {
         pre : {value : function(){
-          if(node.verify) return j.bug('Element undefined');
-          if(arguments.length == 0) return false;
-
-          var finalText = Array.prototype.join.call(arguments, ' ');
-          
           try {
-            node.e.textContent = finalText + node.e.textContent;
-          } catch (err) {
-            node.e.innerText = finalText + node.e.textContent;
+            var finalText = Array.prototype.join.call(arguments, ' ');
+            
+            try {
+              node.e.textContent = finalText + node.e.textContent;
+            } catch (err) {
+              node.e.innerText = finalText + node.e.textContent;
+            }
+            
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
           }
-          
-          return node;
         }, enumerable : false, writable : false, configurable : false},
         pos : {value : function(){
-          if(node.verify) return j.bug('Element undefined');
-          if(arguments.length == 0) return false;
-          
-          var finalText = Array.prototype.join.call(arguments, ' ');
-
           try {
-            node.e.textContent += finalText;
-          } catch (err) {
-            node.e.innerText += finalText;
+            var finalText = Array.prototype.join.call(arguments, ' ');
+
+            try {
+              node.e.textContent += finalText;
+            } catch (err) {
+              node.e.innerText += finalText;
+            }
+            
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
           }
-          
-          return node;
         }, enumerable : false, writable : false, configurable : false},
       },
     
       html : {
         pre : {value : function(){
-          if(node.verify) return j.bug('Element undefined');
-          if(arguments.length == 0) return false;
-
-          node.e.innerHTML = Array.prototype.join.call(arguments, ' ') + node.e.innerHTML;
-          return node;
+          try {
+            node.e.innerHTML = Array.prototype.join.call(arguments, ' ') + node.e.innerHTML;
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
+          }
         }, enumerable : false, writable : false, configurable : false},
         pos : {value : function(){
-          if(arguments.length == 0) return false;
-
-          node.e.innerHTML += Array.prototype.join.call(arguments, ' ');
-          return node;
+          try {
+            node.e.innerHTML += Array.prototype.join.call(arguments, ' ');
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
+          }
         }, enumerable : false, writable : false, configurable : false},
       },
       
       event : {
         add : {value : function(ev,name,fn){
-          if(node.verify) return j.bug('Element undefined');
-          if(arguments.length == 0) return false;
-          if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
-          
-          this[ev] = this[ev] || {};
-          this[ev][name] = fn || this[ev][name] || new Function;
-          node.e.addEventListener(ev, this[ev][name]);
-          this[ev][name]['active'] = true;
-          
-          return node;
+          try {
+            this[ev] = this[ev] || {};
+            this[ev][name] = fn || this[ev][name] || new Function;
+            node.e.addEventListener(ev, this[ev][name]);
+            this[ev][name]['active'] = true;
+            
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
+            if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
+          }
         }, enumerable : false, writable : false, configurable : false},
         change : {value : function(ev,name,fn){
           return this.add(ev,name,fn);
         }, enumerable : false, writable : false, configurable : false},
         del : {value : function(ev,name){
-          if(node.verify) return j.bug('Element undefined');
-          if(arguments.length == 0) return false;
-          if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
-          if(!(ev in this || ev in this && name in this[ev]))
-            return j.bug('EVENT HANDLER + "' + name + '" NOT','REGISTERED ON THE EVENT "' + ev + '"!');
-          
-          node.e.removeEventListener(ev, this[ev][name]);
-          delete this[ev][name];
-          
-          return node;
+          try {
+            node.e.removeEventListener(ev, this[ev][name]);
+            delete this[ev][name];
+            
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
+            if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
+            if(!(ev in this || ev in this && name in this[ev]))
+              return j.bug('EVENT HANDLER + "' + name + '" NOT','REGISTERED ON THE EVENT "' + ev + '"!');
+          }
         }, enumerable : false, writable : false, configurable : false},
         toggle : {value : function(ev,name){
-          if(node.verify) return j.bug('Element undefined');
-          if(arguments.length == 0) return false;
-          if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
-
-          this[ev] = this[ev] || {};
-          
-          if(name in this[ev] && this[ev][name]['active']){
-            node.e.removeEventListener(ev, this[ev][name]);
-            this[ev][name]['active'] = false;
-          } else {
-            this.add(ev,name);
+          try {
+            this[ev] = this[ev] || {};
+            
+            if(name in this[ev] && this[ev][name]['active']){
+              node.e.removeEventListener(ev, this[ev][name]);
+              this[ev][name]['active'] = false;
+            } else {
+              this.add(ev,name);
+            }
+            
+            return node;
+          } catch(err){
+            if(node.verify) return j.bug('Element undefined');
+            if(arguments.length == 0) return false;
+            if(!('on'+ev in node.e)) return j.bug('THE EVENT "' + ev + '" DONT EXIST IN THIS ELEMENT!');
           }
-          
-          return node;
         }, enumerable : false, writable : false, configurable : false},
       },
     };
