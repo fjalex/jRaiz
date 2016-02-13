@@ -1702,7 +1702,7 @@ j = (function __j(){
         }
       }, enumerable : false, writable : false, configurable : false},
     last : { value : j.tree, enumerable : false, writable : false, configurable : false }
-  }
+  };
   
   Object.defineProperties(j.tree, tree);
   
